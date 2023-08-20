@@ -1,0 +1,80 @@
+@font-face {
+    font-family: montserrat;
+    src: url(Montserrat-VariableFont_wght.ttf);
+  }
+
+
+* {
+    box-sizing:border-box;
+    /*font-family:Verdana,Tahoma,sans-serif;*/
+    margin:0;
+    padding:0;
+    /*color: #ffe9b1;*/
+    color: hsl(0, 0%, 100%);
+    font-size: 16px;
+    font-family: montserrat, sans-serif;
+
+}
+
+main {
+    width: 90%;
+    margin: 0 auto;
+}
+
+ul {
+    list-style: none;
+}
+
+body {
+    background: url("../background3.jpg") fixed center;
+    /*background-color: hsla(110, 0%, 10%, 1);*/
+}
+
+h1, h2, h3 {
+    text-align: center;
+    padding-top: 1em;
+}
+
+h1 {
+    font-size: 1.8em;
+}
+
+h2 {
+    font-size: 2em;
+}
+
+h3 {
+    font-size: 1.3em;
+}
+
+footer {
+    color: hsl(0, 0%, 100%);
+    margin-top: 2em;
+    text-align: center;
+}
+
+/*figure:hover {
+    background-color: #334252;
+}*/
+
+h2:target {
+    background-color: hsla(0, 0%, 20%, 1);;
+}
+
+.share {
+    cursor: pointer;
+}
+
+@media (max-width: 760px) {
+    .gridcontainer figcaption {
+        padding: .3em;
+}
+
+h2 {
+    font-size: 1.7em;
+}
+
+.gridcontainer a {
+        margin: .3em;
+    }
+}

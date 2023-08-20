@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обо мне</title>
+    <link rel="stylesheet" href="./styles/commonStyle.css">
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="icon" type="image/png" href="./icon.ico">
+    <style>
+        main {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        a, .welcome {
+            color:hsla(0, 0%, 50%, 1);
+            text-align: center;
+        }
+
+        .welcome {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        p {
+           /*text-align: justify;*/
+            font-size: 120%;
+            margin-top: 1em;
+        }
+
+        .bio {
+            display: flex;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            max-width: 1100px;
+            min-width: 800px;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .bio section {
+            flex-basis: 45%;
+            margin-bottom: 3em;
+        }
+
+        .observing {
+            width: 290px;
+        }
+
+        .radio {
+            width: 180px;
+            position: relative;
+            left:50%;
+        }
+
+        img {
+            border-radius: 50%;
+            margin: 1em;
+        }
+
+        .ending {
+            width: 60%;
+            margin: 0 auto;
+            min-width: 700px;
+        }
+
+        @media (max-width: 1000px) {
+            main {
+                width: 90%;
+            }
+
+            .bio {
+                margin: 0 auto;
+                display: inline-block;
+                max-width: none;
+                min-width: 0;
+                width: 100%;
+            }
+            
+            section:nth-child(3), section:nth-child(5) {
+                width: 50%;
+                display: inline-block;
+            }
+
+            section:nth-child(4), section:nth-child(6) {
+                float: right;
+                width: 50%;
+            }
+
+            .radio {
+                position: static;
+            }
+
+
+            p {
+                text-align: justify;
+            }
+            .ending {
+                width: 90%;
+                min-width: 0;
+            }
+
+            .sitting {
+                width: 50%;
+                float: left;
+                margin-top: 2em;
+            }
+
+        }
+        @media (max-width: 660px) {
+            main {
+                width: 100%;
+            }
+            .bio section {
+                margin-bottom: 0px;
+            }
+
+            section {
+                margin: 0 auto;
+                padding: .8em;
+                min-width: 0;
+                width: 100%;
+                display: block;
+            }
+
+            .sitting, .observing, .radio, .ending {
+                width: 100%;
+                float: none;
+                margin: 0 auto;
+            }
+
+            section:nth-child(3), section:nth-child(5) {
+                width: 100%;
+                display: block;
+            }
+
+            section:nth-child(4), section:nth-child(6) {
+                float: none;
+                width: 100%;
+            }
+
+            section:nth-child(4), section:nth-child(5) {
+                float: none;
+                width: 49%;
+                display: inline-block;
+            }
+
+            .observing, .radio {
+                width: 100%;
+            }
+
+            p {
+                font-size: 100%;
+            }
+            .bio {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="./components/commonCode.js"></script>
+    <h1>Приветствую!</h1>
+    <h2>Я - Максим, любитель астрономии из Эстонии.</h2>
+    <main>
+        <div class="bio">
+            <section>
+                <img src="./me.jpg" alt="" class="sitting">
+            </section>
+            <section>
+                <p>Я один из тех людей, кого с самого детства захватывал необъятный космос. Первый важный поворот произошёл в 1996 году, когда на небе появилась комета C/1996 B2 (Хякутакэ). С этого момента я начал увлечённо изучать небо со своим старым шестикратным биноклем, в поисках планет и редких явлений. Спустя пару-тройку лет я прикоснулся к первому телескопу ТАЛ-1, который открыл мне множество ранее недоступных объектов, включая звездные скопления, туманности и галактики. Это увлечение стало для меня серьёзным делом.</p>
+                <p>В начале 2000-х годов меня захлестнула волна познания: виртуальные планетарии, научные статьи, книги, лекции и онлайн-курсы. Это ещё больше углубило меня в любимое занятие. Я стал всё глубже погружаться в материалы и по сей день продолжаю наблюдения.</p>
+            </section>
+            <section>
+                <p>С детства я мечтал о настоящем телескопе, и в 2014 году моя мечта осуществилась: я стал обладателем простого инструмента - телескопа диаметром 150 мм на экваториальной монтировке и единственным приводом по оси восхождения. Помимо телескопа обзавёлся очень доступными принадлежностями: две линзы барлоу, несколько окуляров, фотокамера Canon 1100D и пара астрокамер. Весь этот комплект позволил мне наблюдать и фотографировать далёкие космические объекты на большом диапазоне увеличений.</p>
+            </section>
+            <section><img src="./observing.jpg" alt="" class="observing"></section>
+            <section>
+                <img src="./radio.jpg" alt="" class="radio">
+            </section>
+            <section>
+                <p>Помимо астрофото, немного увлекаюсь радиолюбительством. В частности, прослушиванием переговоров на МКС и приёмом данных с метеоспутников. Мои работы доступны в соответствующем разделе.</p>
+            </section>
+        </div>
+    <section class="ending">
+        <p>Ранее я активно популяризировал астрономию в соцсетях и проводил вечера тротуарной астрономии для местных жителей. Планирую вернуться к этой деятельности.</p>
+        <p>На этом сайте представляю свои работы, выполненные в разные годы и с различными инструментами. В этих работах я показываю космос таким, каким он виден через мои скромные, но преданно служащие инструменты.</p>
+        <p>Сайт со временем будет обновляться.</p>
+        <p>Если желаете оставить отзыв или предложение<a href="mailto:max.grinch038@aleeas.com">НАПИШИТЕ МНЕ</a></p>
+        <a href="./index.html"><p class="welcome">Добро пожаловать!</p></a>
+    </section>
+</main>
+    <footer><script>footer();</script></footer>
+</body>
+</html>

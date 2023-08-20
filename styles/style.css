@@ -1,0 +1,100 @@
+h1 {
+    font-size: 3em;
+    padding: 20px;
+}
+
+h2 {
+    padding: 10px;
+}
+
+.additional {
+    margin-top: 1em;
+    /*color: rgba(255, 233, 177,.4);*/
+    color: hsla(0, 0%, 50%, 1);
+}
+
+.additional:hover {
+    color: hsl(0, 0%, 100%);
+}
+
+.gallery {
+    width: 60%;
+    margin: 0 auto;
+}
+
+li {
+    list-style:none;
+    margin: 10px auto 20px auto;
+    /*border-bottom: 1px solid rgb(255, 233, 177,.4);*/
+    border-bottom: 1px solid hsla(0, 0%, 50%, 1);
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+figure {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+img {
+    width: 100%;
+}
+
+a {
+    margin: 1em;
+    padding: 0;
+}
+
+figcaption {
+    width: 60%;
+    padding: 1em;
+}
+
+@media (max-width: 1024px) {
+    .gallery {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .gallery a {
+        margin: 1em;
+        width: 50%;
+    }
+
+    figcaption {
+        text-align: justify;
+    }
+}
+
+@media (max-width: 760px) {
+
+
+}
+
+@media (max-width: 600px) {
+    .gallery {
+        width: 100%;
+    }
+
+   .gallery  figure {
+        display: block;
+    }
+
+    .gallery a {
+        width: 50%;
+        margin: 0 auto;
+    }
+
+    .gallery img {
+        padding: 1em;
+    }
+
+    .gallery figcaption {
+        width: 100%;
+        text-align: justify;
+    }
+
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/commonStyle.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/nav.css">
+    <link rel="icon" type="image/png" href="../icon.ico">
+    <title>Венера</title>
+    <style>
+        .gridcontainer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 800px;
+        margin: 0 auto;
+        border-bottom: 1px solid hsla(0, 0%, 50%, 1);
+        }
+
+        .gridcontainer figure {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gridcontainer figure figcaption {
+            width: 100%;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <script src="../components/commonCode.js"></script>
+    <script src="./venuslist.js"></script>
+    <h1>Венера</h1>
+    <p></p>
+    <ul class = 'gallery'>
+
+    <script>
+        renderImageGallery(venuslist);
+    </script>
+        </ul>
+    <script>footer();</script>
+    <script src="../components/nav.js"></script>
+</body>
+</html>
