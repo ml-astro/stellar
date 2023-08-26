@@ -21,15 +21,15 @@ function renderImageGallery (imageArray) {
 function share(id){
     navigator.clipboard.writeText((window.location.href.split("#")[0])+"#"+id);
 }
-
+ 
 function renderJpgMax (image, title){
     return document.write(`
     <li>
-        <figure class="movies">
+        <figure class="${title?'movies':''}">
             <a href = './${image}.jpg'>
-            <img src='${image}_min.jpg'>
+            ${title?`<img src='${image}_min.jpg'>`:`<img src='${image}.jpg'>`}
             </a>
-            <figcaption>${title}</figcaption>
+            <figcaption>${title?title:''}</figcaption>
         </figure>
     </li>`);
 }
