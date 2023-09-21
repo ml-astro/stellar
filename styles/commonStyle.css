@@ -26,8 +26,7 @@ ul {
 }
 
 body {
-    background: url("../background3.jpg") fixed center;
-    /*background-color: hsla(110, 0%, 10%, 1);*/
+    background-color: hsla(110, 0%, 5%, 1);
 }
 
 h1, h2, h3 {
