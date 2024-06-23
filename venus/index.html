@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,11 +12,11 @@
     <title>Венера</title>
     <style>
         .gridcontainer {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        max-width: 800px;
-        margin: 0 auto;
-        border-bottom: 1px solid hsla(0, 0%, 50%, 1);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 800px;
+            margin: 0 auto;
+            border-bottom: 1px solid hsla(0, 0%, 50%, 1);
         }
 
         .gridcontainer figure {
@@ -27,21 +28,132 @@
             width: 100%;
             text-align: center;
         }
-
     </style>
 </head>
+
 <body>
     <script src="../components/commonCode.js"></script>
     <script src="./venuslist.js"></script>
     <h1>Венера</h1>
     <p></p>
-    <ul class = 'gallery'>
-
-    <script>
-        renderImageGallery(venuslist);
-    </script>
-        </ul>
+    <ul class="gallery">
+        <li>
+            <h2 id="venus_2015">Фазы Венеры в 2015 году</h2>
+            <figure>
+                <a href="venus_2015.jpg">
+                    <img src="venus_2015_min.jpg">
+                </a>
+                <figcaption>
+                    <p>Как Луна проходит через разные фазы, так и видимое, освещённое Солнцем полушарие Венеры растет и
+                        убывает. Первые три снимка были сделаны до внутреннего соединения с Солнцем, четвертый - после.
+                    </p>
+                    <p class="additional">Sky Watcher 150/750 Explorer BD, Canon 1100D, линза барлоу 2х</p>
+                    <p class="additional">30 сентября 2015г.</p>
+                    <p align="right" class="share" onclick="share('venus_2015')"><a>Скопировать ссылку</a></p>
+                </figcaption>
+            </figure>
+        </li>
+        <li>
+            <h2 id="venus_long_exp">Венера на длинной выдержке</h2>
+            <figure>
+                <a href="venus_long_exp.jpg">
+                    <img src="venus_long_exp_min.jpg">
+                </a>
+                <figcaption>
+                    <p>Так выглядит Венера, снятая при выдержке 10 секунд. Заметно, насколько она ярче фоновых звёзд.
+                        Здесь её блеск -4.45 звёздной величины, что в 15 раз ярче Сириуса - самой яркой звезды ночного
+                        неба.</p>
+                    <p class="additional">Sky Watcher 150/750 Explorer BD, Canon 1100D, линза барлоу 2х</p>
+                    <p class="additional">3 марта 2020г.</p>
+                    <p align="right" class="share" onclick="share('venus_long_exp')"><a>Скопировать ссылку</a></p>
+                </figcaption>
+            </figure>
+        </li>
+        <li>
+            <h2 id="img_0427">Венера в Плеядах</h2>
+            <figure>
+                <a href="img_0427.jpg">
+                    <img src="img_0427_min.jpg">
+                </a>
+                <figcaption>
+                    <p>Венера раз в 8 лет проходит перед скоплением Плеяд в первых числах апреля. Планета выглядит
+                        примерно в 700 раз ярче Альционы, ярчайшей звезды в Плеядах. Если Венера находится на расстоянии
+                        5 световых минут от Земли, то Альциона и другие звёзды Плеяд удалены примерно на 400 световых
+                        лет. Возраст Венеры - около 4.5 миллиардов лет. Возраст звёзд в Плеядах - всего сто миллионов.
+                    </p>
+                    <p class="additional">Canon 1100D, Sigma AF 70-300mm @300mm</p>
+                    <p class="additional">3 марта 2020г.</p>
+                    <p align="right" class="share" onclick="share('img_0427')"><a>Скопировать ссылку</a></p>
+                </figcaption>
+            </figure>
+        </li>
+        <li>
+            <h2 id="venus_20200430_comparison">Венера и Земля</h2>
+            <figure>
+                <a href="venus_20200430_comparison.jpg">
+                    <img src="venus_20200430_comparison_min.jpg">
+                </a>
+                <figcaption>
+                    <p>Этот наиболее удачный снимок Венеры - из серии снимков до соединения с Солнцем в 2020 году. Для
+                        сравнения сделан коллаж с Землёй, чтобы наглядно показать, насколько она схожа по размерам с
+                        нашей планетой. Но её поверхность совершенно непригодна для жизни.</p>
+                    <p class="additional">Sky Watcher 150/750 Explorer BD, ASI224MC, линза барлоу 2х</p>
+                    <p class="additional">30 апреля 2020г.</p>
+                    <p align="right" class="share" onclick="share('venus_20200430_comparison')"><a>Скопировать
+                            ссылку</a></p>
+                </figcaption>
+            </figure>
+        </li>
+        <li>
+            <h2 id="img_6140">Дневная Венера</h2>
+            <figure>
+                <a href="img_6140.jpg">
+                    <img src="img_6140_min.jpg">
+                </a>
+                <figcaption>
+                    <p>Венера неплохо была видна днём. Чтобы её найти, потребовалось точно знать положение в небе и
+                        вести поиски в бинокль, спрятавшись от Солнца в тени дома. Её блеск на тот момент составлял -4.6
+                        звёздной величины.</p>
+                    <p class="additional">Canon 1100D, Sigma AF 70-300mm @300mm</p>
+                    <p class="additional">25 июля 2015г.</p>
+                    <p align="right" class="share" onclick="share('img_6140')"><a>Скопировать ссылку</a></p>
+                </figcaption>
+            </figure>
+        </li>
+        <li>
+            <h2 id="venus_2020">Фазы Венеры до соединения 2020 года</h2>
+            <figure>
+                <a href="venus_2020.jpg">
+                    <img src="venus_2020_min.jpg">
+                </a>
+                <figcaption>
+                    <p>Первая удачная серия наблюдений за Венерой. Фотографировал планету днём в течение двух месяцев,
+                        по мере её сближения с Солнцем, то есть до верхнего соединения.</p>
+                    <p class="additional">Sky Watcher 150/750 Explorer BD, ASI224MC, линза барлоу 2х</p>
+                    <p class="additional">15 марта - 27 мая 2020г.</p>
+                    <p align="right" class="share" onclick="share('venus_2020')"><a>Скопировать ссылку</a></p>
+                </figcaption>
+            </figure>
+        </li>
+        <li>
+            <h2 id="venus20200527b">Венера в фазе 2%</h2>
+            <figure>
+                <a href="venus20200527b.jpg">
+                    <img src="venus20200527b_min.jpg">
+                </a>
+                <figcaption>
+                    <p>Венера в фазе всего 2% - персональный рекорд! Никогда не заставал её на расстоянии 12 градусов от
+                        солнечного диска. Дальше стало совсем страшно её снимать, так что это был последний снимок в
+                        сезоне сближения 2020 года.</p>
+                    <p class="additional">Sky Watcher 150/750 Explorer BD, ASI224MC, линза барлоу 2х</p>
+                    <p class="additional">27 мая 2020г.</p>
+                    <p align="right" class="share" onclick="share('venus20200527b')"><a>Скопировать ссылку</a></p>
+                </figcaption>
+            </figure>
+        </li>
+    </ul>
     <script>footer();</script>
     <script src="../components/nav.js"></script>
 </body>
+
 </html>
