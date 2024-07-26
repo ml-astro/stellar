@@ -107,7 +107,8 @@
             .sitting {
                 width: 50%;
                 float: left;
-                padding: 0 2em 2em 0;
+                margin: 0 2em 2em 0;
+                padding: 1em;
             }
 
         }
@@ -133,10 +134,20 @@
                 margin: 0 auto;
             }
 
-            section:nth-child(3), section:nth-child(5) {
+            .sitting, .observing, .radio {
+                padding: 0px;
+            }
+
+                section:nth-child(3), section:nth-child(5) {
                 width: 100%;
                 display: block;
             }
+
+            section:nth-child(4) img{
+            display: inline-block;
+            margin-left: auto;
+        }
+
 
             section:nth-child(4), section:nth-child(6) {
                 float: none;

@@ -26,7 +26,7 @@ ul {
 }
 
 li {
-    padding-bottom: 2em;
+    padding-bottom: 1em;
 }
 
 body {
@@ -75,6 +75,14 @@ h2:target {
 
 h2 {
     font-size: 1.7em;
+}
+
+h3 {
+    padding-top: 0;
+}
+
+li {
+    
 }
 
 .gridcontainer a {
