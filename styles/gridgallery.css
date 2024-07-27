@@ -3,12 +3,39 @@
     grid-template-columns: repeat(3, 1fr);
 }
 
-.gridcontainer, .aboutmelink {
+.gridcontainer .header {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.header {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: 30% 30%;
+}
+
+.header p {
+    text-align: right;
+}
+
+.header h1 {
+    text-align: left;
+}
+
+.gridcontainer {
     margin: 0 auto;
     max-width: 1000px;
     border-bottom: 1px solid hsla(0, 0%, 50%, 1);
-} 
+}
 
+.aboutmelink h1 {
+    position: absolute;
+    top: 0;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+}
 
 .gridcontainer:last-child {
     border-bottom: none;
