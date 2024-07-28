@@ -1,3 +1,3 @@
 const footer = function(){
-    return(document.write('Максим Лёвин, {new Date().getFullYear()}'))
+    return(document.write('Maksim Ljovin, 2022'))
 }

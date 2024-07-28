@@ -3,5 +3,5 @@ function share(id){
 }
 
 function footer() {
-    return document.write(`<footer>&copy; Максим Лёвин, ${new Date().getFullYear()}</footer>`);
+    return document.write(`<footer>&copy; Maksim Ljovin, ${new Date().getFullYear()}</footer>`);
 }
