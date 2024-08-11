@@ -58,10 +58,6 @@ figure {
     /*border: 1px solid #FFF;*/
 }
 
-.movies {
-    margin-bottom: 1em;
-}
-
 @media (max-width: 760px) {
     .gridcontainer {
         grid-template-columns: repeat(2, 1fr);
