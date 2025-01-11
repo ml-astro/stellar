@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Solar System</h1>
+
+
+<h2 id="date"></h2>
+<canvas id="myCanvas" width="600" height="600" style="border:1px solid black;"></canvas>
+<script>
+//a
+//57.9, 108.2, 149.6, 228 778.5	1432.0	2867.0	4515.0	5906.4
+//P
+//87.9691	224.701	365.2564  686.98	---4331	10,747	30,589	59,800	90,560
+//angle on 22-12-99
+//222,4  164,7  270 352,5
+//1 day angle
+//4.0923  1.6021 0.985609 0.52403
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
+let date1 = new Date('1999-12-22');
+  let date2 = new Date();
+  var timeDelay = ((date2-date1)/86400000);
+  generateSystem(timeDelay);
+
+function add(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  timeDelay += 10;
+  console.log(timeDelay);
+  generateSystem(timeDelay);
+}
+
+function generateSystem(delay){
+  const centerX = 300;
+  const centerY = 300;
+
+  //sun
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
+  ctx.fillStyle = 'yellow';
+  ctx.stroke();
+  ctx.fill();
+
+  //distances
+  const mercR = 57.9;
+  const venR = 108.2;
+  const earthR = 149;
+  const marsR = 228;
+
+  //position dailychange
+  //4.0923  1.6021 0.985609 0.52403
+  var mercDelay = 4.0923*delay;
+  var venDelay = 1.6021*delay;
+  var earthDelay = 0.98561*delay;
+  var marsDelay = 0.52403*delay;
+  
+  //positions for 22.12.1999
+  const mercA = (-222.4 - mercDelay) * Math.PI / 180;
+  const venA = (-164.7 - venDelay) * Math.PI / 180;
+  const earthA = (-90 - earthDelay) * Math.PI / 180;
+  const marsA = (-352.5 - marsDelay) * Math.PI / 180;
+  
+
+
+  //orbit lines
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, mercR, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, venR, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, earthR, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, marsR, 0, 2 * Math.PI);
+  ctx.stroke();
+  
+  // mercury
+  ctx.save();
+  ctx.translate(centerX, centerY); // Перемещаем начало координат в центр
+  ctx.rotate(mercA); // Поворачиваем на 70 градусов
+  ctx.beginPath();
+  ctx.arc(mercR, 0, 4, 0, 2 * Math.PI); // Радиус 2 пикселя
+  ctx.fillStyle = 'grey';
+  ctx.fill();
+  ctx.restore();
+
+  // venus
+  ctx.save();
+  ctx.translate(centerX, centerY); // Перемещаем начало координат в центр
+  ctx.rotate(venA); // Поворачиваем на 70 градусов
+  ctx.beginPath();
+  ctx.arc(venR, 0, 4, 0, 2 * Math.PI); // Радиус 2 пикселя
+  ctx.fillStyle = 'yellow';
+  ctx.fill();
+  ctx.restore();
+  
+  // earth
+  ctx.save();
+  ctx.translate(centerX, centerY); // Перемещаем начало координат в центр
+  ctx.rotate(earthA); // Поворачиваем на 10 градусов
+  ctx.beginPath();
+  ctx.arc(earthR, 0, 4, 0, 2 * Math.PI); // Радиус 2 пикселя
+  ctx.fillStyle = 'blue';
+  ctx.fill();
+  ctx.restore();
+
+  // mars
+  ctx.save();
+  ctx.translate(centerX, centerY); // Перемещаем начало координат в центр
+  ctx.rotate(marsA); // Поворачиваем на 10 градусов
+  ctx.beginPath();
+  ctx.arc(marsR, 0, 4, 0, 2 * Math.PI); // Радиус 2 пикселя
+  ctx.fillStyle = 'red';
+  ctx.fill();
+  ctx.restore();
+}
+</script>
+
+<button style="border: 1px solid blue; width: 80px; background-color: grey;" onclick="add()">+10 days</button>
+
+</body>
+</html>
