@@ -9,9 +9,10 @@
       padding: 0;
     }
 
-h1, p {
-  text-align: center;
-}
+    h1,
+    p {
+      text-align: center;
+    }
 
     h1 {
       color: white;
@@ -23,20 +24,25 @@ h1, p {
     }
 
     button {
+      display: block;
       font-weight: bold;
-      width: 13%;
       height: 3em;
       background-color: #CCC;
+      margin-bottom: 2em;
+      width: 100px;
+      border-radius: 10px;
     }
 
     .system {
-      width: 1000px;
-      margin: 0 auto;
+      width: 70%;
+      display: inline-block;
     }
 
     #buttonBlock {
-      width: 100%;
-      margin: 0 auto;
+      /*      width: 20%;*/
+      position: absolute;
+      right: 10px;
+      top: 50%;
     }
   </style>
 
@@ -44,8 +50,6 @@ h1, p {
 
 <body>
   <h1>Brightest Planets</h1>
-
-
   <p id="dateField"></p>
   <div id="buttonBlock">
     <button onclick="add(-100)">-100 D</button>
@@ -55,21 +59,56 @@ h1, p {
     <button onclick="add(1)">+1 D</button>
     <button onclick="add(10)">+10 D</button>
     <button onclick="add(100)">+100 D</button>
+    <br>
+    <button onclick="zoomView('out')">zoom out</button>
+    <button onclick="zoomView('in')">zoom in</button>
   </div>
   <div class="system">
-    <canvas id="myCanvas" width="1000" height="1000"></canvas>
+    <canvas id="myCanvas" width="1000px" height="1000px"></canvas>
   </div>
   <script>
 
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
 
+    window.onkeypress = listenToTheKey;
+
     //initial system + time delay
     let date1 = new Date('2024-12-21');
     let date2 = new Date();
     var timeDelay = ((date2 - date1) / 86400000);
-    generateSystem(timeDelay);
+    var zoom = 1;
+    generateSystem(timeDelay, zoom);
 
+    function listenToTheKey(e) {
+      switch (e.key) {
+        case '+':
+          zoomView('in');
+          break;
+        case '-':
+        zoomView('out');
+        break;
+        case 'z':
+          add(-100);
+        break;
+        case 'x':
+          add(-10);
+        break;
+        case 'c':
+          add(-1);
+        break;
+        case 'v':
+          add(1);
+        break;
+        case 'b':
+          add(10);
+        break;
+        case 'n':
+          add(100);
+        break;
+        
+      }
+    }
 
     function addDays(date, days) {
       var result = new Date(date);
@@ -77,21 +116,31 @@ h1, p {
       return result;
     }
 
+    function zoomView(mode) {
+      if (mode == 'in') {
+        zoom -= 0.3;
+      }
+      if (mode == 'out') {
+        zoom += 0.3;
+      }
+      generateSystem(timeDelay, zoom);
+    }
+
     //adding days and generating updated system
     function add(days) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (days == 'now') {
         date2 = new Date();
         timeDelay = ((date2 - date1) / 86400000);
-        generateSystem(timeDelay);
+        generateSystem(timeDelay, zoom);
       }
       else {
         timeDelay += days;
-        generateSystem(timeDelay);
+        generateSystem(timeDelay, zoom);
       }
     }
 
-    function generateSystem(delay) {
+    function generateSystem(delay, zoom) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       const centerX = 500;
       const centerY = 500;
       date2 = addDays(date1, delay);
@@ -106,7 +155,6 @@ h1, p {
       ctx.beginPath();
       ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
       ctx.fillStyle = 'yellow';
-      ctx.stroke();
       ctx.fill();
 
 
@@ -116,42 +164,47 @@ h1, p {
           offset: -161.72,
           step: 4.0923,
           color: "#AAA",
+          size: 3,
         },
         {
           distance: 108.2,
           offset: -34.6,
           step: 1.6021,
           color: "grey",
+          size: 4,
         },
         {
           distance: 149.0,
           offset: -90.0,
           step: 0.985609,
           color: "#44F",
+          size: 4,
         },
         {
           distance: 228.0,
           offset: -104.29,
           step: 0.52403,
           color: "#F33",
+          size: 3,
         },
         {
           distance: 778.5,
           offset: -77.44,
           step: 0.0831,
           color: "#A77",
+          size: 8,
         },
         {
           distance: 1432.0,
           offset: -349.437,
           step: 0.0335,
           color: "#C99",
+          size: 8,
         }
       ];
 
 
       planets.forEach(planet => {
-        var zoom = 2;
         //draw orbit
         ctx.strokeStyle = 'white';
         ctx.beginPath();
@@ -165,7 +218,7 @@ h1, p {
         ctx.translate(centerX, centerY);
         ctx.rotate(phase);
         ctx.beginPath();
-        ctx.arc(planet.distance / zoom, 0, 6, 0, 2 * Math.PI);
+        ctx.arc(planet.distance / zoom, 0, planet.size*2, 0, 2 * Math.PI);
         ctx.fillStyle = planet.color;
         ctx.fill();
         ctx.restore();
