@@ -1,0 +1,169 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+
+body {
+  font-size: 1.1em;
+  line-height: 1.5;
+  color: #222;
+  font-family: Verdana,Tahoma, sans-serif;
+  background: url('../img/sun.jpg') no-repeat fixed center top;
+  background-size: cover;
+}
+
+h1 {
+  padding-top: 1em;
+  font-size: 1.5em;
+  line-height: 1.15;
+  text-align: center;
+  margin-bottom: 5em;
+}
+
+form p {
+  font-size: 1.2em;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+td, th {
+  text-align: center;
+  border: 1px solid wheat;
+}
+
+table {
+  width: 100%;
+  font-size: .8em;
+}
+
+.tablecontainer {
+  overflow: auto;
+}
+
+h1, p {
+  color: white;
+  text-shadow: 0px 0px 3px #000000;
+}
+
+main {
+  width: 95%;
+  margin: 0 auto;
+  position: relative;
+}
+
+img {
+  width: 100%;
+}
+
+#page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+#content-wrap {
+  padding-bottom: 7vh;    /* Footer height */
+}
+
+
+footer {
+  background-color: rgba(50,50,50,0.3);
+  line-height: 1.8em;
+  text-align: center;
+  position: absolute;
+  font-size: 0.8em;
+  bottom: 0;
+  width: 100%;
+  height: 6vh;
+}
+
+footer a {
+  color: white;
+  text-decoration: none;
+}
+
+button {
+  font-size: 1.15em;
+  font-weight: bold;
+  display: block;
+  padding: .5em;
+  color: white;
+  background-color: #1F8DFF;
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-top: .3em;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+#aladin-lite-div {
+  margin: 0 auto;
+}
+
+section {
+  opacity: 0;
+}
+
+.result, .nextresult {
+  font-size: 1.2em;
+  display: none;
+  background-color: rgba(50,50,50,0.7);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+input {
+  text-align: center;
+  font-size: 1.5em;
+  width: 100%;
+  padding: 16px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* MEDIA QUERIES */
+
+@media (min-width: 568px) {
+  main {
+    width: 95%;
+  }
+  form {
+    width: 70%;
+    margin: 20px auto;
+  }
+  label {
+    width: 30%;
+  }
+}
+
+@media (min-width: 768px) {
+  main {
+    width: 80%;
+    max-width: 900px;
+  }  
+
+  label {
+    width: 30%;
+  }
+}
+
+@media (min-width: 1024px) {
+  main {
+    width: 60%;
+    max-width: 900px;
+  }  
+}
+
+
+@media (max-width: 567px) {
+  main {
+    width: 100%;
+  }
+}

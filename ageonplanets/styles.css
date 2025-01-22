@@ -1,0 +1,114 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Segoe UI", "Tahoma", "Verdana";
+}
+
+body {
+  background-color: #000;
+  color: #ffffff;
+}
+
+main {
+  background-color: #000;
+  margin: 0 auto;
+  width: 60vw;
+  height: 100%;
+}
+
+#unhide {
+  display: none;
+}
+
+h1,
+p {
+  text-align: center;
+  margin: 1em;
+}
+
+form input,
+form label {
+  height: 200%;
+}
+
+input,
+label,
+button {
+  display: block;
+  margin: 0 auto 1em auto;
+  text-align: center;
+}
+
+input,
+label,
+.result {
+  font-size: 140%;
+}
+
+form {
+  margin: 4em auto 3em;
+}
+
+input,
+button {
+  width: 200px;
+}
+
+button {
+  background-color: #205391;
+  height: 50px;
+  font-weight: bold;
+  color: #fff;
+  font-size: 130%;
+  border-radius: 3px;
+}
+
+table {
+  margin: 0 auto;
+}
+
+td {
+  border-bottom: 1px solid rgb(40, 40, 40);
+}
+
+td p {
+  line-height: 1.8em;
+  font-size: 20px;
+}
+
+td:nth-child(2) {
+  width: 80%;
+}
+
+@media screen and (max-width: 1000px) {
+  main {
+    width: 98%;
+  }
+}
+
+@media screen and (max-width: 660px) {
+  main {
+    width: 100%;
+  }
+
+  img {
+    width: 100px;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  h1,
+  input,
+  label,
+  .result,
+  p,
+  button,
+  td p {
+    font-size: medium;
+  }
+  button,
+  input {
+    width: 50%;
+  }
+}

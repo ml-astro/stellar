@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Как быстро мы движемся</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8, width=device-width, initial-scale=1.0">
+<link rel="icon" href="icon.ico">
+<style>
+body{
+	background:#3d3d3d;
+	color:#fff;
+	line-height: 1.6;
+	font-family: 'Segoe UI', 'Tahoma', 'Verdana';
+	padding: 1em;
+}
+
+.container{
+	max-width: 1170px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 1em;
+}
+
+.block{
+	max-width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	box-shadow: 0 0 20px 0 rgba(72,94,116,0.7);
+	padding: 1em;
+	background-color: #1a1a1a;
+}
+
+p {
+  text-align: center;
+  font-size: 1.2em;
+  margin:0;
+}
+
+
+.distance {
+  text-align: center;
+  font-size: 2em;
+  margin-top:0px;
+}
+
+.timer {
+	position: fixed;
+	background-color: #2c2c2c;
+	color: #fff;
+	height: 2em;
+	width: 10%;
+	bottom: 30px;
+	right: 50px;
+}
+
+
+.img{
+	width:50%;
+}
+
+@media screen and (max-width: 800px) {
+	.img{
+		width: 100%;
+	}
+	.container {
+		width: 100%;
+	}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="block">
+	<h1>Как быстро мы движемся?</h1>
+</div>
+<div class="block">
+<h2 class="distance" id="timer"></h2>
+<div class="timer" id="timer_side"></div>
+</div>
+<div class="block">
+	<img class='img' src="spin.jpg"/>
+	<p>Наша Земля совершает полный оборот вокруг своей оси с запада на восток за 24 часа. В зависимости от широты, стоя на поверхности, мы перемещаемся со скоростью до 464 метров в секунду. Итак, с момента открытия этой страницы мы переместились вокруг центра Земли приблизительно на</p>
+<p id="surface" class=distance></p>
+</div>
+<div class="block">
+	<img class='img' src="orbit.jpg"/>
+<p>Земля движется вокруг Солнца по эллиптической орбите. Полный оборот мы совершаем за 1 год со средним расстоянием 150 миллионов километров, поэтому с момента открытия страницы мы переместились вокруг Солнца на</p>
+<p class="distance" id="orbital"></p>
+</div>
+<div class="block">
+	<img class='img' src="proxima.jpg"/>
+<p>Наше Солнце движется по направлению к ближайшей звезде, Проксиме Центавра. За время открытия страницы мы приблизились к этой звезде на</p>
+<p class="distance" id="centauri"></p>
+</div>
+<div class="block">
+	<img class='img' src="milkyway.jpg"/>
+<p>Солнце движется по орбите вокруг ядра галактики Млечный Путь. С момента открытия страницы мы пролетели вокруг центра Млечного Пути</p>
+<p class="distance" id="galactic"></p>
+</div>
+<div class="block">
+	<img class='img' src="andromeda.jpg"/>
+<p>Наша галактика входит в так называемую Местную группу, крупнейший член которой - галактика Андромеды. Млечный Путь и Галактика Андромеды притягиваются друг к другу и вскоре обязательно сольются, но пока открыта эта страница мы успели сблизиться на</p>
+<p class="distance" id="andromeda"></p>
+</div>
+<div class="block">
+	<img class='img' src="attractor.jpg"/>
+<p>На расстоянии около 250 млн световых лет в созвездии Наугольник находится гравитационная аномалия, в сторону которой движется наша звёздная система, местная группа галактик, а также другие галактики и их скопления поблизости. С тех пор как вы открыли страницу, мы пролетели в сторону Великого центра притяжения</p>
+<p class="distance" id="attractor"></p>
+</div>
+<div class="block">
+	<img class='img' src="gnz11.jpg"/>
+<p>Вселенная расширяется с огромной скоростью. Чем дальше в космос мы заглядываем, тем больше скорость расширения. С момента открытия страницы мы удалились от самой дальней галактики из известных на</p>
+<p class="distance" id="z11"></p>
+</div>
+
+</div>
+<script>
+var timer = 0;
+
+var x = setInterval(function() {
+	timer+=1;
+    document.getElementById("timer").innerHTML = "Вы открыли страницу "+timer+" сек. назад.";
+    document.getElementById("timer_side").innerHTML = timer+" сек.";
+    document.getElementById("surface").innerHTML = parseInt(.3*timer*100)/100+" км";
+    document.getElementById("orbital").innerHTML = parseInt(29.783*timer*100)/100+" км";
+    document.getElementById("galactic").innerHTML = 230*timer+" км";
+    document.getElementById("centauri").innerHTML = parseInt(21.7*timer*100)/100+" км";
+    document.getElementById("andromeda").innerHTML = 110*timer+" км";
+    document.getElementById("attractor").innerHTML = 600*timer+" км";
+    document.getElementById("z11").innerHTML = 295725*timer+" км";
+}, 1000);
+</script>
+Максим Лёвин, 2018
+</body>
+</html>
