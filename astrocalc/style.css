@@ -3,8 +3,8 @@
 }
 
 body{
-	background:#44318D;
-	color:#26367f;
+	background:#222;
+	color:#FFF;
 	line-height: 1.6;
 	font-family: 'Segoe UI', 'Tahoma', 'Verdana';
 	padding: 1em;
@@ -22,9 +22,9 @@ body{
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
-	box-shadow: 0 0 20px 0 rgba(72,94,116,0.7);
+	/*box-shadow: 0 0 20px 0 rgba(72,94,116,0.7);*/
 	padding: 1em;
-	background-color: #b5c6ff;
+	background-color: #333;
 }
 
 .calculator_results{
@@ -68,7 +68,7 @@ form p{
 .button {
 	width:100%;
 	padding: 1em;
-	background:#D83F87;
+	background:#205391;
 	color: white;
 }
 
