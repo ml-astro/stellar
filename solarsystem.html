@@ -52,68 +52,64 @@
   <h1>Brightest Planets</h1>
   <p id="dateField"></p>
   <div id="buttonBlock">
-    <button onclick="add(-100)">-100 D</button>
-    <button onclick="add(-10)">-10 D</button>
-    <button onclick="add(-1)">-1 D</button>
-    <button onclick="add('now')">NOW</button>
-    <button onclick="add(1)">+1 D</button>
-    <button onclick="add(10)">+10 D</button>
-    <button onclick="add(100)">+100 D</button>
-    <br>
+    <button onclick="animationSpeed(-10)">&#60;&#60;&#60;</button>
+    <button onclick="animationSpeed(-5)">&#60;&#60;</button>
+    <button onclick="animationSpeed(-1)">&#60;</button>
+    <button onclick="stop()">Stop</button>
+    <button onclick="animationSpeed(1)">&#62;</button>
+    <button onclick="animationSpeed(5)">&#62;&#62;</button>
+    <button onclick="animationSpeed(10)">&#62;&#62;&#62;</button>
     <button onclick="zoomView('out')">zoom out</button>
     <button onclick="zoomView('in')">zoom in</button>
+
   </div>
   <div class="system">
     <canvas id="myCanvas" width="1000px" height="1000px"></canvas>
   </div>
   <script>
-
+    //даты для расчета изначального отступа
+    const date1 = new Date('2024-12-21');
+    const date2 = new Date();
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
-
-    window.onkeypress = listenToTheKey;
-
-    //initial system + time delay
-    let date1 = new Date('2024-12-21');
-    let date2 = new Date();
-    var timeDelay = ((date2 - date1) / 86400000);
+    //изначальный отступ
+    const originalDaysOffset = ((date2 - date1) / 86400000);
+    //переменная для подсчета отступа от оригинала, используется при генерировании системы
+    var daysOffset = originalDaysOffset;
+    //создаем счетчик
+    let animate;
+    let speed;
     var zoom = 1;
-    generateSystem(timeDelay, zoom);
+    //initial system for today
+    generateSystem(originalDaysOffset, zoom);
 
-    function listenToTheKey(e) {
-      switch (e.key) {
-        case '+':
-          zoomView('in');
-          break;
-        case '-':
-        zoomView('out');
-        break;
-        case 'z':
-          add(-100);
-        break;
-        case 'x':
-          add(-10);
-        break;
-        case 'c':
-          add(-1);
-        break;
-        case 'v':
-          add(1);
-        break;
-        case 'b':
-          add(10);
-        break;
-        case 'n':
-          add(100);
-        break;
-        
-      }
+
+    //создать новую дату
+    function animationSpeed(x){
+      clearInterval(animate)
+      speed = x;
+      animate = setInterval(add, 100);
     }
 
-    function addDays(date, days) {
-      var result = new Date(date);
-      result.setDate(result.getDate() + days);
-      return result;
+    //add days for next frame
+    function add(){
+      daysOffset+=speed;
+      generateSystem(daysOffset, zoom);
+      displayDate();
+    }
+    
+    //stop animation
+    function stop(){
+      clearInterval(animate);
+    }
+    
+    /*display date on screen*/
+    function displayDate(){
+      var date3 = new Date();
+      date3.setDate(date1.getDate() + daysOffset);
+      let month = parseInt(date3.getMonth()) + 1;
+      let dateString = date3.getDate() + '/' + month + '/' + date3.getFullYear();
+      document.getElementById('dateField').textContent = dateString;
     }
 
     function zoomView(mode) {
@@ -123,31 +119,14 @@
       if (mode == 'out') {
         zoom += 0.1;
       }
-      generateSystem(timeDelay, zoom);
+      generateSystem(daysOffset, zoom);
     }
 
-    //adding days and generating updated system
-    function add(days) {
-      if (days == 'now') {
-        date2 = new Date();
-        timeDelay = ((date2 - date1) / 86400000);
-        generateSystem(timeDelay, zoom);
-      }
-      else {
-        timeDelay += days;
-        generateSystem(timeDelay, zoom);
-      }
-    }
 
     function generateSystem(delay, zoom) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const centerX = 500;
       const centerY = 500;
-      date2 = addDays(date1, delay);
-      let month = parseInt(date2.getMonth()) + 1;
-      dateString = date2.getDate() + '/' + month + '/' + date2.getFullYear();
-      document.getElementById('dateField').textContent = dateString;
-
       ctx.fillStyle = 'black';
       ctx.fillRect(10, 10, canvas.height, canvas.height);
 
@@ -225,15 +204,6 @@
       });
     }
 
-
-    //a
-    //57.9, 108.2, 149.6, 228 778.5	1432.0	2867.0	4515.0	5906.4
-    //P
-    //87.9691	224.701	365.2564  686.98	---4331	10,747	30,589	59,800	90,560
-    //angle on 22-12-99
-    //222,4  164,7  270 352,5
-    //1 day angle
-    //4.0923  1.6021 0.985609 0.52403 0.0831
   </script>
 </body>
 
