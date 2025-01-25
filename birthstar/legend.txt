@@ -1,0 +1,31 @@
+906kb
+
+Eruptive variable Star - ev
+High proper-motion Star	- pm
+Variable of BY Dra type - by
+Double or multiple star - dbl
+White Dwarf Candidate - wd*
+White Dwarf - wd
+Spectroscopic binary - dbl*
+Brown Dwarf (M<0.08solMass) - bd
+Low-mass star (M<1solMass) - low
+Variable of RS CVn type - rs
+Eclipsing binary - ecl
+Peculiar Star - pec
+Cataclysmic Variable Star
+Red Giant Branch star
+T Tau-type Star
+Rotationally variable Star - rot
+Emission-line Star - em
+Variable Star of alpha2 CVn type
+Variable Star of delta sct type
+Variable Star of orion type
+Variable Star of gamma dor type
+long-period variable star
+Long Period Variable candidate
+cepheid variable star
+star
+variable star
+Hot subdwarf
+Young Stellar Object Candidate
+Young Stellar Object
