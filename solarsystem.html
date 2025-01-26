@@ -9,9 +9,9 @@
       padding: 0;
     }
 
-    h1,
-    p {
-      text-align: center;
+    .heading {
+      text-align: left;
+      position: fixed;
     }
 
     h1 {
@@ -28,37 +28,37 @@
       font-weight: bold;
       height: 3em;
       background-color: #CCC;
-      margin-bottom: 2em;
+      margin-bottom: 1em;
       width: 100px;
       border-radius: 10px;
     }
 
     .system {
       width: 70%;
-      display: inline-block;
+      margin-left: 5%;
     }
 
     #buttonBlock {
-      /*      width: 20%;*/
-      position: absolute;
+      position: fixed;
       right: 10px;
-      top: 50%;
+      top: 10%;
     }
   </style>
 
 </head>
 
 <body>
-  <h1>Brightest Planets</h1>
+  <div class="heading"><h1>Brightest Planets</h1>
   <p id="dateField"></p>
+</div>
   <div id="buttonBlock">
-    <button onclick="animationSpeed(-10)">&#60;&#60;&#60;</button>
-    <button onclick="animationSpeed(-5)">&#60;&#60;</button>
-    <button onclick="animationSpeed(-1)">&#60;</button>
+    <button onclick="animationStep(-10)">&#60;&#60;&#60;</button>
+    <button onclick="animationStep(-5)">&#60;&#60;</button>
+    <button onclick="animationStep(-1)">&#60;</button>
     <button onclick="stop()">Stop</button>
-    <button onclick="animationSpeed(1)">&#62;</button>
-    <button onclick="animationSpeed(5)">&#62;&#62;</button>
-    <button onclick="animationSpeed(10)">&#62;&#62;&#62;</button>
+    <button onclick="animationStep(1)">&#62;</button>
+    <button onclick="animationStep(5)">&#62;&#62;</button>
+    <button onclick="animationStep(10)">&#62;&#62;&#62;</button>
     <button onclick="zoomView('out')">zoom out</button>
     <button onclick="zoomView('in')">zoom in</button>
 
@@ -67,51 +67,59 @@
     <canvas id="myCanvas" width="1000px" height="1000px"></canvas>
   </div>
   <script>
-    //даты для расчета изначального отступа
-    const date1 = new Date('2024-12-21');
-    const date2 = new Date();
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
-    //изначальный отступ
-    const originalDaysOffset = ((date2 - date1) / 86400000);
-    //переменная для подсчета отступа от оригинала, используется при генерировании системы
-    var daysOffset = originalDaysOffset;
-    //создаем счетчик
+
     let animate;
-    let speed;
-    var zoom = 1;
+    let step;
+    var zoom = 1.6;
+
+    //offset from reference date
+    const referenceDate = new Date('2024-12-21');
+    
+    //переменная для подсчета отступа от оригинала, используется при генерировании системы
+    var today = new Date();
+    var daysOffset = ((today - referenceDate) / 86400000);
+    document.getElementById('dateField').textContent = today.getDate() + '.' + today.getMonth()+1 + '.' + today.getFullYear();
+
     //initial system for today
-    generateSystem(originalDaysOffset, zoom);
+    generateSystem(daysOffset, zoom);
 
-
-    //создать новую дату
-    function animationSpeed(x){
+    //generate new date using step value
+    function animationStep(x){
       clearInterval(animate)
-      speed = x;
+      step = x;
       animate = setInterval(add, 100);
     }
 
     //add days for next frame
     function add(){
-      daysOffset+=speed;
+      daysOffset+=step;
       generateSystem(daysOffset, zoom);
-      displayDate();
     }
     
     //stop animation
     function stop(){
       clearInterval(animate);
     }
-    
-    /*display date on screen*/
+
+    //add 0 before date and month
+    function smallDateFormat(number){
+     if(number<10){
+        return '0'+number;
+      }
+      else return number
+    }
+
+    //display date on screen
     function displayDate(){
-      var date3 = new Date();
-      date3.setDate(date1.getDate() + daysOffset);
-      let month = parseInt(date3.getMonth()) + 1;
-      let dateString = date3.getDate() + '/' + month + '/' + date3.getFullYear();
+      var frameDate = new Date(referenceDate);
+      frameDate.setDate(referenceDate.getDate() + daysOffset);
+      let dateString = smallDateFormat(frameDate.getDate()) + '.' + smallDateFormat(frameDate.getMonth()+1) + '.' + frameDate.getFullYear();
       document.getElementById('dateField').textContent = dateString;
     }
 
+    //sets the scale of drawings
     function zoomView(mode) {
       if (mode == 'in') {
         zoom -= 0.1;
@@ -124,6 +132,7 @@
 
 
     function generateSystem(delay, zoom) {
+      displayDate();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const centerX = 500;
       const centerY = 500;
@@ -136,7 +145,7 @@
       ctx.fillStyle = 'yellow';
       ctx.fill();
 
-
+      //draw planets and orbits
       const planets = [
         {
           distance: 57.9,
@@ -181,8 +190,6 @@
           size: 8,
         }
       ];
-
-
       planets.forEach(planet => {
         //draw orbit
         ctx.strokeStyle = 'white';
