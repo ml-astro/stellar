@@ -48,9 +48,10 @@
 </head>
 
 <body>
-  <div class="heading"><h1>Brightest Planets</h1>
-  <p id="dateField"></p>
-</div>
+  <div class="heading">
+    <h1>Brightest Planets</h1>
+    <p id="dateField"></p>
+  </div>
   <div id="buttonBlock">
     <button onclick="animationStep(-10)">&#60;&#60;&#60;</button>
     <button onclick="animationStep(-5)">&#60;&#60;</button>
@@ -69,6 +70,21 @@
   <script>
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
+    var play = false;
+
+    //keyboard and mouse wheel controlled zoom + -
+    window.addEventListener('wheel', e => {
+      (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
+    }
+    )
+    window.addEventListener('keydown', e => {
+      switch (e.key) {
+        case '+': zoomView('in');
+          break;
+        case '-': zoomView('out');
+          break;
+      }
+    })
 
     let animate;
     let step;
@@ -76,46 +92,46 @@
 
     //offset from reference date
     const referenceDate = new Date('2024-12-21');
-    
+
     //переменная для подсчета отступа от оригинала, используется при генерировании системы
     var today = new Date();
     var daysOffset = ((today - referenceDate) / 86400000);
-    document.getElementById('dateField').textContent = today.getDate() + '.' + today.getMonth()+1 + '.' + today.getFullYear();
+    document.getElementById('dateField').textContent = today.getDate() + '.' + today.getMonth() + 1 + '.' + today.getFullYear();
 
     //initial system for today
     generateSystem(daysOffset, zoom);
 
     //generate new date using step value
-    function animationStep(x){
+    function animationStep(x) {
       clearInterval(animate)
       step = x;
       animate = setInterval(add, 100);
     }
 
     //add days for next frame
-    function add(){
-      daysOffset+=step;
+    function add() {
+      daysOffset += step;
       generateSystem(daysOffset, zoom);
     }
-    
+
     //stop animation
-    function stop(){
+    function stop() {
       clearInterval(animate);
     }
 
     //add 0 before date and month
-    function smallDateFormat(number){
-     if(number<10){
-        return '0'+number;
+    function smallDateFormat(number) {
+      if (number < 10) {
+        return '0' + number;
       }
       else return number
     }
 
     //display date on screen
-    function displayDate(){
+    function displayDate() {
       var frameDate = new Date(referenceDate);
       frameDate.setDate(referenceDate.getDate() + daysOffset);
-      let dateString = smallDateFormat(frameDate.getDate()) + '.' + smallDateFormat(frameDate.getMonth()+1) + '.' + frameDate.getFullYear();
+      let dateString = smallDateFormat(frameDate.getDate()) + '.' + smallDateFormat(frameDate.getMonth() + 1) + '.' + frameDate.getFullYear();
       document.getElementById('dateField').textContent = dateString;
     }
 
@@ -204,7 +220,7 @@
         ctx.translate(centerX, centerY);
         ctx.rotate(phase);
         ctx.beginPath();
-        ctx.arc(planet.distance / zoom, 0, planet.size*2, 0, 2 * Math.PI);
+        ctx.arc(planet.distance / zoom, 0, planet.size * 2, 0, 2 * Math.PI);
         ctx.fillStyle = planet.color;
         ctx.fill();
         ctx.restore();
