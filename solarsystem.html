@@ -88,7 +88,7 @@
 
     let animate;
     let step;
-    var zoom = 1.6;
+    var zoom = 1;
 
     //offset from reference date
     const referenceDate = new Date('2024-12-21');
@@ -105,13 +105,11 @@
     function animationStep(x) {
       clearInterval(animate)
       step = x;
-      animate = setInterval(add, 100);
-    }
-
-    //add days for next frame
-    function add() {
-      daysOffset += step;
-      generateSystem(daysOffset, zoom);
+      //and add days to for next frame
+      animate = setInterval(() => {
+        daysOffset += step;
+        generateSystem(daysOffset, zoom)
+      }, 100);
     }
 
     //stop animation
