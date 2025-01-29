@@ -72,6 +72,52 @@
     const ctx = canvas.getContext('2d');
     var play = false;
 
+    //planet data for reference date
+    const planets = [
+      {
+        distance: 57.9,
+        offset: -161.72,
+        step: 4.0923,
+        color: "#AAA",
+        size: 3,
+      },
+      {
+        distance: 108.2,
+        offset: -34.6,
+        step: 1.6021,
+        color: "#EEE",
+        size: 4,
+      },
+      {
+        distance: 149.0,
+        offset: -90.0,
+        step: 0.985609,
+        color: "#44F",
+        size: 4,
+      },
+      {
+        distance: 228.0,
+        offset: -104.29,
+        step: 0.52403,
+        color: "#F33",
+        size: 3,
+      },
+      {
+        distance: 778.5,
+        offset: -77.44,
+        step: 0.0831,
+        color: "#E99",
+        size: 8,
+      },
+      {
+        distance: 1432.0,
+        offset: -349.437,
+        step: 0.0335,
+        color: "#CAA",
+        size: 8,
+      }
+    ];
+
     //keyboard and mouse wheel controlled zoom + -
     window.addEventListener('wheel', e => {
       (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
@@ -160,50 +206,6 @@
       ctx.fill();
 
       //draw planets and orbits
-      const planets = [
-        {
-          distance: 57.9,
-          offset: -161.72,
-          step: 4.0923,
-          color: "#AAA",
-          size: 3,
-        },
-        {
-          distance: 108.2,
-          offset: -34.6,
-          step: 1.6021,
-          color: "#EEE",
-          size: 4,
-        },
-        {
-          distance: 149.0,
-          offset: -90.0,
-          step: 0.985609,
-          color: "#44F",
-          size: 4,
-        },
-        {
-          distance: 228.0,
-          offset: -104.29,
-          step: 0.52403,
-          color: "#F33",
-          size: 3,
-        },
-        {
-          distance: 778.5,
-          offset: -77.44,
-          step: 0.0831,
-          color: "#E99",
-          size: 8,
-        },
-        {
-          distance: 1432.0,
-          offset: -349.437,
-          step: 0.0335,
-          color: "#CAA",
-          size: 8,
-        }
-      ];
       planets.forEach(planet => {
         //draw orbit
         ctx.strokeStyle = 'white';
