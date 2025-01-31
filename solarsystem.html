@@ -10,224 +10,246 @@
     }
 
     .heading {
+      position: absolute;
       text-align: left;
-      position: fixed;
     }
 
     h1 {
-      color: white;
     }
 
     p {
-      color: white;
       font-size: 22px;
     }
 
-    button {
-      display: block;
-      font-weight: bold;
-      height: 3em;
-      background-color: #CCC;
-      margin-bottom: 1em;
-      width: 100px;
-      border-radius: 10px;
+    h1, p {
+      color: #FFF;
+      padding-left: 10px;
     }
 
-    .system {
-      width: 70%;
-      margin-left: 5%;
+    button {
+      font-weight: bold;
+      background-color: #CCC;
+      margin-bottom: 1em;
+      border-radius: 10px;
+      padding: 15px 15px;
+    }
+
+    button:nth-child(7) {
+      margin-right: 20px;
     }
 
     #buttonBlock {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin-inline: auto;
+      width: fit-content;
+      bottom: 5%;
+    }
+
+    .speedcontrols,
+    .zoomcontrols {
+      display: inline-block;
+    }
+
+    .system {
       position: fixed;
-      right: 10px;
-      top: 10%;
+      top: 50%;
+      left: 50%;
+      margin-top: -450px;
+      margin-left: -450px;
+      z-index: -1;
     }
   </style>
-
+  <title>Простой планетарий</title>
+<meta name="viewport" 
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 </head>
 
 <body>
   <div class="heading">
-    <h1>Brightest Planets</h1>
+    <h1>Простой планетарий</h1>
     <p id="dateField"></p>
   </div>
   <div id="buttonBlock">
-    <button onclick="animationStep(-10)">&#60;&#60;&#60;</button>
-    <button onclick="animationStep(-5)">&#60;&#60;</button>
-    <button onclick="animationStep(-1)">&#60;</button>
-    <button onclick="stop()">Stop</button>
-    <button onclick="animationStep(1)">&#62;</button>
-    <button onclick="animationStep(5)">&#62;&#62;</button>
-    <button onclick="animationStep(10)">&#62;&#62;&#62;</button>
-    <button onclick="zoomView('out')">zoom out</button>
-    <button onclick="zoomView('in')">zoom in</button>
+    <div class="speedcontrols">
+      <button onclick="animationStep(-10)">&#60;&#60;&#60;</button>
+      <button onclick="animationStep(-5)">&#60;&#60;</button>
+      <button onclick="animationStep(-1)">&#60;</button>
+      <button onclick="stop()">II</button>
+      <button onclick="animationStep(1)">&#62;</button>
+      <button onclick="animationStep(5)">&#62;&#62;</button>
+      <button onclick="animationStep(10)">&#62;&#62;&#62;</button>
+    </div>
+    <div class="zoomcontrols">
+      <button onclick="zoomView('out')">-</button>
+      <button onclick="zoomView('in')">+</button>
 
-  </div>
-  <div class="system">
-    <canvas id="myCanvas" width="1000px" height="1000px"></canvas>
-  </div>
-  <script>
-    const canvas = document.getElementById('myCanvas');
-    const ctx = canvas.getContext('2d');
-    var play = false;
+    </div>
+    <div class="system">
+      <canvas id="myCanvas" width="900px" height="900px"></canvas>
+    </div>
+    <script>
+      const canvas = document.getElementById('myCanvas');
+      const ctx = canvas.getContext('2d');
+      var play = false;
 
-    //planet data for reference date
-    const planets = [
-      {
-        distance: 57.9,
-        offset: -161.72,
-        step: 4.0923,
-        color: "#AAA",
-        size: 3,
-      },
-      {
-        distance: 108.2,
-        offset: -34.6,
-        step: 1.6021,
-        color: "#EEE",
-        size: 4,
-      },
-      {
-        distance: 149.0,
-        offset: -90.0,
-        step: 0.985609,
-        color: "#44F",
-        size: 4,
-      },
-      {
-        distance: 228.0,
-        offset: -104.29,
-        step: 0.52403,
-        color: "#F33",
-        size: 3,
-      },
-      {
-        distance: 778.5,
-        offset: -77.44,
-        step: 0.0831,
-        color: "#E99",
-        size: 8,
-      },
-      {
-        distance: 1432.0,
-        offset: -349.437,
-        step: 0.0335,
-        color: "#CAA",
-        size: 8,
+      //planet data for reference date
+      const planets = [
+        {
+          distance: 57.9,
+          offset: -161.72,
+          step: 4.0923,
+          color: "#AAA",
+          size: 3,
+        },
+        {
+          distance: 108.2,
+          offset: -34.6,
+          step: 1.6021,
+          color: "#EEE",
+          size: 4,
+        },
+        {
+          distance: 149.0,
+          offset: -90.0,
+          step: 0.985609,
+          color: "#44F",
+          size: 4,
+        },
+        {
+          distance: 228.0,
+          offset: -104.29,
+          step: 0.52403,
+          color: "#F33",
+          size: 3,
+        },
+        {
+          distance: 778.5,
+          offset: -77.44,
+          step: 0.0831,
+          color: "#E99",
+          size: 8,
+        },
+        {
+          distance: 1432.0,
+          offset: -349.437,
+          step: 0.0335,
+          color: "#CAA",
+          size: 8,
+        }
+      ];
+
+      //keyboard and mouse wheel controlled zoom + -
+      window.addEventListener('wheel', e => {
+        (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
       }
-    ];
+      )
+      window.addEventListener('keydown', e => {
+        switch (e.key) {
+          case '+': zoomView('in');
+            break;
+          case '-': zoomView('out');
+            break;
+        }
+      })
 
-    //keyboard and mouse wheel controlled zoom + -
-    window.addEventListener('wheel', e => {
-      (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
-    }
-    )
-    window.addEventListener('keydown', e => {
-      switch (e.key) {
-        case '+': zoomView('in');
-          break;
-        case '-': zoomView('out');
-          break;
-      }
-    })
+      let animate;
+      let step;
+      var zoom = 1;
 
-    let animate;
-    let step;
-    var zoom = 1;
+      //offset from reference date
+      const referenceDate = new Date('2024-12-21');
 
-    //offset from reference date
-    const referenceDate = new Date('2024-12-21');
+      //переменная для подсчета отступа от оригинала, используется при генерировании системы
+      var today = new Date();
+      var daysOffset = ((today - referenceDate) / 86400000);
+      document.getElementById('dateField').textContent = today.getDate() + '.' + today.getMonth() + 1 + '.' + today.getFullYear();
 
-    //переменная для подсчета отступа от оригинала, используется при генерировании системы
-    var today = new Date();
-    var daysOffset = ((today - referenceDate) / 86400000);
-    document.getElementById('dateField').textContent = today.getDate() + '.' + today.getMonth() + 1 + '.' + today.getFullYear();
-
-    //initial system for today
-    generateSystem(daysOffset, zoom);
-
-    //generate new date using step value
-    function animationStep(x) {
-      clearInterval(animate)
-      step = x;
-      //and add days to for next frame
-      animate = setInterval(() => {
-        daysOffset += step;
-        generateSystem(daysOffset, zoom)
-      }, 100);
-    }
-
-    //stop animation
-    function stop() {
-      clearInterval(animate);
-    }
-
-    //add 0 before date and month
-    function smallDateFormat(number) {
-      if (number < 10) {
-        return '0' + number;
-      }
-      else return number
-    }
-
-    //display date on screen
-    function displayDate() {
-      var frameDate = new Date(referenceDate);
-      frameDate.setDate(referenceDate.getDate() + daysOffset);
-      let dateString = smallDateFormat(frameDate.getDate()) + '.' + smallDateFormat(frameDate.getMonth() + 1) + '.' + frameDate.getFullYear();
-      document.getElementById('dateField').textContent = dateString;
-    }
-
-    //sets the scale of drawings
-    function zoomView(mode) {
-      if (mode == 'in') {
-        zoom -= 0.1;
-      }
-      if (mode == 'out') {
-        zoom += 0.1;
-      }
+      //initial system for today
       generateSystem(daysOffset, zoom);
-    }
+
+      //generate new date using step value
+      function animationStep(x) {
+        clearInterval(animate)
+        step = x;
+        //and add days to for next frame
+        animate = setInterval(() => {
+          daysOffset += step;
+          generateSystem(daysOffset, zoom)
+        }, 100);
+      }
+
+      //stop animation
+      function stop() {
+        clearInterval(animate);
+      }
+
+      //add 0 before date and month
+      function smallDateFormat(number) {
+        if (number < 10) {
+          return '0' + number;
+        }
+        else return number
+      }
+
+      //display date on screen
+      function displayDate() {
+        var frameDate = new Date(referenceDate);
+        frameDate.setDate(referenceDate.getDate() + daysOffset);
+        let dateString = smallDateFormat(frameDate.getDate()) + '.' + smallDateFormat(frameDate.getMonth() + 1) + '.' + frameDate.getFullYear();
+        document.getElementById('dateField').textContent = dateString;
+      }
+
+      //sets the scale of drawings
+      function zoomView(mode) {
+        if (mode == 'in') {
+          zoom -= 0.1;
+        }
+        if (mode == 'out') {
+          zoom += 0.1;
+        }
+        generateSystem(daysOffset, zoom);
+      }
 
 
-    function generateSystem(delay, zoom) {
-      displayDate();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const centerX = 500;
-      const centerY = 500;
-      ctx.fillStyle = 'black';
-      ctx.fillRect(10, 10, canvas.height, canvas.height);
+      function generateSystem(delay, zoom) {
+        displayDate();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const centerX = 450;
+        const centerY = 450;
+        ctx.fillStyle = 'black';
+        ctx.fillRect(10, 10, canvas.height, canvas.height);
 
-      //draw sun
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
-      ctx.fillStyle = 'yellow';
-      ctx.fill();
-
-      //draw planets and orbits
-      planets.forEach(planet => {
-        //draw orbit
-        ctx.strokeStyle = 'white';
+        //draw sun
         ctx.beginPath();
-        ctx.arc(centerX, centerY, planet.distance / zoom, 0, 2 * Math.PI);
-        ctx.stroke();
-
-        //calculate phase
-        let phase = (planet.offset - planet.step * delay) * Math.PI / 180;
-        //draw planet with translation applied
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(phase);
-        ctx.beginPath();
-        ctx.arc(planet.distance / zoom, 0, planet.size * 2, 0, 2 * Math.PI);
-        ctx.fillStyle = planet.color;
+        ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
+        ctx.fillStyle = 'yellow';
         ctx.fill();
-        ctx.restore();
-      });
-    }
 
-  </script>
+        //draw planets and orbits
+        planets.forEach(planet => {
+          //draw orbit
+          ctx.strokeStyle = 'white';
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, planet.distance / zoom, 0, 2 * Math.PI);
+          ctx.stroke();
+
+          //calculate phase
+          let phase = (planet.offset - planet.step * delay) * Math.PI / 180;
+          //draw planet with translation applied
+          ctx.save();
+          ctx.translate(centerX, centerY);
+          ctx.rotate(phase);
+          ctx.beginPath();
+          ctx.arc(planet.distance / zoom, 0, planet.size * 2, 0, 2 * Math.PI);
+          ctx.fillStyle = planet.color;
+          ctx.fill();
+          ctx.restore();
+        });
+      }
+
+    </script>
 </body>
 
 </html>

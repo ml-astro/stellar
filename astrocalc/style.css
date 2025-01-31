@@ -1,88 +1,142 @@
-*{
+* {
 	box-sizing: border-box;
 }
 
-body{
-	background:#222;
-	color:#FFF;
+body {
+	background: #222;
+	color: #FFF;
 	line-height: 1.6;
 	font-family: 'Segoe UI', 'Tahoma', 'Verdana';
 	padding: 1em;
 }
 
-.container{
-	max-width: 1170px;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 1em;
-}
-
-.calculator, .calculator_results, .refraction{
-	max-width: 900px;
-	margin-left: auto;
-	margin-right: auto;
+h3 {
 	text-align: center;
-	/*box-shadow: 0 0 20px 0 rgba(72,94,116,0.7);*/
-	padding: 1em;
-	background-color: #333;
 }
 
-.calculator_results{
+.calculator,
+.calculator_results,
+.refraction {
+	max-width: 900px;
+	margin: 0 auto;
+	text-align: center;
+	padding: 1em;
+}
+
+.calculator_results {
 	max-width: 900px;
 	text-align: right;
 }
 
-.calculator form, .refraction form{
+.calculator form,
+.refraction form {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-gap: 20px;
 }
 
-.calculator_results form, .refraction form{
+.calculator_results form,
+.refraction form {
 	display: grid;
 	grid-gap: 20px;
 }
 
-.calculator form label, .refraction form label{
+.calculator form label,
+.refraction form label {
 	display: block;
+}
+
+label {
+	color: #AAA;
+	margin-right: 10px;
 }
 
 .wide {
 	grid-column: 1 / 3;
 }
 
-form p{
+form p {
 	margin: 0;
 }
 
 .calculator_results form input {
-	width:30%;
-	padding: 1em;
+	width: 30%;
+	height: 2em;
 }
 
-.calculator form input, .button{
-	width:70%;
-	padding: 1em;
+input {
+	font-size: 18px;
+}
+
+.calculator form input {
+	width: 70%;
+	height: 2em;
 }
 
 .button {
-	width:100%;
+	width: 100%;
 	padding: 1em;
-	background:#205391;
+	background: #205391;
 	color: white;
 }
 
 .button:hover {
-	cursor:pointer;
+	cursor: pointer;
 }
 
-.calculator form button{
-	background:#89a4ff;
-	border:0;
+.refraction {
+	width: fit-content;
 }
 
-.calculator form button:hover, .button:hover, .calculator form button:focus{
-	background:#395cd3;
-	color:#fff;
+.calculator form button {
+	background: #89a4ff;
+	border: 0;
+}
+
+.calculator form button:hover,
+.button:hover,
+.calculator form button:focus {
+	background: #395cd3;
+	color: #fff;
 	outline: 0;
+}
+
+
+@media screen and (max-width: 700px) {
+
+	body {
+		margin: 0;
+		padding: 4px;
+		font-size: 18px;
+	}
+
+	.calculator form,
+	.calculator_results {
+		display: block;
+		width: 100%;
+	}
+
+	.calculator label {
+		width: 100%;
+	}
+
+	form p {
+		margin: 10px;
+	}
+
+	.button {
+		margin-bottom: 10px;
+	}
+
+	.calculator_results label {
+		display: block;
+		text-align: left;
+		width: 100%;
+	}
+	.calculator_results form input {
+		text-align: left;
+		width: 100%;
+	}
+
+
 }

@@ -1,15 +1,10 @@
-function start(){
-	JDnow();
-}
-
 function roundup(number, degree){
 	return parseInt(number*degree)/degree;
 }
 
 function JDnow(){
-	var now = new Date();
-	var d1 = new Date().getTime();
-	document.getElementById("JD").innerHTML=roundup((d1/1000/3600/24+2440587.5),100000);
+	var now = new Date().getTime();
+	document.getElementById("JD").innerHTML=roundup((now/1000/3600/24+2440587.5),100000);
 }
 
 function reset(form){

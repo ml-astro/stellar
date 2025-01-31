@@ -6,12 +6,12 @@
 <link rel="stylesheet" href="style.css">
 <script src="calc.js"></script>
 </head>
-<body onload="start()">
+<body onload="JDnow()">
 	<div class="calculator">
 		<h2>Текущий юлианский день</h2>
 		<p id="JD"></p>
 	</div>
-	<div class="container">
+	<hr>
 		<div class="calculator">
 			<h2 class='title'>Калькулятор телескопа</h2>
 			<form>
@@ -32,7 +32,7 @@
 					<input type="number" id="matrixSize" value="0" size="4">
 				</p>
 				<p>
-					<label>Горизонтальное разрешение камеры (px)</label>
+					<label>Горизонтальное разрешение камеры</label>
 					<input type="number" id="maxResolution" value="0" size="4">
 				</p>
 				<p class='wide'>
@@ -42,9 +42,10 @@
 			</form>
 		</div>
 		<div class="calculator_results">
+			<h3>Результат</h3>
 			<form>
 				<p>
-					<label>Увеличение телескопа</label>
+					<label>Увеличение</label>
 					<input id="magnification" readonly="" size="2">
 				</p>
 				<p>
@@ -52,15 +53,15 @@
 					<input id="focal" readonly="" size="2">
 				</p>
 				<p>
-					<label>Угловое разрешение телескопа в красном диапазоне</label>
+					<label>Угловое разрешение в красном диапазоне</label>
 					<input id="redResult" readonly="" size="4">
 				</p>
 				<p>
-					<label>Угловое разрешение телескопа в синем диапазоне</label>
+					<label>Угловое разрешение в синем диапазоне</label>
 					<input id="blueResult" readonly="" size="4">
 				</p>
 				<p>
-					<label>Светосила в сравнении с невооруженным глазом (зрачок 7mm)</label>
+					<label>Светосила в сравнении с глазом</label>
 					<input id="power" readonly="" size="4">
 				</p>
 				<p>
@@ -76,13 +77,13 @@
 					<input id="cameraResolution" readonly="" size="3">
 				</p>			
 				<p>
-					<label>Максимально разумная длина фокуса для камеры</label>
+					<label>Максимальная длина фокуса для камеры</label>
 					<input id="limitFocal" readonly="" size="3">
 				</p>
 			</form>
 		</div>
-	</div>
-	<div class="container">
+
+	<hr>
 		<div class="calculator">
 			<h2 class='title'>Калькулятор рефракции и атмосферного поглощения</h2>
 			<form>
@@ -96,11 +97,12 @@
 				</p>
 			</form>
 				<p class='wide'>
-					<div class="button" onclick="refraction()">РАССЧИТАТЬ РЕФРАКЦИЮ</div>
+					<div class="button refraction" onclick="refraction()">РАССЧИТАТЬ РЕФРАКЦИЮ</div>
 				</p>
 
 		</div>
 		<div class="calculator">
+			<h3>Результат</h3>
 			<form>
 				<p>
 					<label>Рефракция</label>
@@ -112,7 +114,6 @@
 				</p>
 			</form>
 		</div>
-	</div>
 	Максим Лёвин
 </body>
 </html>
