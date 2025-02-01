@@ -53,11 +53,11 @@
     }
 
     .system {
-      position: fixed;
+      /*position: fixed;
       top: 50%;
       left: 50%;
       margin-top: -450px;
-      margin-left: -450px;
+      margin-left: -450px;*/
       z-index: -1;
     }
   </style>
@@ -84,16 +84,28 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
     <div class="zoomcontrols">
       <button onclick="zoomView('out')">-</button>
       <button onclick="zoomView('in')">+</button>
-
+    </div>
     </div>
     <div class="system">
-      <canvas id="myCanvas" width="900px" height="900px"></canvas>
     </div>
     <script>
+      const system = document.createElement("canvas");
+      const systemId = document.createAttribute("id");
+      const systemWidth = document.createAttribute("width");
+      const systemHeight = document.createAttribute("height");
+      systemId.value = "myCanvas";
+      systemWidth.value = window.innerWidth+'px';
+      systemHeight.value = window.innerHeight+'px';
+      system.setAttributeNode(systemId);
+      system.setAttributeNode(systemWidth);
+      system.setAttributeNode(systemHeight);
+      document.getElementsByClassName('system')[0].appendChild(system);
+
       const canvas = document.getElementById('myCanvas');
       const ctx = canvas.getContext('2d');
       var play = false;
-
+      
+      
       //planet data for reference date
       const planets = [
         {
@@ -216,8 +228,8 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
       function generateSystem(delay, zoom) {
         displayDate();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const centerX = 450;
-        const centerY = 450;
+        const centerX = window.innerWidth/2;
+        const centerY = window.innerHeight/2;
         ctx.fillStyle = 'black';
         ctx.fillRect(10, 10, canvas.height, canvas.height);
 
