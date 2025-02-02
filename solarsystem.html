@@ -228,10 +228,10 @@
     //sets the scale of drawings
     function zoomView(mode) {
       if (mode == 'in') {
-        zoom -= 0.1;
+        zoom = zoom * 0.9;
       }
       if (mode == 'out') {
-        zoom += 0.1;
+        zoom = zoom * 1.1;
       }
       generateSystem(daysOffset, zoom);
     }
