@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор восхода и заката</title>
+</head>
+
+<body>
+    <script>
+        const longitude = 23.02;
+        const latitude = 59.47;
+
+        function toRadians(degree) {
+            return degree * Math.PI / 180;
+        }
+
+        function addFractionalDays(date, days) {
+            date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+            return date;
+        }
+
+        const referenceDate = new Date(Date.UTC(2000, 0, 1, 12, 0, 0));
+        // Julian date offset
+        const n = Math.ceil((new Date() - referenceDate) / 86400000);
+        console.log('Julian date offset: ' + n);
+        // Mean solar time
+        const J_ = n - (longitude / 360);
+        console.log('Mean solar time: ' + J_);
+        // Solar mean anomaly
+        const M = (357.5291 + 0.98560028 * J_) % 360;
+        console.log('Solar mean anomaly: ' + M);
+        // Equation of the center
+        const C = 1.9148 * Math.sin(toRadians(M)) + 0.0200 * Math.sin(2 * toRadians(M)) + 0.0003 * Math.sin(3 * toRadians(M));
+        console.log("Equation of the center: " + C);
+        // Ecliptic longitude
+        const lambda = (M + C + 180 + 102.9372) % 360;
+        console.log("Ecliptic longitude: " + lambda);
+        // Solar transit time
+        const J_transit = 2451545.0 + J_ + 0.0053 * Math.sin(toRadians(M)) - 0.0069 * Math.sin(2 * toRadians(lambda));
+        console.log("Solar transit time: " + J_transit);
+        // Declination of the Sun
+        const sin_d = Math.sin(toRadians(lambda)) * Math.sin(toRadians(23.4397));
+        const cos_d = Math.cos(Math.asin(toRadians(sin_d)));
+        console.log("Declination of the Sun: " + sin_d);
+        // Hour angle
+        const some_cos = (Math.sin(toRadians(-0.833) - Math.sin(toRadians(latitude)) * sin_d)) / ((Math.cos(toRadians(latitude)) * cos_d));
+        const hourAngle = Math.acos(some_cos) * 180 / Math.PI;
+        console.log("Hour angle: " + hourAngle);
+        // Sunrise
+        const j_rise = J_transit - hourAngle / 360;
+        const sunrise = j_rise - 2451545.0
+        let sunriseDate = new Date(referenceDate);
+        console.log("Sunrise: " + addFractionalDays(sunriseDate,sunrise));
+        // Sunset
+        const j_set = J_transit + hourAngle / 360;
+        const sunset = j_set - 2451545.0
+        let sunsetDate = new Date(referenceDate);
+        console.log("Sunset: " + addFractionalDays(sunsetDate,sunset));
+
+
+    </script>
+</body>
+
+</html>
