@@ -56,10 +56,6 @@ footer {
     text-align: center;
 }
 
-/*figure:hover {
-    background-color: #334252;
-}*/
-
 h2:target {
     background-color: hsla(0, 0%, 20%, 1);;
 }
