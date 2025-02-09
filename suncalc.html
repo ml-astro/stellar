@@ -8,12 +8,13 @@
 </head>
 
 <body>
+    <div id="result"></div>
     <script>
-        const longitude = 23.02;
+        const longitude = 25.02;
         const latitude = 59.47;
-
+        const div = document.getElementById("result");
         function toRadians(degree) {
-            return degree * Math.PI / 180;
+            return degree * Math.PI / 180.0;
         }
 
         function addFractionalDays(date, days) {
@@ -21,44 +22,50 @@
             return date;
         }
 
-        const referenceDate = new Date(Date.UTC(2000, 0, 1, 12, 0, 0));
+        const referenceDate = new Date(2000, 0, 1, 14);
         // Julian date offset
         const n = Math.ceil((new Date() - referenceDate) / 86400000);
-        console.log('Julian date offset: ' + n);
+        div.innerHTML += ('<p>Julian date offset: ' + n);
+
         // Mean solar time
-        const J_ = n - (longitude / 360);
-        console.log('Mean solar time: ' + J_);
+        const J_ = n + 0.0009 - longitude / 360.0;
+        div.innerHTML += ('</p><p>Mean solar time: ' + J_);
         // Solar mean anomaly
         const M = (357.5291 + 0.98560028 * J_) % 360;
-        console.log('Solar mean anomaly: ' + M);
+        div.innerHTML += ('</p><p>Solar mean anomaly: ' + M);
+
         // Equation of the center
         const C = 1.9148 * Math.sin(toRadians(M)) + 0.0200 * Math.sin(2 * toRadians(M)) + 0.0003 * Math.sin(3 * toRadians(M));
-        console.log("Equation of the center: " + C);
+        div.innerHTML += ("</p><p>Equation of the center: " + C);
         // Ecliptic longitude
         const lambda = (M + C + 180 + 102.9372) % 360;
-        console.log("Ecliptic longitude: " + lambda);
+        div.innerHTML += ("</p><p>Ecliptic longitude: " + lambda);
         // Solar transit time
         const J_transit = 2451545.0 + J_ + 0.0053 * Math.sin(toRadians(M)) - 0.0069 * Math.sin(2 * toRadians(lambda));
-        console.log("Solar transit time: " + J_transit);
+        div.innerHTML += ("</p><p>Solar transit time: " + addFractionalDays(referenceDate,(J_transit - 2451545)));
         // Declination of the Sun
         const sin_d = Math.sin(toRadians(lambda)) * Math.sin(toRadians(23.4397));
         const cos_d = Math.cos(Math.asin(toRadians(sin_d)));
-        console.log("Declination of the Sun: " + sin_d);
+        div.innerHTML += ("</p><p>Declination of the Sun: " + sin_d);
         // Hour angle
         const some_cos = (Math.sin(toRadians(-0.833) - Math.sin(toRadians(latitude)) * sin_d)) / ((Math.cos(toRadians(latitude)) * cos_d));
-        const hourAngle = Math.acos(some_cos) * 180 / Math.PI;
-        console.log("Hour angle: " + hourAngle);
+        const hourAngle = Math.acos(some_cos) * 180.0 / Math.PI;
+        div.innerHTML += ("</p><p>Hour angle: " + hourAngle);
         // Sunrise
-        const j_rise = J_transit - hourAngle / 360;
+        const j_rise = J_transit - hourAngle / 360.0;
         const sunrise = j_rise - 2451545.0
         let sunriseDate = new Date(referenceDate);
-        console.log("Sunrise: " + addFractionalDays(sunriseDate,sunrise));
+        div.innerHTML += ("</p><p>Sunrise: " + addFractionalDays(sunriseDate, sunrise));
+        div.innerHTML += ("</p><p>Sunrise direction: " + (180 - hourAngle));
         // Sunset
-        const j_set = J_transit + hourAngle / 360;
+        const j_set = J_transit + hourAngle / 360.0;
         const sunset = j_set - 2451545.0
         let sunsetDate = new Date(referenceDate);
-        console.log("Sunset: " + addFractionalDays(sunsetDate,sunset));
-
+        div.innerHTML += ("</p><p>Sunset: " + addFractionalDays(sunsetDate, sunset));
+        div.innerHTML += ("</p><p>Sunset direction: " + (180 + hourAngle));
+        // Day length
+        const length = (sunsetDate - sunriseDate) / 1000.0 / 3600.0
+        div.innerHTML += ("</p><p>Day length: " + length + "h</p>");
 
     </script>
 </body>
