@@ -1,14 +1,14 @@
 @font-face {
     font-family: montserrat;
     src: url(Montserrat-VariableFont_wght.ttf);
-  }
+}
 
 
 * {
-    box-sizing:border-box;
+    box-sizing: border-box;
     /*font-family:Verdana,Tahoma,sans-serif;*/
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
     /*color: #ffe9b1;*/
     color: hsl(0, 0%, 100%);
     font-size: 16px;
@@ -26,17 +26,27 @@ ul {
 }
 
 li {
+    position: relative;
     padding-bottom: 1em;
 }
 
 body {
-    background-color: hsla(110, 0%, 5%, 1); 
+    background-color: hsla(110, 0%, 5%, 1);
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     text-align: center;
     padding-top: 1em;
 }
+
+h3 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    }
 
 h1 {
     font-size: 1.8em;
@@ -47,7 +57,11 @@ h2 {
 }
 
 h3 {
+    padding: 10px;
+    border-radius: 10px;
     font-size: 1em;
+    z-index: 10;
+    background-color:rgba(0,0,0,.7);
 }
 
 footer {
@@ -57,7 +71,8 @@ footer {
 }
 
 h2:target {
-    background-color: hsla(0, 0%, 20%, 1);;
+    background-color: hsla(0, 0%, 20%, 1);
+    ;
 }
 
 .share {
@@ -68,21 +83,19 @@ h2:target {
 @media (max-width: 760px) {
     .gridcontainer figcaption {
         padding: .3em;
-}
+    }
 
-h2 {
-    font-size: 1.7em;
-}
+    h2 {
+        font-size: 1.7em;
+    }
 
-h3 {
-    padding-top: 0;
-}
+    h3 {
+        padding-top: 0;
+    }
 
-li {
-    
-}
+    li {}
 
-.gridcontainer a {
+    .gridcontainer a {
         margin: .3em;
     }
 }
