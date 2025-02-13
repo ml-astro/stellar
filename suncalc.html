@@ -118,7 +118,8 @@
         });
         const referenceDate = new Date(2000, 0, 1, 15);
         // Julian date offset
-        const n = Math.ceil((new Date() - referenceDate) / 86400000);
+        var now = new Date()
+        const n = Math.ceil((now - referenceDate) / 86400000);
 
         function calcluate(latitude, longitude) {
             // Mean solar time
@@ -135,6 +136,7 @@
             // Solar transit time
             const J_transit = 2451545.0 + J_ + 0.0053 * Math.sin(toRadians(M)) - 0.0069 * Math.sin(2 * toRadians(lambda));
             document.getElementById('J_transit').innerHTML = displayTime(addFractionalDays(referenceDate, (J_transit - 2451545)));
+
 
             // Declination of the Sun
             //const sin_d = Math.sin(toRadians(lambda)) * Math.sin(toRadians(23.4397));
