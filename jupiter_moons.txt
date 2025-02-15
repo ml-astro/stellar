@@ -1,0 +1,92 @@
+Jupiter radius 71492x69911 km
+            a           P               mag
+Io          421700      1.769137786 d   5.02
+Europa      670900      3.551181 d      5.29
+Ganymede    1070400     7.15455296 d    4.61
+Callisto    1882700     16.6890184 d    5.65
+
+/5000 = px scale
+
+Earth 149.6 M km
+0.98560911 deg/day
+
+Jupiter 816.363 M km
+0.0830911764094918 deg/day
+
+
+(Ndays * P) % 1 * 360 = degrees
+
+
+pick a reference date - opposition or 0 deg earth
+            jupiter center time
+Io          14 2 2025 12:05
+Europa      15 2 2025 6:00
+Ganymede    18 2 2025 12:40
+Callisto    17 2 2025 3:40
+
+------------------------------
+
+A < 90
+    x = R * cosA
+    y = R * sinA
+90 < A < 180
+    -x = R * sinA
+    y = R * cosA
+180 < A < 270
+    -x = R * cosA
+    -y = R * sinA
+270 < A < 360
+    x = R * sinA
+    -y = R * cosA
+
+dX  = Xj - Xe
+dY  = Yj - Ye
+
+D = sqrt(mod(dX^2)+mod(dY^2))
+
+dX > 0, dY > 0
+    cosA = dX/D
+dX < 0, dY > 0
+    cosA = dY/D
+    A=A+90
+dX < 0, dY < 0
+    cosA = dX/D
+    A=A+180
+dX > 0, dY < 0
+    cosA = dY/D
+    A=A+270
+
+этот угол А применить к системе Юпитера - прокрутить рассчитанное положение спутников назад на угол А
+
+----
+
+расчет фазы спутников для земного наблюдателя
+Asat = Asat - A
+
+если Аsat > 360, есть смысл %360 ?
+
+---
+
+расчет 
+расстояния от диска планеты
+
+A < 180 = +x
+A > 180 = -x
+
+A < 90
+sinA = x/d
+x = sinA*d
+
+A < 180
+A = A-90
+cosA = x/d
+x = cosA*d
+
+A < 270
+A = A-180
+sinA = x/d
+x = sinA*d
+
+A < 360
+A = A-270
+x = cosA*d

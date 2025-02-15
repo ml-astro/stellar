@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moons</title>
+</head>
+<body>
+    <script>
+        const today = new Date();
+        const referenceDate = new Date(2021,1,2,15,2)
+        Ndays = ((today-referenceDate)/86400000);
+        console.log(Ndays);
+        //calculates a fraction of full orbit
+        function orbitTravel(Pmoon) {
+            return (Ndays * Pmoon) % 1 * 360
+        }
+
+
+    </script>
+</body>
+</html>
