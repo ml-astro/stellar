@@ -1,15 +1,15 @@
 h1 {
-    font-size: 3em;
+    font-size: 2em;
     padding: 20px;
 }
 
 h2 {
     padding: 10px;
+    font-size: 1em;
 }
 
 .additional {
     margin-top: 1em;
-    /*color: rgba(255, 233, 177,.4);*/
     color: hsla(0, 0%, 50%, 1);
 }
 
@@ -25,7 +25,6 @@ h2 {
 li {
     list-style:none;
     margin: 10px auto 20px auto;
-    /*border-bottom: 1px solid rgb(255, 233, 177,.4);*/
     border-bottom: 1px solid hsla(0, 0%, 50%, 1);
 }
 

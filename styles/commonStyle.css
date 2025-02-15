@@ -27,7 +27,6 @@ ul {
 
 li {
     position: relative;
-    padding-bottom: 1em;
 }
 
 body {
@@ -41,27 +40,18 @@ h3 {
     padding-top: 1em;
 }
 
-h3 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    }
-
-h1 {
-    font-size: 1.8em;
-}
-
 h2 {
     font-size: 1.5em;
+    padding: 15px;
 }
 
 h3 {
+    position: absolute;
+    width: 100%;
+    top: 0;
     padding: 10px;
-    border-radius: 10px;
-    font-size: 1em;
     z-index: 10;
-    background-color:rgba(0,0,0,.7);
+    background-color:rgba(0, 0, 0, 0.8);
 }
 
 footer {
@@ -80,22 +70,16 @@ h2:target {
 }
 
 
-@media (max-width: 760px) {
+@media (max-width:500px) {
     .gridcontainer figcaption {
         padding: .3em;
     }
 
     h2 {
-        font-size: 1.7em;
+        font-size: larger;
     }
-
-    h3 {
-        padding-top: 0;
-    }
-
-    li {}
 
     .gridcontainer a {
-        margin: .3em;
+        
     }
 }

@@ -10,16 +10,13 @@
 .header {
     max-width: 1000px;
     margin: 0 auto;
-    display: grid;
-    justify-content: space-between;
-    grid-template-columns: 30% 30%;
 }
 
 .header p {
     text-align: right;
 }
 
-.header h1 {
+h1 {
     text-align: left;
 }
 
@@ -43,7 +40,6 @@
 
 img {
     width: 100%;
-    padding: .5em;
 }
 
 p {
@@ -64,7 +60,7 @@ figure {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
     .gridcontainer {
         grid-template-columns: repeat(1, 1fr);
     }
