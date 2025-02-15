@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: black;
+    margin: 0;
+    padding: 0;
+  }
+
+  .heading {
+    position: absolute;
+    text-align: left;
+  }
+
+  p {
+    font-size: 22px;
+  }
+
+  h1,
+  p {
+    color: #FFF;
+    padding-left: 10px;
+  }
+
+  button {
+    font-weight: bold;
+    font-size: 100%;
+    background-color: #CCC;
+    margin-bottom: 1em;
+    border-radius: 10px;
+    padding: 15px 15px;
+  }
+
+  button:nth-child(7) {
+    margin-right: 20px;
+  }
+
+  #buttonBlock {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: fit-content;
+    bottom: 2vh;
+  }
+
+  .speedcontrols,
+  .zoomcontrols {
+    display: inline-block;
+  }
+
+  .system {
+    position: fixed;
+    z-index: -1;
+  }

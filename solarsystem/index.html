@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="./style.css">
+  <title>Простой планетарий</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+</head>
+
+<body>
+  <div class="heading">
+    <h1>Простой планетарий</h1>
+    <p id="dateField"></p>
+  </div>
+  <div id="buttonBlock">
+    <div class="speedcontrols">
+      <button onclick="animationStep(-10)">&#60;&#60;&#60;</button>
+      <button onclick="animationStep(-5)">&#60;&#60;</button>
+      <button onclick="animationStep(-1)">&#60;</button>
+      <button onclick="stop()">II</button>
+      <button onclick="animationStep(1)">&#62;</button>
+      <button onclick="animationStep(5)">&#62;&#62;</button>
+      <button onclick="animationStep(10)">&#62;&#62;&#62;</button>
+    </div>
+    <div class="zoomcontrols">
+      <button onclick="zoomView('out')">-</button>
+      <button onclick="zoomView('in')">+</button>
+    </div>
+  </div>
+  <div class="system">
+  </div>
+  <script src="./script.js">
+    
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор восхода и заката</title>
+    <style>
+        @font-face {
+            font-family: montserrat;
+            src: url(../styles/Montserrat-VariableFont_wght.ttf);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        * {
+            font-family: montserrat, sans-serif;
+        }
+
+        table {
+            margin: 0 auto;
+        }
+
+        tr:nth-child(odd) {
+            background-color: bisque;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Солнечный калькулятор</h1>
+    <table>
+        <tr>
+            <td>Эклиптическая долгота Солнца</td>
+            <td id="lambda"></td>
+        </tr>
+        <tr>
+            <td>Солнечный полдень</td>
+            <td id="J_transit"></td>
+        </tr>
+        <tr>
+            <td>Склонение Солнца</td>
+            <td id="sin_d"></td>
+        </tr>
+        <tr>
+            <td>Наибольшая высота Солнца</td>
+            <td id="hMax"></td>
+        </tr>
+        <tr>
+            <td>Часовой угол восхода и захода</td>
+            <td id="hourAngle"></td>
+        </tr>
+        <tr>
+            <td>Восход</td>
+            <td id="sunriseDate"></td>
+        </tr>
+        <tr>
+            <td>Закат</td>
+            <td id="sunsetDate"></td>
+        </tr>
+        <tr>
+            <td>Долгота дня</td>
+            <td id="dayLength"></td>
+        </tr>
+    </table>
+    <script src="./script.js">
+       
+    </script>
+
+</body>
+
+</html>
