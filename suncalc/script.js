@@ -71,8 +71,7 @@
 
 
      // Declination of the Sun
-     //const sin_d = Math.sin(toRadians(lambda)) * Math.sin(toRadians(23.4397));
-     const sin_d = -0.2307632479684015
+     const sin_d = Math.sin(toRadians(lambda)) * Math.sin(toRadians(23.4397));
      const cos_d = Math.cos(Math.asin(sin_d));
      document.getElementById('sin_d').innerHTML = roundup10(sin_d) + "&deg;";
      document.getElementById('hMax').innerHTML = roundup10(90 - latitude + toDegrees(sin_d)) + "&deg;";
