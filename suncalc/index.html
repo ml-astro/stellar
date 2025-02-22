@@ -11,8 +11,17 @@
             src: url(../styles/Montserrat-VariableFont_wght.ttf);
         }
 
+        body {
+            background-color: #222;
+        }
+
+
         h1 {
             text-align: center;
+        }
+
+        td, h1 {
+            color: #FFF;
         }
 
         * {
@@ -23,34 +32,27 @@
             margin: 0 auto;
         }
 
+        td {
+            padding: 15px;
+            font-size: 18px;
+        }
+
         tr:nth-child(odd) {
-            background-color: bisque;
+            background-color: #444;
+        }
+
+        tr:nth-child(even) {
+            background-color: #333;
         }
     </style>
 </head>
 
 <body>
-    <h1>Солнечный калькулятор</h1>
+    <h1>Солнце сегодня</h1>
     <table>
         <tr>
-            <td>Эклиптическая долгота Солнца</td>
-            <td id="lambda"></td>
-        </tr>
-        <tr>
-            <td>Солнечный полдень</td>
+            <td>Полдень</td>
             <td id="J_transit"></td>
-        </tr>
-        <tr>
-            <td>Склонение Солнца</td>
-            <td id="sin_d"></td>
-        </tr>
-        <tr>
-            <td>Наибольшая высота Солнца</td>
-            <td id="hMax"></td>
-        </tr>
-        <tr>
-            <td>Часовой угол восхода и захода</td>
-            <td id="hourAngle"></td>
         </tr>
         <tr>
             <td>Восход</td>
@@ -63,6 +65,22 @@
         <tr>
             <td>Долгота дня</td>
             <td id="dayLength"></td>
+        </tr>
+        <tr>
+            <td>Наибольшая высота</td>
+            <td id="hMax"></td>
+        </tr>
+        <tr>
+            <td>Часовой угол восхода и захода</td>
+            <td id="hourAngle"></td>
+        </tr>
+        <tr>
+            <td>Эклиптическая долгота</td>
+            <td id="lambda"></td>
+        </tr>
+        <tr>
+            <td>Склонение</td>
+            <td id="sin_d"></td>
         </tr>
     </table>
     <script src="./script.js">

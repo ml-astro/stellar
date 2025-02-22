@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moons</title>
+    <link rel="stylesheet" href="../styles/commonStyle.css">
+    <style>
+        body {
+            background-color: #222;
+        }
+
+        .center {
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        ul {
+            width: 300px;
+            margin: 0 auto;
+            list-style-type: none;
+            padding-left: 0;
+            padding-top: 1em;
+        }
+
+        li {
+            padding: 10px 0px;
+            border-bottom: 1px solid #333;
+            margin: 0;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Спутники Юпитера</h1>
+    <div class="center">
+        <canvas id="myCanvas" width="1000" height="400">
+        </canvas>
+    </div>
+<ul>
+    <li>I - Ио</li>
+    <li>E - Европа</li>
+    <li>G - Ганимед</li>
+    <li>C - Каллисто</li>
+    <li id="distance"></li>
+</ul>
+    <script src='./script.js'>
+    </script>
+</body>
+
+</html>
