@@ -20,10 +20,14 @@ let M = (168.6562 + 4.0923344368 * d) % 360 + 360 //Mean anonaly
 let E0 = M + (180 / Math.PI) * e * Math.sin(toRadians(M)) * (1 + e * Math.cos(toRadians(M))) //eccentric anomaly
 let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1 - e * Math.cos(toRadians(E0))) //eccentric anomaly
 let v = toDegrees(2 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(toRadians(E1) / 2))); //true anomaly
-let r = (a * (1 - e ** 2)) / (1 + e * Math.cos(toRadians(v))); //heliocentric distance
+let r = (a * (1 - e ** 2)) / (1 + e * Math.cos(toRadians(v))); //distance
+//calc x, y
+let x = r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
+let y = r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
+//calc longitude
+//let longitude = (toDegrees(Math.atan2(y, x)) + 360) % 360
 
-
-
+console.log(x + ' ' + y);
 
 /*
 
