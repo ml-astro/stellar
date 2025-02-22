@@ -1,3 +1,19 @@
+const system = document.createElement("canvas");
+const systemId = document.createAttribute("id");
+const systemWidth = document.createAttribute("width");
+const systemHeight = document.createAttribute("height");
+systemId.value = "myCanvas";
+
+systemWidth.value = window.innerWidth + 'px';
+systemHeight.value = 400;
+
+system.setAttributeNode(systemId);
+system.setAttributeNode(systemWidth);
+system.setAttributeNode(systemHeight);
+document.getElementsByClassName('system')[0].appendChild(system);
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
 /* WORKS BAD WITH CIRCULAR ORBITS */
 const today = new Date()
 //UTC
@@ -66,8 +82,7 @@ var distance = Math.sqrt(Math.abs(deltaX) ** 2 + Math.abs(deltaY) ** 2)
 var timeDelay = distance * 0.0058
 var lightTravelTime = distance * 149597870.700 / 299792 / 3600 / 24
 
-//console.log('Approx distance: ' + distance + ' AU');
-document.getElementById("distance").textContent='Расстояние ' + Math.floor(lightTravelTime*24*60)+' световых минут'
+document.getElementById("distance").textContent = 'Расстояние ' + Math.floor(lightTravelTime * 24 * 60) + ' световых минут'
 
 
 if (deltaX > 0 && deltaY > 0) {
@@ -88,32 +103,31 @@ if (deltaX > 0 && deltaY < 0) {
 
 }
 
-//console.log("viewAngle: " + viewAngle);
 
 /* CALCULATING MOON POSITIONS BOTH LONGITUDE AND IN X,Y COORDS */
 
 const moons = [
     {
         name: 'Io',
-        sma: 421700,
+        sma: 1.0,
         period: 1.769137786,
         offset: 292.8,
     },
     {
         name: 'Europa',
-        sma: 670900,
+        sma: 1.5909,
         period: 3.551181,
         offset: 254.38,
     },
     {
         name: 'Ganymede',
-        sma: 1070400,
+        sma: 2.5383,
         period: 7.15455296,
         offset: 326.27,
     },
     {
         name: 'Callisto',
-        sma: 1882700,
+        sma: 4.4645,
         period: 16.6890184,
         offset: 136.94,
     }
@@ -121,40 +135,41 @@ const moons = [
 
 moons.forEach(moon => {
     moon.longitude = (((Ndays - lightTravelTime) / moon.period) % 1 * 360 + moon.offset) % 360
-    calculateXY(moon)   
+    calculateXY(moon)
 });
 
 
 
 /* DRAW VIEW OF SYSTEM */
+const centerX = canvas.width / 2
 
-var c = document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
 function drawMoon(moon) {
-    var xPos = moon.x/4000 + 500
+    //canvas.width, canvas.height
+
+    var xPos = moon.x * canvas.width / 10 + centerX
     ctx.beginPath();
     ctx.arc(xPos, 200, 3, 0, 2 * Math.PI);
     ctx.fillStyle = "white";
     ctx.fill();
     ctx.font = "80% Arial";
-    ctx.fillText(moon.name.substring(0,1),xPos-5,250);
+    ctx.fillText(moon.name.substring(0, 1), xPos - 5, 250);
 }
 
 //draw far moons
-moons.forEach(moon => {    
-    if(moon.y > 0) {
+moons.forEach(moon => {
+    if (moon.y > 0) {
         drawMoon(moon)
     }
 });
 //draw jupiter between far and near moons
 ctx.beginPath();
-ctx.arc(500, 200, 69911/4000, 0, 2 * Math.PI);
+ctx.arc(centerX, 200, 0.16 * canvas.width / 10, 0, 2 * Math.PI);
 ctx.fillStyle = "orange";
 ctx.fill();
 
 //draw near moons
 moons.forEach(moon => {
-    if(moon.y < 0) {
+    if (moon.y < 0) {
         drawMoon(moon)
     }
 });

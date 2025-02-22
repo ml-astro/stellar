@@ -3,7 +3,7 @@
 }
 
 body {
-	background: #222;
+	background: #111;
 	color: #FFF;
 	line-height: 1.6;
 	font-family: 'Segoe UI', 'Tahoma', 'Verdana';
@@ -102,7 +102,7 @@ input {
 }
 
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 760px) {
 
 	body {
 		margin: 0;
