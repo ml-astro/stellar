@@ -2,7 +2,9 @@ const today = new Date()
 const reference = new Date(2000, 0, 1, 0, 0)
 var d = (today - reference) / 86400000
 let zoom = 0.2;
+let info = false
 let displaynames = false
+let distances = false
 
 const system = document.createElement("canvas");
 const systemId = document.createAttribute("id");
@@ -160,19 +162,19 @@ window.addEventListener('keydown', e => {
 })
 window.addEventListener('wheel', e => {
     (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
-  })
+})
 
 function zoomView(mode) {
     if (mode == 'in') {
-        if (zoom > 0.033){
+        if (zoom > 0.033) {
             zoom = zoom * 0.9;
         }
     }
     if (mode == 'out') {
-        if (zoom < 10){
+        if (zoom < 10) {
             zoom = zoom * 1.1;
         }
-    }    
+    }
     generateSystem()
 }
 
@@ -187,31 +189,47 @@ function calculateXY(planet) {
     let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1 - e * Math.cos(toRadians(E0))) //eccentric anomaly
     let v = toDegrees(2 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(toRadians(E1) / 2))); //true anomaly
     let r = (a * (1 - e ** 2)) / (1 + e * Math.cos(toRadians(v))); //distance
-    //calc x, y
     planet.x = r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.y = r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.orbit = Math.sqrt(planet.x ** 2 + planet.y ** 2)
-    //calc longitude
     //let longitude = (toDegrees(Math.atan2(y, x)) + 360) % 360
 }
 
-//добавить расстояния до планет
-//расчитываем координаты, теперь они хранятся в объектах и не нужно их заново считать при зуме
+
 planets.forEach(planet => {
     calculateXY(planet)
 })
 
-function toggleInfo(){
-    if(!info){
+function toggleInfo() {
+    if (!info) {
+        if (!distances) {
+            calculateDistance()
+        }
+        document.getElementById('info').style.display = 'initial'
         info = true
     }
     else {
+        document.getElementById('info').style.display = 'none'
+        document.getElementById('info').innerHTML = ''
         info = false
     }
 }
 
-function toggleNames(){
-    if(!displaynames){
+function calculateDistance() {
+    document.getElementById('info').innerHTML += '<p>Расстояния до планет</p>'
+    planets.forEach(planet => {
+        let earthX = planets[2].x
+        let earthY = planets[2].y
+        if (planet.name != 'Земля') {
+            let distance = Math.round((Math.sqrt(Math.abs(earthX - planet.x) ** 2 + Math.abs(earthY - planet.y) ** 2))*1496)/10
+            document.getElementById('info').innerHTML += '<p>' + planet.name + ': ' + distance + ' млн. км.</p>'
+            document.getElementById('info').style.display = 'initial'
+        }
+    });
+}
+
+function toggleNames() {
+    if (!displaynames) {
         displaynames = true
     }
     else {
@@ -227,19 +245,20 @@ function generateSystem() {
     ctx.arc(canvas.clientWidth / 2, canvas.clientHeight / 2, 6, 0, 2 * Math.PI);
     ctx.fillStyle = "yellow";
     ctx.fill();
-    
+
     planets.forEach(planet => {
         ctx.beginPath();
+        ctx.setLineDash([2, 5]);
         ctx.arc(planet.x * 50 / zoom + canvas.width / 2, -planet.y * 50 / zoom + canvas.height / 2, 4, 0, 2 * Math.PI);
         ctx.fillStyle = planet.color;
         ctx.fill();
         ctx.strokeStyle = planet.color;
         ctx.beginPath()
-        ctx.arc(canvas.width / 2, canvas.height / 2, planet.orbit * 50  / zoom, 0, 2 * Math.PI)
+        ctx.arc(canvas.width / 2, canvas.height / 2, planet.orbit * 50 / zoom, 0, 2 * Math.PI)
         ctx.stroke();
-        if(displaynames){
+        if (displaynames) {
             ctx.font = "80% Arial";
-            ctx.fillText(planet.name, planet.x * 50 / zoom -5  + canvas.width / 2, -planet.y * 50 / zoom+20 + canvas.height / 2);
+            ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 20 + canvas.height / 2);
         }
     });
 

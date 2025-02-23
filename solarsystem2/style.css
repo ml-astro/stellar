@@ -14,6 +14,12 @@ body {
     font-size: 22px;
   }
 
+#info p{
+  color: rgba(200, 200,200, 0.6);
+  font-size: 1em;
+  margin-top: 0;
+}
+
   h1,
   p {
     color: #FFF;
