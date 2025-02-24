@@ -1,8 +1,9 @@
-const today = new Date()
+var today = new Date()
 const reference = new Date(2000, 0, 1, 0, 0)
 var d = (today - reference) / 86400000
 let zoom = 0.2;
 let info = false
+let skipped = false
 let displaynames = false
 let distances = false
 
@@ -152,6 +153,35 @@ function toDegrees(radians) {
     return radians * (180 / Math.PI)
 }
 
+function skip(days) {
+    skipped = true
+    d += days
+    planets.forEach(planet => {
+        calculateXY(planet)
+    })
+    generateSystem()
+    calculateDistance()
+    if (info == true) {
+        document.getElementById('info').style.display = 'initial'
+    }
+    if (info == false){
+        document.getElementById('info').style.display = 'none'
+    }
+}
+
+function toggleInfo() {
+    calculateDistance()
+    info =! info
+    if (info == true) {
+        document.getElementById('info').style.display = 'initial'
+    }
+    if (info == false) {
+        document.getElementById('info').style.display = 'none'
+    }
+    console.log(info);
+}
+
+
 window.addEventListener('keydown', e => {
     switch (e.key) {
         case '+': zoomView('in');
@@ -192,6 +222,7 @@ function calculateXY(planet) {
     planet.x = r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.y = r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.orbit = Math.sqrt(planet.x ** 2 + planet.y ** 2)
+
     //let longitude = (toDegrees(Math.atan2(y, x)) + 360) % 360
 }
 
@@ -200,32 +231,19 @@ planets.forEach(planet => {
     calculateXY(planet)
 })
 
-function toggleInfo() {
-    if (!info) {
-        if (!distances) {
-            calculateDistance()
-        }
-        document.getElementById('info').style.display = 'initial'
-        info = true
-    }
-    else {
-        document.getElementById('info').style.display = 'none'
-        document.getElementById('info').innerHTML = ''
-        info = false
-    }
-}
 
 function calculateDistance() {
+    document.getElementById('info').innerHTML = ''
     document.getElementById('info').innerHTML += '<p>Расстояния до планет</p>'
     planets.forEach(planet => {
         let earthX = planets[2].x
         let earthY = planets[2].y
         if (planet.name != 'Земля') {
-            let distance = Math.round((Math.sqrt(Math.abs(earthX - planet.x) ** 2 + Math.abs(earthY - planet.y) ** 2))*1496)/10
+            let distance = Math.round((Math.sqrt(Math.abs(earthX - planet.x) ** 2 + Math.abs(earthY - planet.y) ** 2)) * 1496) / 10
             document.getElementById('info').innerHTML += '<p>' + planet.name + ': ' + distance + ' млн. км.</p>'
-            document.getElementById('info').style.display = 'initial'
         }
     });
+    document.getElementById('info').style.display = 'initial'
 }
 
 function toggleNames() {
