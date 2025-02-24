@@ -3,9 +3,11 @@ const reference = new Date(2000, 0, 1, 0, 0)
 var d = (today - reference) / 86400000
 let zoom = 0.2;
 let info = false
-let skipped = false
 let displaynames = false
-let distances = false
+let displaydistances = false
+
+
+//-------------- CREATING CANVAS --------------------///
 
 const system = document.createElement("canvas");
 const systemId = document.createAttribute("id");
@@ -18,10 +20,25 @@ system.setAttributeNode(systemId);
 system.setAttributeNode(systemWidth);
 system.setAttributeNode(systemHeight);
 document.getElementsByClassName('system')[0].appendChild(system);
-
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+//------------------------- CREATING EVENT LISTENERS ----------------------//
+
+window.addEventListener('keydown', e => {
+    switch (e.key) {
+        case '+': zoomView('in');
+            break;
+        case '-': zoomView('out');
+            break;
+    }
+})
+window.addEventListener('wheel', e => {
+    (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
+})
+
+
+//----------------------------------- PLANETS DATA ----------------------------//
 const planets = [
     {
         name: 'Меркурий',
@@ -145,6 +162,14 @@ const planets = [
     }
 ]
 
+//---------------------------------- INITIALIZATION -----------------------------//
+planets.forEach(planet => {
+    calculatePositions(planet)
+})
+calculateDistance()
+drawSystem()
+
+//------------------------------------ FUNCTIONS ---------------------------------//
 function toRadians(degrees) {
     return degrees * (Math.PI / 180)
 }
@@ -154,45 +179,13 @@ function toDegrees(radians) {
 }
 
 function skip(days) {
-    skipped = true
     d += days
     planets.forEach(planet => {
-        calculateXY(planet)
+        calculatePositions(planet)
+        calculateDistance()
     })
-    generateSystem()
-    calculateDistance()
-    if (info == true) {
-        document.getElementById('info').style.display = 'initial'
-    }
-    if (info == false){
-        document.getElementById('info').style.display = 'none'
-    }
+    drawSystem()
 }
-
-function toggleInfo() {
-    calculateDistance()
-    info =! info
-    if (info == true) {
-        document.getElementById('info').style.display = 'initial'
-    }
-    if (info == false) {
-        document.getElementById('info').style.display = 'none'
-    }
-    console.log(info);
-}
-
-
-window.addEventListener('keydown', e => {
-    switch (e.key) {
-        case '+': zoomView('in');
-            break;
-        case '-': zoomView('out');
-            break;
-    }
-})
-window.addEventListener('wheel', e => {
-    (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
-})
 
 function zoomView(mode) {
     if (mode == 'in') {
@@ -205,10 +198,11 @@ function zoomView(mode) {
             zoom = zoom * 1.1;
         }
     }
-    generateSystem()
+    drawSystem()
 }
 
-function calculateXY(planet) {
+//расчет положений планет - в объекты
+function calculatePositions(planet) {
     let N = planet.N + planet.dN * d //Long of asc. node    
     let i = planet.i + planet.di * d //Inclination
     let w = planet.w + planet.dw * d //Argument of perihelion
@@ -222,30 +216,21 @@ function calculateXY(planet) {
     planet.x = r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.y = r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.orbit = Math.sqrt(planet.x ** 2 + planet.y ** 2)
-
     //let longitude = (toDegrees(Math.atan2(y, x)) + 360) % 360
+
+
+    //perhaps i should check info flags here in order to call these functions
 }
 
-
-planets.forEach(planet => {
-    calculateXY(planet)
-})
-
-
+//расчет расстояний от земли - после расчета положений
 function calculateDistance() {
-    document.getElementById('info').innerHTML = ''
-    document.getElementById('info').innerHTML += '<p>Расстояния до планет</p>'
     planets.forEach(planet => {
-        let earthX = planets[2].x
-        let earthY = planets[2].y
-        if (planet.name != 'Земля') {
-            let distance = Math.round((Math.sqrt(Math.abs(earthX - planet.x) ** 2 + Math.abs(earthY - planet.y) ** 2)) * 1496) / 10
-            document.getElementById('info').innerHTML += '<p>' + planet.name + ': ' + distance + ' млн. км.</p>'
-        }
+        if (planet.name != 'Земля') { planet.distance = Math.round((Math.sqrt(Math.abs(planets[2].x - planet.x) ** 2 + Math.abs(planets[2].y - planet.y) ** 2)) * 10) / 10 + ' а.е.' }
     });
-    document.getElementById('info').style.display = 'initial'
+    drawSystem()
 }
 
+//показать названия
 function toggleNames() {
     if (!displaynames) {
         displaynames = true
@@ -253,11 +238,25 @@ function toggleNames() {
     else {
         displaynames = false
     }
-    generateSystem()
+    drawSystem()
+    calculateDistance()
 }
-generateSystem()
 
-function generateSystem() {
+function toggleInfo() {
+    console.log(displaydistances);
+    
+    if (!displaydistances) {
+        displaydistances = true
+    }
+    else {
+        displaydistances= false
+    }
+    drawSystem()
+    calculateDistance()
+}
+
+//нарисовать систему на холсте
+function drawSystem() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(canvas.clientWidth / 2, canvas.clientHeight / 2, 6, 0, 2 * Math.PI);
@@ -276,7 +275,13 @@ function generateSystem() {
         ctx.stroke();
         if (displaynames) {
             ctx.font = "80% Arial";
-            ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 20 + canvas.height / 2);
+            ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom +18 + canvas.height / 2);
+        }
+        if (displaydistances) {
+            ctx.font = "80% Arial";
+            if (planet.name != 'Земля') {
+                ctx.fillText(planet.distance, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 32 + canvas.height / 2);
+            }
         }
     });
 
