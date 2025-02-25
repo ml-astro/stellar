@@ -1,44 +1,93 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: black;
-    margin: 0;
-    padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: black;
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  font-weight: bold;
+  color: white;
+  background-color: rgba(60, 60, 60, .6);
+  margin: 2px;
+  border: none;
+  border-radius: 3px;
+}
+
+.zoom {
+  position: absolute;
+  top: 40%;
+  left: 30px;
+  width: 70px;
+}
+
+.zoom button {
+  font-size: 150%;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.legend {
+  position: absolute;
+  font-size: 80%;
+  right: 30px;
+  top: 30px;
+}
+
+.legend button {
+  width: 110px;
+  padding: 10px;
+}
+
+.system {
+  position: fixed;
+  z-index: -1;
+}
+
+.skip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
+  bottom: 30px;
+}
+
+.skip button {
+  font-size: 120%;
+  padding: 20px;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .zoom {
+    left: 0;
   }
 
-  #legend {
+  .legend {
     position: absolute;
-    left: 0;
-    bottom: 0;
-  }
-  
-  button {
-    font-weight: bold;
-    color: white;
-    font-size: 100%;
-    background-color: rgba(40,40,40);
-    margin: 2px;
-    border: none;
-    padding: 15px 15px;
-  }
-
-  #buttonBlock {
-    position: absolute;
-    left: 0;
+    font-size: 80%;
     right: 0;
-    margin-inline: auto;
-    width: fit-content;
+    top: 0;
+  }
+
+  .legend button {
+    width: 110px;
+    padding: 0px;
+  }
+
+  .skip {
     bottom: 0;
+    width: 100%;
+    margin: 0 auto;
   }
 
-  #buttonBlock > div > button:nth-child(2){
-    margin-right: 40px;
-  }
-  .zoomcontrols {
-    display: inline-block;
-    margin-right: 50px;
+  .skip button {
+    width: 15%;
+    font-size: 120%;
+    margin: 0;
+    padding: 20px 0 20px 0
   }
 
-  .system {
-    position: fixed;
-    z-index: -1;
-  }
+}

@@ -12,23 +12,21 @@
     <div class="system">
     </div>
     <script src="./solarsystem.js"></script>
-    <div id="legend">
-        <div class="zoomcontrols">
-            <button onclick="toggleNames()">Названия</button><br>
-            <button onclick="toggleInfo()">Расстояния</button>
-        </div>
+    <div class="legend">
+        <button onclick="toggleNames()">Названия</button><br>
+        <button onclick="toggleInfo()">Расстояния</button>
     </div>
-    <div id="buttonBlock">
-        <div class="zoomcontrols">
-            <button onclick="zoomView('out')">-</button>
-            <button onclick="zoomView('in')">+</button>
-            <button onclick="skip(-30)">-30д</button>
-            <button onclick="skip(-10)">-10д</button>
-            <button onclick="skip(-1)">-1д</button>
-            <button onclick="skip(1)">+1д</button>
-            <button onclick="skip(10)">+10д</button>
-            <button onclick="skip(30)">+30д</button>
-        </div>
+    <div class="zoom">
+        <button onclick="zoomView('in')">+</button>
+        <button onclick="zoomView('out')">-</button>
+    </div>
+    <div class="skip">
+        <button onclick="skip(-30)">-30</button>
+        <button onclick="skip(-10)">-10</button>
+        <button onclick="skip(-1)">-1</button>
+        <button onclick="skip(1)">+1</button>
+        <button onclick="skip(10)">+10</button>
+        <button onclick="skip(30)">+30</button>
     </div>
 
 </body>
