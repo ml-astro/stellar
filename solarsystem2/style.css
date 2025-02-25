@@ -14,7 +14,7 @@ body {
     font-size: 22px;
   }
 
-#info p{
+#date{
   color: rgba(200, 200,200, 0.6);
   font-size: 1em;
   margin-top: 0;
@@ -45,7 +45,7 @@ body {
     right: 0;
     margin-inline: auto;
     width: fit-content;
-    bottom: 2vh;
+    bottom: 0;
   }
 
   .speedcontrols,

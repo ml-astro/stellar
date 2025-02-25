@@ -1,10 +1,12 @@
 var today = new Date()
+var currentDate = today
 const reference = new Date(2000, 0, 1, 0, 0)
-var d = (today - reference) / 86400000
+var d = (currentDate - reference) / 86400000
+document.getElementById('date').innerHTML+=currentDate.getDate() + '.' + (currentDate.getMonth()+1) + '.' + currentDate.getFullYear()
 let zoom = 0.2;
 let info = false
-let displaynames = false
-let displaydistances = false
+let namesVisible = false
+let distancesVisible = false
 
 
 //-------------- CREATING CANVAS --------------------///
@@ -166,7 +168,7 @@ const planets = [
 planets.forEach(planet => {
     calculatePositions(planet)
 })
-calculateDistance()
+calculateDistances()
 drawSystem()
 
 //------------------------------------ FUNCTIONS ---------------------------------//
@@ -179,10 +181,15 @@ function toDegrees(radians) {
 }
 
 function skip(days) {
-    d += days
+    
+    currentDate.setDate(currentDate.getDate() + days);
+    d = (currentDate - reference) / 86400000
+    document.getElementById('date').innerHTML=''
+    document.getElementById('date').innerHTML+=currentDate.getDate() + '.' + (currentDate.getMonth()+1) + '.' + currentDate.getFullYear()
+    console.log(currentDate);
     planets.forEach(planet => {
         calculatePositions(planet)
-        calculateDistance()
+        calculateDistances()
     })
     drawSystem()
 }
@@ -217,13 +224,11 @@ function calculatePositions(planet) {
     planet.y = r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.orbit = Math.sqrt(planet.x ** 2 + planet.y ** 2)
     //let longitude = (toDegrees(Math.atan2(y, x)) + 360) % 360
-
-
     //perhaps i should check info flags here in order to call these functions
 }
 
 //расчет расстояний от земли - после расчета положений
-function calculateDistance() {
+function calculateDistances() {
     planets.forEach(planet => {
         if (planet.name != 'Земля') { planet.distance = Math.round((Math.sqrt(Math.abs(planets[2].x - planet.x) ** 2 + Math.abs(planets[2].y - planet.y) ** 2)) * 10) / 10 + ' а.е.' }
     });
@@ -232,27 +237,25 @@ function calculateDistance() {
 
 //показать названия
 function toggleNames() {
-    if (!displaynames) {
-        displaynames = true
+    if (!namesVisible) {
+        namesVisible = true
     }
     else {
-        displaynames = false
+        namesVisible = false
     }
     drawSystem()
-    calculateDistance()
+    calculateDistances()
 }
 
 function toggleInfo() {
-    console.log(displaydistances);
-    
-    if (!displaydistances) {
-        displaydistances = true
+    if (!distancesVisible) {
+        distancesVisible = true
     }
     else {
-        displaydistances= false
+        distancesVisible= false
     }
     drawSystem()
-    calculateDistance()
+    calculateDistances()
 }
 
 //нарисовать систему на холсте
@@ -273,11 +276,11 @@ function drawSystem() {
         ctx.beginPath()
         ctx.arc(canvas.width / 2, canvas.height / 2, planet.orbit * 50 / zoom, 0, 2 * Math.PI)
         ctx.stroke();
-        if (displaynames) {
+        if (namesVisible) {
             ctx.font = "80% Arial";
             ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom +18 + canvas.height / 2);
         }
-        if (displaydistances) {
+        if (distancesVisible) {
             ctx.font = "80% Arial";
             if (planet.name != 'Земля') {
                 ctx.fillText(planet.distance, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 32 + canvas.height / 2);
