@@ -271,10 +271,11 @@ function drawSystem() {
         ctx.beginPath()
         ctx.arc(canvas.width / 2, canvas.height / 2, planet.orbit * 50 / zoom, 0, 2 * Math.PI)
         ctx.stroke();
-        ctx.font = "80% Arial";
+        ctx.font = "100% Arial";
         let month = currentDate.getMonth() + 1
         if (month < 10) { month = '0' + month }
         ctx.fillText(currentDate.getDate() + '.' + month + '.' + currentDate.getFullYear(), 10, 20);
+        ctx.font = "80% Arial";
         if (namesVisible) {
             ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 18 + canvas.height / 2);
         }

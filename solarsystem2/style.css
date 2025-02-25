@@ -5,46 +5,20 @@ body {
     padding: 0;
   }
 
-  .heading {
-    position: absolute;
-    text-align: left;
-  }
-
-  p {
-    font-size: 22px;
-  }
-
   #legend {
     position: absolute;
     left: 0;
     bottom: 0;
   }
-
-  #legend button {
-    padding: 10px;
-    color: white;
-    font-size: 80%;
-    background-color: rgba(40,40,40);
-    border-radius: 1px;
-  }
-
-  h1,
-  p {
-    color: #FFF;
-    padding-left: 10px;
-  }
-
+  
   button {
     font-weight: bold;
+    color: white;
     font-size: 100%;
-    background-color: #CCC;
-    margin-bottom: 1em;
-    border-radius: 10px;
+    background-color: rgba(40,40,40);
+    margin: 2px;
+    border: none;
     padding: 15px 15px;
-  }
-
-  button:nth-child(7) {
-    margin-right: 20px;
   }
 
   #buttonBlock {
@@ -56,9 +30,12 @@ body {
     bottom: 0;
   }
 
-  .speedcontrols,
+  #buttonBlock > div > button:nth-child(2){
+    margin-right: 40px;
+  }
   .zoomcontrols {
     display: inline-block;
+    margin-right: 50px;
   }
 
   .system {
