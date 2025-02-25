@@ -14,11 +14,19 @@ body {
     font-size: 22px;
   }
 
-#date{
-  color: rgba(200, 200,200, 0.6);
-  font-size: 1em;
-  margin-top: 0;
-}
+  #legend {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+
+  #legend button {
+    padding: 10px;
+    color: white;
+    font-size: 80%;
+    background-color: rgba(40,40,40);
+    border-radius: 1px;
+  }
 
   h1,
   p {

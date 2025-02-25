@@ -9,16 +9,19 @@
 </head>
 
 <body>
-
     <div class="system">
     </div>
     <script src="./solarsystem.js"></script>
+    <div id="legend">
+        <div class="zoomcontrols">
+            <button onclick="toggleNames()">Названия</button><br>
+            <button onclick="toggleInfo()">Расстояния</button>
+        </div>
+    </div>
     <div id="buttonBlock">
         <div class="zoomcontrols">
             <button onclick="zoomView('out')">-</button>
             <button onclick="zoomView('in')">+</button>
-            <button onclick="toggleNames()">Названия</button>
-            <button onclick="toggleInfo()">Расстояния</button>
         </div>
         <div class="zoomcontrols">
             <button onclick="skip(-30)">-30д</button>

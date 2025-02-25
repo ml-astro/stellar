@@ -1,8 +1,6 @@
-var today = new Date()
-var currentDate = today
+var currentDate = new Date()
 const reference = new Date(2000, 0, 1, 0, 0)
 var d = (currentDate - reference) / 86400000
-document.getElementById('date').innerHTML+=currentDate.getDate() + '.' + (currentDate.getMonth()+1) + '.' + currentDate.getFullYear()
 let zoom = 0.2;
 let info = false
 let namesVisible = false
@@ -181,12 +179,9 @@ function toDegrees(radians) {
 }
 
 function skip(days) {
-    
+
     currentDate.setDate(currentDate.getDate() + days);
     d = (currentDate - reference) / 86400000
-    document.getElementById('date').innerHTML=''
-    document.getElementById('date').innerHTML+=currentDate.getDate() + '.' + (currentDate.getMonth()+1) + '.' + currentDate.getFullYear()
-    console.log(currentDate);
     planets.forEach(planet => {
         calculatePositions(planet)
         calculateDistances()
@@ -252,7 +247,7 @@ function toggleInfo() {
         distancesVisible = true
     }
     else {
-        distancesVisible= false
+        distancesVisible = false
     }
     drawSystem()
     calculateDistances()
@@ -276,12 +271,14 @@ function drawSystem() {
         ctx.beginPath()
         ctx.arc(canvas.width / 2, canvas.height / 2, planet.orbit * 50 / zoom, 0, 2 * Math.PI)
         ctx.stroke();
+        ctx.font = "80% Arial";
+        let month = currentDate.getMonth() + 1
+        if (month < 10) { month = '0' + month }
+        ctx.fillText(currentDate.getDate() + '.' + month + '.' + currentDate.getFullYear(), 10, 20);
         if (namesVisible) {
-            ctx.font = "80% Arial";
-            ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom +18 + canvas.height / 2);
+            ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 18 + canvas.height / 2);
         }
         if (distancesVisible) {
-            ctx.font = "80% Arial";
             if (planet.name != 'Земля') {
                 ctx.fillText(planet.distance, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 32 + canvas.height / 2);
             }
