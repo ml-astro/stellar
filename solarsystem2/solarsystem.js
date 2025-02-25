@@ -31,8 +31,17 @@ window.addEventListener('keydown', e => {
             break;
         case '-': zoomView('out');
             break;
+        case 'd': skip(1);
+            break;
+        case 's': skip(-1);
+            break;
+        case 'в': skip(1);
+            break;
+        case 'ы': skip(-1);
+            break;
     }
 })
+
 window.addEventListener('wheel', e => {
     (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
 })
@@ -218,8 +227,8 @@ function calculatePositions(planet) {
     planet.x = r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.y = r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.orbit = Math.sqrt(planet.x ** 2 + planet.y ** 2)
+
     //let longitude = (toDegrees(Math.atan2(y, x)) + 360) % 360
-    //perhaps i should check info flags here in order to call these functions
 }
 
 //расчет расстояний от земли - после расчета положений
@@ -274,13 +283,16 @@ function drawSystem() {
         ctx.font = "100% Arial";
         let month = currentDate.getMonth() + 1
         if (month < 10) { month = '0' + month }
-        ctx.fillText(currentDate.getDate() + '.' + month + '.' + currentDate.getFullYear(), 10, 20);
+        ctx.fillStyle = "white";
+        ctx.fillText(currentDate.getDate() + '.' + month + '.' + currentDate.getFullYear(), 30, 30);
         ctx.font = "80% Arial";
         if (namesVisible) {
+            ctx.fillStyle = planet.color;
             ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 18 + canvas.height / 2);
         }
         if (distancesVisible) {
             if (planet.name != 'Земля') {
+                ctx.fillStyle = planet.color;
                 ctx.fillText(planet.distance, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 32 + canvas.height / 2);
             }
         }
