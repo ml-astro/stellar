@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
-    
+
     <div class="system">
     </div>
     <script src="./solarsystem.js"></script>
@@ -15,19 +17,22 @@
 
     </div>
     <div id="buttonBlock">
-    <div class="zoomcontrols">
-        <button onclick="zoomView('out')">-</button>
-        <button onclick="zoomView('in')">+</button>
-        <button onclick="toggleNames()">Названия</button>
-        <button onclick="toggleInfo()">Инфо</button>
+        <div class="zoomcontrols">
+            <button onclick="zoomView('out')">-</button>
+            <button onclick="zoomView('in')">+</button>
+            <button onclick="toggleNames()">Названия</button>
+            <button onclick="toggleInfo()">Расстояния</button>
+        </div>
+        <div class="zoomcontrols">
+            <button onclick="skip(-30)">-30д</button>
+            <button onclick="skip(-10)">-10д</button>
+            <button onclick="skip(-1)">-1д</button>
+            <button onclick="skip(1)">+1д</button>
+            <button onclick="skip(10)">+10д</button>
+            <button onclick="skip(30)">+30д</button>
+        </div>
     </div>
-    <div class="zoomcontrols">
-        <button onclick="skip(-10)">-10д</button>
-        <button onclick="skip(-1)">-1д</button>
-        <button onclick="skip(1)">+1д</button>
-        <button onclick="skip(10)">+10д</button>
-      </div>
-    </div>
-    
+
 </body>
+
 </html>
