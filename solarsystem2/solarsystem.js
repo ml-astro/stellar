@@ -7,7 +7,7 @@ let zoom = 150;
 let info = false
 let namesVisible = false
 let distancesVisible = false
-
+let animate
 
 //-------------- CREATING CANVAS --------------------///
 
@@ -174,8 +174,28 @@ function toDegrees(radians) {
     return radians * (180 / Math.PI)
 }
 
-function skip(days) {
+function animationStep(x) {
+    clearInterval(animate)
+    step = 5;
 
+    //and add days to for next frame
+    animate = setInterval(() => {
+        currentDate.setDate(currentDate.getDate() + 5);
+        d = (currentDate - reference) / 86400000
+        planets.forEach(planet => {
+            calculatePositions(planet)
+            calculateDistances()
+        })
+        drawSystem()
+    }, 100);
+}
+
+//stop animation
+function stop() {
+    clearInterval(animate);
+}
+
+function skip(days) {
     currentDate.setDate(currentDate.getDate() + days);
     d = (currentDate - reference) / 86400000
     planets.forEach(planet => {
@@ -262,6 +282,7 @@ function drawSystem() {
     ctx.fill();
 
     planets.forEach(planet => {
+
         //draw planet
         ctx.beginPath();
         ctx.arc(planet.x * zoom + canvas.width / 2, -planet.y * zoom + canvas.height / 2, 4, 0, 2 * Math.PI); //planets
@@ -272,7 +293,7 @@ function drawSystem() {
         ctx.setLineDash([1, 5]);
         ctx.strokeStyle = planet.color;
         ctx.beginPath()
-        drawOrbit(planet.a, planet.e, planet.w,planet.xoffset,planet.yoffset);
+        drawOrbit(planet.a, planet.e, planet.w, planet.xoffset, planet.yoffset);
         //круговые орбиты
         //ctx.arc(canvas.width / 2, canvas.height / 2, planet.orbit * zoom, 0, 2 * Math.PI)
         ctx.stroke();
@@ -301,9 +322,9 @@ function drawSystem() {
     });
 }
 
-function drawOrbit(a, e, omega,x,y) {
-    omega+=45 //вот такое говно
-    
+function drawOrbit(a, e, omega, x, y) {
+    omega += 45 //вот такое говно
+
     // Малая полуось
     let b = a * Math.sqrt(1 - e * e);
     let focusOffset = e * a; // Смещение фокуса (Солнца)
@@ -318,7 +339,7 @@ function drawOrbit(a, e, omega,x,y) {
     //3 малая полуось
     //4 большая полуось
     //5.6.7 не надо
-    ctx.ellipse((-focusOffset+x) * zoom, zoom*y, a * zoom, b * zoom, 0, 0, 2 * Math.PI);
+    ctx.ellipse((-focusOffset + x) * zoom, zoom * y, a * zoom, b * zoom, 0, 0, 2 * Math.PI);
     ctx.restore();
 }
 
