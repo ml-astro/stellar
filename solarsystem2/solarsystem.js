@@ -1,7 +1,7 @@
 var currentDate = new Date()
 const reference = new Date(2000, 0, 1, 0, 0)
 var d = (currentDate - reference) / 86400000
-let zoom = 0.2;
+let zoom = 150;
 let info = false
 let namesVisible = false
 let distancesVisible = false
@@ -199,13 +199,14 @@ function skip(days) {
 }
 
 function zoomView(mode) {
-    if (mode == 'in') {
-        if (zoom > 0.033) {
+
+    if (mode == 'out') {
+        if (zoom > 2) {
             zoom = zoom * 0.9;
         }
     }
-    if (mode == 'out') {
-        if (zoom < 10) {
+    if (mode == 'in') {
+        if (zoom < 800) {
             zoom = zoom * 1.1;
         }
     }
@@ -224,6 +225,7 @@ function calculatePositions(planet) {
     let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1 - e * Math.cos(toRadians(E0))) //eccentric anomaly
     let v = toDegrees(2 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(toRadians(E1) / 2))); //true anomaly
     let r = (a * (1 - e ** 2)) / (1 + e * Math.cos(toRadians(v))); //distance
+    planet.b = planet.a * Math.sqrt(1 - planet.e * planet.e);//semi minor axis
     planet.x = r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.y = r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.orbit = Math.sqrt(planet.x ** 2 + planet.y ** 2)
@@ -272,13 +274,16 @@ function drawSystem() {
 
     planets.forEach(planet => {
         ctx.beginPath();
-        ctx.setLineDash([2, 5]);
-        ctx.arc(planet.x * 50 / zoom + canvas.width / 2, -planet.y * 50 / zoom + canvas.height / 2, 4, 0, 2 * Math.PI);
+        ctx.arc(planet.x * zoom + canvas.width / 2, -planet.y * zoom + canvas.height / 2, 4, 0, 2 * Math.PI); //planets
         ctx.fillStyle = planet.color;
         ctx.fill();
+
+        ctx.setLineDash([2, 5]);
         ctx.strokeStyle = planet.color;
         ctx.beginPath()
-        ctx.arc(canvas.width / 2, canvas.height / 2, planet.orbit * 50 / zoom, 0, 2 * Math.PI)
+        drawOrbit(planet.a, planet.e, planet.w);
+        //drawOrbit(0.3871,0.205636,29.1241)
+        //ctx.arc(canvas.width / 2, canvas.height / 2, planet.orbit * zoom, 0, 2 * Math.PI)
         ctx.stroke();
         ctx.font = "100% Arial";
         let month = currentDate.getMonth() + 1
@@ -288,14 +293,46 @@ function drawSystem() {
         ctx.font = "80% Arial";
         if (namesVisible) {
             ctx.fillStyle = planet.color;
-            ctx.fillText(planet.name, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 18 + canvas.height / 2);
+            ctx.fillText(planet.name, planet.x * zoom - 5 + canvas.width / 2, -planet.y * zoom + 18 + canvas.height / 2);
         }
         if (distancesVisible) {
             if (planet.name != 'Земля') {
                 ctx.fillStyle = planet.color;
-                ctx.fillText(planet.distance, planet.x * 50 / zoom - 5 + canvas.width / 2, -planet.y * 50 / zoom + 32 + canvas.height / 2);
+                ctx.fillText(planet.distance, planet.x * zoom - 5 + canvas.width / 2, -planet.y * zoom + 32 + canvas.height / 2);
             }
         }
     });
-
 }
+
+
+
+/*
+ctx.beginPath();
+drawOrbit(0.3871, 0.205636, 29.1241)
+ctx.stroke();
+ctx.beginPath();
+drawOrbit(1.523688, 0.093405, 286.5016)
+ctx.stroke();
+*/
+
+function drawOrbit(a, e, omega) {
+    //b=0.3788271110382742; // Малая полуось
+    let focusOffset = e * a; // Смещение фокуса (Солнца)
+    //console.log(omega);
+    let b = a * Math.sqrt(1 - e * e);
+
+    ctx.save();
+    ctx.translate(canvas.clientWidth / 2, canvas.clientHeight / 2); // Перемещаем центр
+    ctx.rotate(((-omega) * Math.PI) / 180); // Поворот эллипса
+
+    ctx.beginPath();
+    //1 смещение по х - focus offset - смещение фокуса эллипса от центра - к солнцу
+    //2 смещение по оси у
+    //3 малая полуось
+    //4 большая полуось
+    //5.6.7 не надо
+    //ctx.ellipse(-focusOffset * zoom, 0, a * zoom, b * zoom, 0, 0, 2 * Math.PI);
+    ctx.ellipse(-focusOffset * zoom, 0, a * zoom, b * zoom, 0, 0, 2 * Math.PI);
+    ctx.restore();
+}
+
