@@ -14,19 +14,20 @@
     <script src="./solarsystem.js"></script>
     <div class="legend">
         <button onclick="toggleNames()">Названия</button><br>
-        <button onclick="toggleInfo()">Расстояния</button>
+        <button onclick="toggleInfo()">( i )</button>
     </div>
     <div class="zoom">
         <button onclick="zoomView('in')">+</button>
         <button onclick="zoomView('out')">-</button>
     </div>
     <div class="skip">
+        <button onclick="skip(-365)">-Г</button>
         <button onclick="skip(-30)">-30</button>
         <button onclick="skip(-10)">-10</button>
         <button onclick="skip(-1)">-1</button>
         <button onclick="skip(1)">+1</button>
         <button onclick="skip(10)">+10</button>
-        <button onclick="skip(30)">+30</button>
+        <button onclick="skip(365)">+Г</button>
     </div>
 
 </body>
