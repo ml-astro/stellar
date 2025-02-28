@@ -263,8 +263,8 @@ function displayInfo() {
     planets.forEach(planet => {
         if (!isNaN(planet.num)) {
             let tr = document.getElementsByTagName('tr')[planet.num + 1]
-            tr.getElementsByTagName('td')[1].innerHTML = planet.distance * 149.6 + ' м.км'
-            tr.getElementsByTagName('td')[2].innerHTML = calculateElongation(planet)
+            tr.getElementsByTagName('td')[1].innerHTML = Math.round(planet.distance * 149.6) + ' м.км'
+            tr.getElementsByTagName('td')[2].innerHTML = Math.round(calculateElongation(planet))+'&deg;'
             tr.getElementsByTagName('td')[3].innerHTML = calculatePhase(planet)
             tr.getElementsByTagName('td')[4].innerHTML = calculateMag(planet)
         }
@@ -279,19 +279,17 @@ function displayInfo() {
 function calculateElongation(planet) {
     let a = planet.distance
     let b = planet.r
-    let c = planets[2].r
-    //console.log(Math.acos((a + c * c - b * b) / (2 * a * c)));
-    console.log(((a + c * c - b * b) / (2 * a * c)));
-    let elongation = toDegrees(Math.acos((a + c * c - b * b) / (2 * a * c)))
+    let c = planets[2].r   
+    let elongation = toDegrees(Math.acos((a * a + c * c - b * b) / (2 * a * c)))
     return elongation
 }
 
 function calculatePhase() {
-    return 'phase'
+    return '%'
 }
 
 function calculateMag() {
-    return 'magnitude'
+    return 'M'
 }
 
 //показать названия
