@@ -9,6 +9,8 @@ let namesVisible = false
 let distancesVisible = false
 let animate
 
+var modal = document.getElementsByClassName('modal')[0]
+
 //-------------- CREATING CANVAS --------------------///
 
 const system = document.createElement("canvas");
@@ -48,10 +50,10 @@ window.addEventListener('wheel', e => {
     (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
 })
 
-
 //----------------------------------- PLANETS DATA ----------------------------//
 const planets = [
     {
+        num: 0,
         name: 'Меркурий',
         color: "#918E87",
         N: 48.33076593,
@@ -60,11 +62,12 @@ const planets = [
         a: 0.38709927,
         e: 0.20563593,
         M: 103.9465,
-        dM: 4.0923344368,
+        dM: 4.09234043,
         xoffset: 0,
         yoffset: 0
     },
     {
+        num: 1,
         name: 'Венера',
         color: "#D9C091",
         N: 76.67984255,
@@ -73,7 +76,7 @@ const planets = [
         a: 0.72333566,
         e: 0.00677672,
         M: 280.074910,
-        dM: 1.6021302244,
+        dM: 1.602144,
         xoffset: 0,
         yoffset: 0
     },
@@ -86,12 +89,13 @@ const planets = [
         a: 1.00000261,
         e: 0.01671123,
         M: 357.6180389,
-        dM: 0.9856002585,
+        dM: 0.985578,
         //сраные костыли!
         xoffset: 0.01,
         yoffset: 0.015
     },
     {
+        num: 2,
         name: 'Марс',
         color: "#C1440E",
         N: 49.55953891,
@@ -100,11 +104,12 @@ const planets = [
         a: 1.52371034,
         e: 0.09339410,
         M: 124.444888195,
-        dM: 0.5240207766,
+        dM: 0.524009568,
         xoffset: 0,
         yoffset: 0
     },
     {
+        num: 3,
         name: 'Юпитер',
         color: "#D2B48C",
         N: 100.47390909,
@@ -113,11 +118,12 @@ const planets = [
         a: 5.20288700,
         e: 0.04838624,
         M: 59.073717,
-        dM: 0.0830853001,
+        dM: 0.08310048,
         xoffset: 0.1,
         yoffset: 0.2
     },
     {
+        num: 4,
         name: 'Сатурн',
         color: "#E6C28B",
         N: 113.66242448,
@@ -126,11 +132,12 @@ const planets = [
         a: 9.53667594,
         e: 0.05386179,
         M: 265.2373659,
-        dM: 0.0334442282,
+        dM: 0.03335988,
         xoffset: 0.3,
         yoffset: 0.5
     },
     {
+        num: 5,
         name: 'Уран',
         color: "#7FBCD2",
         N: 74.01692503,
@@ -139,11 +146,12 @@ const planets = [
         a: 19.18916464,
         e: 0.04725744,
         M: 255.880997,
-        dM: 0.011725806,
+        dM: 0.011623387,
         xoffset: 0.2,
         yoffset: 0.4
     },
     {
+        num: 6,
         name: 'Нептун',
         color: "#7F88AA",
         N: 131.78422574,
@@ -152,7 +160,7 @@ const planets = [
         a: 30.06992276,
         e: 0.00859048,
         M: 320.068409,
-        dM: 0.005995147,
+        dM: 0.005942,
         xoffset: 0,
         yoffset: 0
     }
@@ -206,7 +214,6 @@ function skip(days) {
 }
 
 function zoomView(mode) {
-
     if (mode == 'out') {
         if (zoom > 2) {
             zoom = zoom * 0.9;
@@ -220,7 +227,7 @@ function zoomView(mode) {
     drawSystem()
 }
 
-//расчет положений планет - в объекты
+//расчет положений планет, радиуса вектора, угла
 function calculatePositions(planet) {
     let N = planet.N// + planet.dN * d //Long of asc. node    
     let i = planet.i// + planet.di * d //Inclination
@@ -234,20 +241,57 @@ function calculatePositions(planet) {
     let E0 = M + (180 / Math.PI) * e * Math.sin(toRadians(M)) * (1 + e * Math.cos(toRadians(M))) //eccentric anomaly
     let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1 - e * Math.cos(toRadians(E0))) //eccentric anomaly
     let v = toDegrees(2 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(toRadians(E1) / 2))); //true anomaly
-    let r = (a * (1 - e * e)) / (1 + e * Math.cos(toRadians(v))); //distance
-    planet.x = r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
-    planet.y = r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
-    //planet.orbit = Math.sqrt(planet.x ** 2 + planet.y ** 2)
-
-    //let longitude = (toDegrees(Math.atan2(y, x)) + 360) % 360
+    planet.r = (a * (1 - e * e)) / (1 + e * Math.cos(toRadians(v))); //current distance from sun
+    planet.x = planet.r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
+    planet.y = planet.r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
+    planet.longitude = (toDegrees(Math.atan2(planet.y, planet.x)) + 360) % 360
 }
 
 //расчет расстояний от земли - после расчета положений
 function calculateDistances() {
     planets.forEach(planet => {
-        if (planet.name != 'Земля') { planet.distance = Math.round((Math.sqrt(Math.abs(planets[2].x - planet.x) ** 2 + Math.abs(planets[2].y - planet.y) ** 2)) * 10) / 10 + ' а.е.' }
+        if (planet.name != 'Земля') {
+            planet.distance = Math.round((Math.sqrt(Math.abs(planets[2].x - planet.x) ** 2 + Math.abs(planets[2].y - planet.y) ** 2)) * 100) / 100
+        }
+        planets[2].distance = planets[2].r
     });
     drawSystem()
+    displayInfo()
+}
+
+function displayInfo() {
+    planets.forEach(planet => {
+        if (!isNaN(planet.num)) {
+            let tr = document.getElementsByTagName('tr')[planet.num + 1]
+            tr.getElementsByTagName('td')[1].innerHTML = planet.distance * 149.6 + ' м.км'
+            tr.getElementsByTagName('td')[2].innerHTML = calculateElongation(planet)
+            tr.getElementsByTagName('td')[3].innerHTML = calculatePhase(planet)
+            tr.getElementsByTagName('td')[4].innerHTML = calculateMag(planet)
+        }
+    })
+}
+
+//a - earth to planet
+//b - sun to planet
+//c - sun to earth
+//A - angle planet - sun - earth
+//B - angle sun - earth - planet = elongation
+function calculateElongation(planet) {
+    let a = planet.distance
+    let b = planet.r
+    let c = planets[2].r
+    //console.log(Math.acos((a + c * c - b * b) / (2 * a * c)));
+    console.log(((a + c * c - b * b) / (2 * a * c)));
+    let elongation = toDegrees(Math.acos((a + c * c - b * b) / (2 * a * c)))
+    return elongation
+}
+
+function calculatePhase() {
+    return 'phase'
+}
+
+function calculateMag() {
+    return 'magnitude'
 }
 
 //показать названия
@@ -265,9 +309,11 @@ function toggleNames() {
 function toggleInfo() {
     if (!distancesVisible) {
         distancesVisible = true
+        modal.style.display = 'initial'
     }
     else {
         distancesVisible = false
+        modal.style.display = 'none'
     }
     drawSystem()
     calculateDistances()
@@ -313,12 +359,12 @@ function drawSystem() {
         }
 
         //show distances
-        if (distancesVisible) {
+        /*if (distancesVisible) {
             if (planet.name != 'Земля') {
                 ctx.fillStyle = planet.color;
                 ctx.fillText(planet.distance, planet.x * zoom - 5 + canvas.width / 2, -planet.y * zoom + 32 + canvas.height / 2);
             }
-        }
+        }*/
     });
 }
 

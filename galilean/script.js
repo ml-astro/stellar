@@ -100,7 +100,6 @@ if (deltaX < 0 && deltaY < 0) {
 if (deltaX > 0 && deltaY < 0) {
     deltaY = Math.abs(deltaY)
     viewAngle = toDegrees(Math.atan(deltaX / deltaY)) + 270
-
 }
 
 

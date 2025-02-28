@@ -59,6 +59,31 @@ button {
   padding: 20px;
 }
 
+.modal {
+  display: none;
+  color: white;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20%;
+  margin-inline: auto;
+  width: fit-content;
+}
+
+.modal table {
+  line-height: 2;
+  width: 50vw;
+  min-width: 400px;
+  max-width: 600px;
+}
+
+.modal tr:nth-child(odd) {
+  background-color: rgba(56, 56, 56, 0.546);
+}
+
+.modal tr:nth-child(even) {
+  background-color: rgba(43, 43, 43, 0.546);
+}
 
 @media only screen and (max-width: 600px) {
   .zoom {
