@@ -264,7 +264,7 @@ function displayInfo() {
         if (!isNaN(planet.num)) {
             let tr = document.getElementsByTagName('tr')[planet.num + 1]
             tr.getElementsByTagName('td')[1].innerHTML = Math.round(planet.distance * 149.6) + ' м.км'
-            tr.getElementsByTagName('td')[2].innerHTML = Math.round(calculateElongation(planet))+'&deg;'
+            tr.getElementsByTagName('td')[2].innerHTML = calculateElongation(planet)+'&deg;'
             tr.getElementsByTagName('td')[3].innerHTML = calculatePhase(planet)
             tr.getElementsByTagName('td')[4].innerHTML = calculateMag(planet)
         }
@@ -280,16 +280,30 @@ function calculateElongation(planet) {
     let a = planet.distance
     let b = planet.r
     let c = planets[2].r   
-    let elongation = toDegrees(Math.acos((a * a + c * c - b * b) / (2 * a * c)))
-    return elongation
+    planet.elongation = toDegrees(Math.acos((a * a + c * c - b * b) / (2 * a * c)))
+    return Math.round(planet.elongation)
 }
 
-function calculatePhase() {
-    return '%'
+
+//для внутренних и внешних планет отдельная формула?
+function calculatePhase(planet) {
+    let difference = Math.abs(planet.longitude-planets[2].longitude)
+    if(difference>180) {
+        difference = Math.abs(360-difference)
+    }
+    planet.phaseangle = planet.elongation + difference
+    //console.log(difference);
+        /*let longitudeDifference = Math.abs(planet.longitude-planets[2].longitude)
+    if(longitudeDifference > 180) {
+        longitudeDifference = Math.abs(longitudeDifference-360)
+        //вывернули угол
+    }
+    let angle = 180 - Math.abs(longitudeDifference - planet.elongation)*/
+    return (' ')
 }
 
 function calculateMag() {
-    return 'M'
+    return ''
 }
 
 //показать названия
