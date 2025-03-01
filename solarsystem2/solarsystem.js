@@ -179,7 +179,7 @@ function toRadians(degrees) {
 }
 
 function toDegrees(radians) {
-    return radians * (180 / Math.PI)
+    return radians * (180.0 / Math.PI)
 }
 
 function animationStep(x) {
@@ -238,10 +238,10 @@ function calculatePositions(planet) {
     //put the updated numbers for dM later from horizons interface
     let M = (planet.M + planet.dM * d) % 360 + 360 //Mean anonaly
 
-    let E0 = M + (180 / Math.PI) * e * Math.sin(toRadians(M)) * (1 + e * Math.cos(toRadians(M))) //eccentric anomaly
-    let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1 - e * Math.cos(toRadians(E0))) //eccentric anomaly
-    let v = toDegrees(2 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(toRadians(E1) / 2))); //true anomaly
-    planet.r = (a * (1 - e * e)) / (1 + e * Math.cos(toRadians(v))); //current distance from sun
+    let E0 = M + (180 / Math.PI) * e * Math.sin(toRadians(M)) * (1.0 + e * Math.cos(toRadians(M))) //eccentric anomaly
+    let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1.0 - e * Math.cos(toRadians(E0))) //eccentric anomaly
+    let v = toDegrees(2.0 * Math.atan(Math.sqrt((1.0 + e) / (1.0 - e)) * Math.tan(toRadians(E1) / 2.0))); //true anomaly
+    planet.r = (a * (1.0 - e * e)) / (1.0 + e * Math.cos(toRadians(v))); //current distance from sun
     planet.x = planet.r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.y = planet.r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.longitude = (toDegrees(Math.atan2(planet.y, planet.x)) + 360) % 360
@@ -251,7 +251,7 @@ function calculatePositions(planet) {
 function calculateDistances() {
     planets.forEach(planet => {
         if (planet.name != 'Земля') {
-            planet.distance = Math.round((Math.sqrt(Math.abs(planets[2].x - planet.x) ** 2 + Math.abs(planets[2].y - planet.y) ** 2)) * 100) / 100
+            planet.distance = (Math.sqrt((planets[2].x - planet.x) ** 2 + (planets[2].y - planet.y) ** 2))
         }
         planets[2].distance = planets[2].r
     });
@@ -287,18 +287,12 @@ function calculateElongation(planet) {
 
 //для внутренних и внешних планет отдельная формула?
 function calculatePhase(planet) {
-    let difference = Math.abs(planet.longitude-planets[2].longitude)
-    if(difference>180) {
-        difference = Math.abs(360-difference)
+    let longitudeDifference = Math.abs(planet.longitude-planets[2].longitude)
+    if(longitudeDifference>180) {
+        longitudeDifference = 360-longitudeDifference
     }
-    planet.phaseangle = planet.elongation + difference
-    //console.log(difference);
-        /*let longitudeDifference = Math.abs(planet.longitude-planets[2].longitude)
-    if(longitudeDifference > 180) {
-        longitudeDifference = Math.abs(longitudeDifference-360)
-        //вывернули угол
-    }
-    let angle = 180 - Math.abs(longitudeDifference - planet.elongation)*/
+    planet.phaseangle = (longitudeDifference + planet.elongation)
+    console.log('angle = ' + planet.longitude);
     return (' ')
 }
 
