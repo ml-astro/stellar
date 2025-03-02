@@ -89,13 +89,23 @@
         <button onclick="zoomView('out')">-</button>
     </div>
     <div class="skip">
-        <button onclick="skip(-365)">-Г</button>
+        <!--<button onclick="skip(-365)">-Г</button>
         <button onclick="skip(-10)">-10</button>
-        <button onclick="skip(-1)">-1</button>
+        <button onclick="skip(-1)">-1</button>-->
         <button id="play">></button>
-        <button onclick="skip(1)">+1</button>
+        <!--<button onclick="skip(1)">+1</button>
         <button onclick="skip(10)">+10</button>
-        <button onclick="skip(365)">+Г</button>
+        <button onclick="skip(365)">+Г</button>-->
+    </div>
+
+    <div id="calendar">
+        <p>10.03.1990</p>
+        <div class="day top" onclick="skip(1)"></div>
+        <div class="month top" onclick="skip(30)"></div>
+        <div class="year top" onclick="skip(366)"></div>
+        <div class="day btm" onclick="skip(-1)"></div>
+        <div class="month btm" onclick="skip(-30)"></div>
+        <div class="year btm" onclick="skip(-365)"></div>
     </div>
     <script src="./solarsystem.js"></script>
 

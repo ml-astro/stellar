@@ -46,9 +46,9 @@ button {
 }
 
 .skip {
-  position: absolute;
+  /*position: absolute;
   left: 0;
-  right: 0;
+  right: 0;*/
   margin-inline: auto;
   width: fit-content;
   bottom: 30px;
@@ -57,6 +57,50 @@ button {
 .skip button {
   font-size: 120%;
   padding: 20px;
+}
+
+#calendar {
+  position: absolute;
+  user-select: none;
+  width: 250px;
+  height: 100px;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  margin-inline: auto;
+  padding: 0;
+}
+
+#calendar p {
+  z-index: -1000;
+  user-select: none;
+  position: absolute;
+  font-size: 48px;
+  margin: 0;
+  padding-top: 24px;
+  color: #FFF;
+}
+
+#calendar div {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  background-color: rgba(60, 60, 60, .3);
+}
+
+.day {
+  width: 60px;
+  height: 49%;
+}
+
+.month {
+  width: 60px;
+  height: 49%;
+}
+
+.year {
+  width: 120px;
+  height: 49%;
 }
 
 .modal {

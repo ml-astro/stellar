@@ -371,6 +371,15 @@ function toggleInfo() {
     }
 }
 
+function showDate() {
+    let day = currentDate.getDate()
+    if (day < 10) { day = '0' + day }
+    let month = currentDate.getMonth() + 1
+    if (month < 10) { month = '0' + month }
+    let year = currentDate.getFullYear()
+    document.querySelector('#calendar p').innerHTML=day+'.'+month+'.'+year
+}
+
 //нарисовать систему на холсте
 function drawSystem() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -378,7 +387,7 @@ function drawSystem() {
     ctx.arc(canvas.width / 2, canvas.height / 2, 6, 0, 2 * Math.PI);
     ctx.fillStyle = "yellow";
     ctx.fill();
-
+    showDate()
     planets.forEach(planet => {
         //draw planet
         ctx.beginPath();
@@ -392,11 +401,13 @@ function drawSystem() {
         drawOrbit(planet.a, planet.e, planet.w, planet.xoffset, planet.yoffset)
         ctx.stroke();
         //show date
-        ctx.font = "100% Arial";
+        /*ctx.font = "100% Arial";
+        let day = currentDate.getDate()
+        if (day < 10) { day = '0' + day }
         let month = currentDate.getMonth() + 1
         if (month < 10) { month = '0' + month }
         ctx.fillStyle = "white";
-        ctx.fillText(currentDate.getDate() + '.' + month + '.' + currentDate.getFullYear(), 30, 30);
+        ctx.fillText(day + '.' + month + '.' + currentDate.getFullYear(), 30, 30);*/
         //show names
         ctx.font = "80% Arial";
         if (namesVisible) {
