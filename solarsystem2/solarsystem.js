@@ -1,11 +1,12 @@
 //добавить видимый размер и на основе размера и фазы - блеск
+//переведи все ае в км
 
 var currentDate = new Date()
 
 //элементы орбит опираются на эту дату:
 const reference = new Date(2025, 0, 1, 0, 0)
 var d = (currentDate - reference) / 86400000
-let zoom = 150;
+let zoom = 2.5;
 //let info = false
 let namesVisible = false
 let isInfoActive = false
@@ -48,7 +49,7 @@ window.addEventListener('keydown', e => {
         case 'i': toggleInfo();
             break;
         case 'n': toggleNames();
-            break;        
+            break;
     }
 })
 
@@ -60,14 +61,14 @@ let button = document.getElementById('play')
 let intervalid
 
 button.addEventListener('click', () => {
-    if(!intervalid){
-        intervalid=setInterval(()=>{
+    if (!intervalid) {
+        intervalid = setInterval(() => {
             skip(3)
-        },100)
+        }, 100)
     }
     else {
         clearInterval(intervalid)
-        intervalid=null
+        intervalid = null
     }
 })
 
@@ -75,13 +76,17 @@ button.addEventListener('click', () => {
 //----------------------------------- PLANETS DATA ----------------------------//
 const planets = [
     {
+        //in million km
         num: 0,
         name: 'Меркурий',
         color: "#918E87",
+        size: 0.00244,
+        mag0: 0,
         N: 48.2998053, //OM
         i: 7.003502, //IN
         w: 29.1956, //W
-        a: 0.38709857, //A
+        //a: 0.38709857, //A
+        a: 57.909,
         e: 0.20563889, //EC
         M: 103.9465, //MA
         dM: 4.09234043, //N
@@ -92,10 +97,13 @@ const planets = [
         num: 1,
         name: 'Венера',
         color: "#D9C091",
+        size: 0.006052,
+        mag0: 0,
         N: 76.61185393,
         i: 3.3943933,
         w: 55.15075,
-        a: 0.7233282,
+        //a: 0.7233282,
+        a: 108.20835,
         e: 0.00674678,
         M: 280.074910,
         dM: 1.602144,
@@ -108,22 +116,26 @@ const planets = [
         N: 190.71637577,
         i: 0.00297708,
         w: 272.9783,
-        a: 1.00091255,
+        //a: 1.00091255,
+        a: 149.734386,
         e: 0.0175619,
         M: 357.412225,
         dM: 0.984262,
         //сраные костыли!
-        xoffset: 0.04,
+        xoffset: 4,
         yoffset: 0
     },
     {
         num: 2,
         name: 'Марс',
         color: "#C1440E",
+        size: 0.003389,
+        mag0: 0,
         N: 49.48673,
         i: 1.84758,
         w: 286.7115,
-        a: 1.523737,
+        //a: 1.523737,
+        a: 227.948,
         e: 0.0934303,
         M: 124.444888,
         dM: 0.524009568,
@@ -134,52 +146,63 @@ const planets = [
         num: 3,
         name: 'Юпитер',
         color: "#D2B48C",
+        size: 0.069911,
+        mag0: 0,
         N: 100.52021,
         i: 1.30346,
         w: 273.609,
-        a: 5.202827,
+        //a: 5.202827,
+        a: 778.33186,
         e: 0.0483062,
         M: 58.982826,
         dM: 0.08309065,
-        xoffset: 0.1,
-        yoffset: 0.2
+        xoffset: 15,
+        yoffset: 25
     },
     {
         num: 4,
         name: 'Сатурн',
         color: "#E6C28B",
+        size: 0.058232,
+        mag0: 0,
         N: 113.5596,
         i: 2.485819,
         w: 337.1664,
-        a: 9.55568,
+        //a: 9.55568,
+        a: 1429.50914,
         e: 0.0522302,
         M: 264.9878,
         dM: 0.03337136,
-        xoffset: 0.3,
-        yoffset: 0.5
+        xoffset: 40,
+        yoffset: 60
     },
     {
         num: 5,
         name: 'Уран',
         color: "#7FBCD2",
-        N: 74.012654,
+        size:0.025362,
+        N: 0.025362,
         i: 0.772897,
         w: 90.4959,
-        a: 19.30135,
+        //a: 19.30135,
+        a: 2887.44094,
         e: 0.0456241,
         M: 255.88225,
         dM: 0.01162337,
-        xoffset: 0.2,
-        yoffset: 0.4
+        xoffset:20,
+        yoffset: -100
     },
     {
         num: 6,
         name: 'Нептун',
         color: "#7F88AA",
+        size: 0.024622,
+        mag0: 0,
         N: 131.9474,
         i: 1.77485,
         w: 268.1154,
-        a: 30.1836,
+        //a: 30.1836,
+        a: 4515.4065,
         e: 0.012661,
         M: 319.6851,
         dM: 0.005944,
@@ -231,7 +254,7 @@ function skip(days) {
     planets.forEach(planet => {
         calculatePosition(planet)
     })
-    if(isInfoActive){
+    if (isInfoActive) {
         calculateDistances()
     }
     drawSystem()
@@ -239,12 +262,12 @@ function skip(days) {
 
 function zoomView(mode) {
     if (mode == 'out') {
-        if (zoom > 2) {
+        if (zoom > 0.03) {
             zoom = zoom * 0.9;
         }
     }
     if (mode == 'in') {
-        if (zoom < 800) {
+        if (zoom < 10) {
             zoom = zoom * 1.1;
         }
     }
@@ -264,6 +287,7 @@ function calculatePosition(planet) {
     let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1.0 - e * Math.cos(toRadians(E0))) //eccentric anomaly
     let v = toDegrees(2.0 * Math.atan(Math.sqrt((1.0 + e) / (1.0 - e)) * Math.tan(toRadians(E1) / 2.0))); //true anomaly
     planet.r = (a * (1.0 - e * e)) / (1.0 + e * Math.cos(toRadians(v))); //current distance from sun
+
     planet.x = planet.r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.y = planet.r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.longitude = (toDegrees(Math.atan2(planet.y, planet.x)) + 360) % 360
@@ -284,9 +308,10 @@ function displayInfo() {
     planets.forEach(planet => {
         if (!isNaN(planet.num)) {
             let tr = document.getElementsByTagName('tr')[planet.num + 1]
-            tr.getElementsByTagName('td')[1].textContent = Math.round(planet.distance * 149.6) + ' м.км'
-            tr.getElementsByTagName('td')[2].textContent = Math.round(calculateElongation(planet))+'\u00B0'
+            tr.getElementsByTagName('td')[1].textContent = Math.round(planet.distance) + ' м.км'
+            tr.getElementsByTagName('td')[2].textContent = Math.round(calculateElongation(planet)) + '\u00B0'
             tr.getElementsByTagName('td')[3].textContent = Math.round(calculatePhase(planet)) + '%'
+            tr.getElementsByTagName('td')[4].textContent = Math.round(calculateSize(planet)) + '"'
         }
     })
 }
@@ -300,32 +325,39 @@ function calculateElongation(planet) {
     let a = planet.distance
     let b = planet.r
     let c = planets[2].r
-    let elongation   
+    let elongation
     elongation = toDegrees(Math.acos((a * a + c * c - b * b) / (2 * a * c)))
-    if(!isNaN(elongation)){
-        planet.elongation= elongation
+    if (!isNaN(elongation)) {
+        planet.elongation = elongation
     }
     return (planet.elongation)
 }
 
+function calculateSize(planet){
+    let size = planet.size/planet.distance*206265*2
+    console.log(planet.size + ' '+planet.distance);
+    
+    return size
+}
+
 function calculatePhase(planet) {
-    let longitudeDifference = Math.abs(planet.longitude-planets[2].longitude)
-    if(longitudeDifference>180) {
-        longitudeDifference = 360-longitudeDifference
+    let longitudeDifference = Math.abs(planet.longitude - planets[2].longitude)
+    if (longitudeDifference > 180) {
+        longitudeDifference = 360 - longitudeDifference
     }
     planet.phaseangle = Math.round(longitudeDifference + planet.elongation)
-    if(planet.phaseangle > 180){
+    if (planet.phaseangle > 180) {
         planet.phaseangle = 180
     }
     let phase
     if (planet.phaseangle < 90) {
-        phase = ((1.0-Math.cos(planet.phaseangle*0.017453292))/2.0)*100;
+        phase = ((1.0 - Math.cos(planet.phaseangle * 0.017453292)) / 2.0) * 100;
     }
-    if (planet.phaseangle > 90){
-        phase = ((1.0+Math.cos((180-planet.phaseangle)*0.017453292))/2.0)*100;
+    if (planet.phaseangle > 90) {
+        phase = ((1.0 + Math.cos((180 - planet.phaseangle) * 0.017453292)) / 2.0) * 100;
     }
-    if(!isNaN(phase)){
-        planet.phase= phase
+    if (!isNaN(phase)) {
+        planet.phase = phase
     }
     return (planet.phase)
 }
