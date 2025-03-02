@@ -62,11 +62,13 @@ let intervalid
 
 button.addEventListener('click', () => {
     if (!intervalid) {
+        document.getElementById('play').innerHTML = '||'
         intervalid = setInterval(() => {
             skip(3)
         }, 100)
     }
     else {
+        document.getElementById('play').innerHTML = '>'
         clearInterval(intervalid)
         intervalid = null
     }
@@ -81,7 +83,7 @@ const planets = [
         name: 'Меркурий',
         color: "#918E87",
         size: 0.00244,
-        mag0: 0,
+        mag0: -0.42,
         N: 48.2998053, //OM
         i: 7.003502, //IN
         w: 29.1956, //W
@@ -98,7 +100,7 @@ const planets = [
         name: 'Венера',
         color: "#D9C091",
         size: 0.006052,
-        mag0: 0,
+        mag0: -4.4,
         N: 76.61185393,
         i: 3.3943933,
         w: 55.15075,
@@ -130,7 +132,7 @@ const planets = [
         name: 'Марс',
         color: "#C1440E",
         size: 0.003389,
-        mag0: 0,
+        mag0: -1.52,
         N: 49.48673,
         i: 1.84758,
         w: 286.7115,
@@ -147,7 +149,7 @@ const planets = [
         name: 'Юпитер',
         color: "#D2B48C",
         size: 0.069911,
-        mag0: 0,
+        mag0: -9.4,
         N: 100.52021,
         i: 1.30346,
         w: 273.609,
@@ -164,7 +166,7 @@ const planets = [
         name: 'Сатурн',
         color: "#E6C28B",
         size: 0.058232,
-        mag0: 0,
+        mag0: -8.88,
         N: 113.5596,
         i: 2.485819,
         w: 337.1664,
@@ -180,7 +182,8 @@ const planets = [
         num: 5,
         name: 'Уран',
         color: "#7FBCD2",
-        size:0.025362,
+        size: 0.025362,
+        mag0: -7.19,
         N: 0.025362,
         i: 0.772897,
         w: 90.4959,
@@ -189,7 +192,7 @@ const planets = [
         e: 0.0456241,
         M: 255.88225,
         dM: 0.01162337,
-        xoffset:20,
+        xoffset: 20,
         yoffset: -100
     },
     {
@@ -197,7 +200,7 @@ const planets = [
         name: 'Нептун',
         color: "#7F88AA",
         size: 0.024622,
-        mag0: 0,
+        mag0: -6.87,
         N: 131.9474,
         i: 1.77485,
         w: 268.1154,
@@ -226,27 +229,6 @@ function toRadians(degrees) {
 function toDegrees(radians) {
     return radians * (180.0 / Math.PI)
 }
-/*
-function animationStep(x) {
-    clearInterval(animate)
-    step = 5;
-
-    //and add days to for next frame
-    animate = setInterval(() => {
-        currentDate.setDate(currentDate.getDate() + 5);
-        d = (currentDate - reference) / 86400000
-        planets.forEach(planet => {
-            calculatePosition(planet)
-        })
-        calculateDistances()
-        drawSystem()
-    }, 100);
-}
-
-//stop animation
-function stop() {
-    clearInterval(animate);
-}*/
 
 function skip(days) {
     currentDate.setDate(currentDate.getDate() + days);
@@ -312,6 +294,7 @@ function displayInfo() {
             tr.getElementsByTagName('td')[2].textContent = Math.round(calculateElongation(planet)) + '\u00B0'
             tr.getElementsByTagName('td')[3].textContent = Math.round(calculatePhase(planet)) + '%'
             tr.getElementsByTagName('td')[4].textContent = Math.round(calculateSize(planet)) + '"'
+            tr.getElementsByTagName('td')[5].textContent = Math.round(calculateMag(planet) * 10) / 10
         }
     })
 }
@@ -333,10 +316,8 @@ function calculateElongation(planet) {
     return (planet.elongation)
 }
 
-function calculateSize(planet){
-    let size = planet.size/planet.distance*206265*2
-    console.log(planet.size + ' '+planet.distance);
-    
+function calculateSize(planet) {
+    let size = planet.size / planet.distance * 206265 * 2
     return size
 }
 
@@ -345,7 +326,7 @@ function calculatePhase(planet) {
     if (longitudeDifference > 180) {
         longitudeDifference = 360 - longitudeDifference
     }
-    planet.phaseangle = Math.round(longitudeDifference + planet.elongation)
+    planet.phaseangle = longitudeDifference + planet.elongation
     if (planet.phaseangle > 180) {
         planet.phaseangle = 180
     }
@@ -359,12 +340,19 @@ function calculatePhase(planet) {
     if (!isNaN(phase)) {
         planet.phase = phase
     }
+    planet.longitudeDifference = longitudeDifference
     return (planet.phase)
 }
 
-function calculateMag() {
-    return ''
+function calculateMag(planet) {
+    let r = planet.r / 149.6;
+    let delta = planet.distance / 149.6
+    let distanceFactor = 5 * Math.log10(r * delta);
+    let g = toRadians(180 - planet.phaseangle)
+    let phi = -2.5 * Math.log10((1 + Math.cos(g)) / 2);
+    return planet.mag0 + distanceFactor + phi;
 }
+
 
 //показать названия
 function toggleNames() {
