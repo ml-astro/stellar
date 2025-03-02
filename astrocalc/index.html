@@ -1,119 +1,126 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Астрономический калькулятор</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8, width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
-<script src="calc.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8, width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+	<script src="calc.js"></script>
 </head>
+
 <body onload="JDnow()">
 	<div class="calculator">
 		<h2>Текущий юлианский день</h2>
 		<p id="JD"></p>
 	</div>
 	<hr>
-		<div class="calculator">
-			<h2 class='title'>Калькулятор телескопа</h2>
-			<form>
-				<p>
-					<label>Диаметр объектива (mm)</label>
-					<input type="number" id="aperture" value="0" size="4">
-				</p>
-				<p>
-					<label>Длина фокуса объектива (mm)</label>
-					<input type="number" id="focalLength" value="0" size="4">
-				</p>
-				<p>
-					<label>Длина фокуса окуляра (mm)</label>
-					<input type="number" id="eyepieceFocal" value="0" size="4">
-				</p>
-				<p>
-					<label>Размер матрицы (mm)</label>
-					<input type="number" id="matrixSize" value="0" size="4">
-				</p>
-				<p>
-					<label>Горизонтальное разрешение камеры</label>
-					<input type="number" id="maxResolution" value="0" size="4">
-				</p>
-				<p class='wide'>
-					<div class="button" onclick="telescope()">РАССЧИТАТЬ</div>
-					<div class="button" onclick="reset()">СБРОС</div>
-				</p>
-			</form>
-		</div>
-		<div class="calculator_results">
-			<h3>Результат</h3>
-			<form>
-				<p>
-					<label>Увеличение</label>
-					<input id="magnification" readonly="" size="2">
-				</p>
-				<p>
-					<label>Геометрическая светосила</label>
-					<input id="focal" readonly="" size="2">
-				</p>
-				<p>
-					<label>Угловое разрешение в красном диапазоне</label>
-					<input id="redResult" readonly="" size="4">
-				</p>
-				<p>
-					<label>Угловое разрешение в синем диапазоне</label>
-					<input id="blueResult" readonly="" size="4">
-				</p>
-				<p>
-					<label>Светосила в сравнении с глазом</label>
-					<input id="power" readonly="" size="4">
-				</p>
-				<p>
-					<label>Предельная звёздная величина</label>
-					<input id="magLimit" readonly="" size="3">
-				</p>			
-				<p>
-					<label>Поле зрения камеры в градусах</label>
-					<input id="fov" readonly="" size="3">
-				</p>			
-				<p>
-					<label>Угловое разрешение камеры</label>
-					<input id="cameraResolution" readonly="" size="3">
-				</p>			
-				<p>
-					<label>Максимальная длина фокуса для камеры</label>
-					<input id="limitFocal" readonly="" size="3">
-				</p>
-			</form>
-		</div>
+	<div class="calculator">
+		<h2 class='title'>Калькулятор телескопа</h2>
+		<form>
+			<h3>Выбери тип наблюдений:</h3><br>
+			
+				<div class="button" onclick="show('visual','photo')">ВИЗУАЛ</div>
+				<div class="button" onclick="show('photo','visual')">ФОТО</div>
+			<p>
+				<label>Диаметр объектива (mm)</label>
+				<input type="number" id="aperture" value="0" size="4">
+			</p>
+			<p>
+				<label>Длина фокуса объектива (mm)</label>
+				<input type="number" id="focalLength" value="0" size="4">
+			</p>
+			<p class="visual">
+				<label>Длина фокуса окуляра (mm)</label>
+				<input type="number" id="eyepieceFocal" value="0" size="4">
+			</p>
+			<p class="photo">
+				<label>Размер матрицы (mm)</label>
+				<input type="number" id="matrixSize" value="0" size="4">
+			</p>
+			<p class="photo">
+				<label>Горизонтальное разрешение камеры</label>
+				<input type="number" id="maxResolution" value="0" size="4">
+			</p>
+			<p class='wide'>
+			<div class="button" onclick="telescope()">РАССЧИТАТЬ</div>
+			<div class="button" onclick="reset()">СБРОС</div>
+			</p>
+		</form>
+	</div>
+	<div class="calculator_results">
+		<h3>Результат</h3>
+		<form>
+			<p class="visual">
+				<label>Увеличение</label>
+				<input id="magnification" readonly="" size="2">
+			</p>
+			<p>
+				<label>Геометрическая светосила</label>
+				<input id="focal" readonly="" size="2">
+			</p>
+			<p class="photo">
+				<label>Угловое разрешение в красном диапазоне</label>
+				<input id="redResult" readonly="" size="4">
+			</p>
+			<p class="photo">
+				<label>Угловое разрешение в синем диапазоне</label>
+				<input id="blueResult" readonly="" size="4">
+			</p>
+			<p class="visual">
+				<label>Светосила в сравнении с глазом</label>
+				<input id="power" readonly="" size="4">
+			</p>
+			<p  class="visual">
+				<label>Предельная звёздная величина</label>
+				<input id="magLimit" readonly="" size="3">
+			</p>
+			<p class="photo">
+				<label>Поле зрения камеры в градусах</label>
+				<input id="fov" readonly="" size="3">
+			</p>
+			<p class="photo">
+				<label>Угловое разрешение камеры</label>
+				<input id="cameraResolution" readonly="" size="3">
+			</p>
+			<p class="photo">
+				<label>Максимальная длина фокуса для камеры</label>
+				<input id="limitFocal" readonly="" size="3">
+			</p>
+		</form>
+	</div>
 
 	<hr>
-		<div class="calculator">
-			<h2 class='title'>Калькулятор рефракции и атмосферного поглощения</h2>
-			<form>
-				<p>
-					<label>Высота над горизонтом (градус)</label>
-					<input type="number" id="altHor" value="1" size="3">
-				</p>
-				<p>
-					<label>Высота над уровнем моря (m)</label>
-					<input type="number" id="altObs" value="1" size="3">
-				</p>
-			</form>
-				<p class='wide'>
-					<div class="button refraction" onclick="refraction()">РАССЧИТАТЬ РЕФРАКЦИЮ</div>
-				</p>
+	<div class="calculator">
+		<h2 class='title'>Калькулятор рефракции и атмосферного поглощения</h2>
+		<form>
+			<p>
+				<label>Высота над горизонтом (градус)</label>
+				<input type="number" id="altHor" value="1" size="3">
+			</p>
+			<p>
+				<label>Высота над уровнем моря (m)</label>
+				<input type="number" id="altObs" value="1" size="3">
+			</p>
+		</form>
+		<p class='wide'>
+		<div class="button refraction" onclick="refraction()">РАССЧИТАТЬ РЕФРАКЦИЮ</div>
+		</p>
 
-		</div>
-		<div class="calculator">
-			<h3>Результат</h3>
-			<form>
-				<p>
-					<label>Рефракция</label>
-					<input id="ref" type="text" readonly="" size="7">
-				</p>
-				<p>
-					<label>Поглощение</label>
-					<input id="extinction" type="text" readonly="" size="7">
-				</p>
-			</form>
-		</div>
+	</div>
+	<div class="calculator">
+		<h3>Результат</h3>
+		<form>
+			<p>
+				<label>Рефракция</label>
+				<input id="ref" type="text" readonly="" size="7">
+			</p>
+			<p>
+				<label>Поглощение</label>
+				<input id="extinction" type="text" readonly="" size="7">
+			</p>
+		</form>
+	</div>
 	Максим Лёвин
 </body>
+
 </html>

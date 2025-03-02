@@ -10,6 +10,10 @@ body {
 	padding: 1em;
 }
 
+.hidden {
+	display: none;
+}
+
 h3 {
 	text-align: center;
 }
