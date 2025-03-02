@@ -81,21 +81,16 @@
         </table>
     </div>
     <div class="legend">
-        <button onclick="toggleNames()">Названия</button><br>
-        <button onclick="toggleInfo()">( i )</button>
+        <img src="./price-tag.png" alt="" onclick="toggleNames()">
+        <br>
+        <img src="./information.png" alt="" onclick="toggleInfo()">
     </div>
     <div class="zoom">
-        <button onclick="zoomView('in')">+</button>
-        <button onclick="zoomView('out')">-</button>
+        <button onclick="zoomView('in')" class="btn-circle">+</button>
+        <button onclick="zoomView('out')" class="btn-circle">-</button>
     </div>
     <div class="skip">
-        <!--<button onclick="skip(-365)">-Г</button>
-        <button onclick="skip(-10)">-10</button>
-        <button onclick="skip(-1)">-1</button>-->
-        <button id="play">></button>
-        <!--<button onclick="skip(1)">+1</button>
-        <button onclick="skip(10)">+10</button>
-        <button onclick="skip(365)">+Г</button>-->
+        <button id="play">&#9658;</button>
     </div>
 
     <div id="calendar">

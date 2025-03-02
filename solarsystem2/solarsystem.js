@@ -68,7 +68,7 @@ button.addEventListener('click', () => {
         }, 100)
     }
     else {
-        document.getElementById('play').innerHTML = '>'
+        document.getElementById('play').innerHTML = '&#9658;'
         clearInterval(intervalid)
         intervalid = null
     }
@@ -220,6 +220,7 @@ planets.forEach(planet => {
 })
 drawSystem()
 calculateDistances()
+showDate()
 
 //------------------------------------ FUNCTIONS ---------------------------------//
 function toRadians(degrees) {
@@ -240,6 +241,7 @@ function skip(days) {
         calculateDistances()
     }
     drawSystem()
+    showDate()
 }
 
 function zoomView(mode) {
@@ -387,7 +389,6 @@ function drawSystem() {
     ctx.arc(canvas.width / 2, canvas.height / 2, 6, 0, 2 * Math.PI);
     ctx.fillStyle = "yellow";
     ctx.fill();
-    showDate()
     planets.forEach(planet => {
         //draw planet
         ctx.beginPath();
