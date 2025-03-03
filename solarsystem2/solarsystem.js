@@ -285,7 +285,9 @@ function calculateDistances() {
         }
         planets[2].distance = planets[2].r
     });
-    displayInfo()
+    if(isInfoActive){
+        displayInfo()
+    }
 }
 
 function displayInfo() {
@@ -371,6 +373,7 @@ function toggleInfo() {
         isInfoActive = false
         modal.style.display = 'none'
     }
+    calculateDistances()
 }
 
 function showDate() {

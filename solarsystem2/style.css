@@ -4,16 +4,16 @@ body {
   margin: 0;
   padding: 0;
 }
-
-button, img {
+/*
+button {
   font-weight: bold;
   color: white;
-  background-color: rgba(60, 60, 60, .4);
   margin: 2px;
   border: none;
   border-radius: 3px;
   font-size: 150%;
-}
+  background-color: rgba(60, 60, 60, .4);
+}*/
 
 .zoom {
   position: absolute;
@@ -22,10 +22,15 @@ button, img {
   width: 70px;
 }
 
-.btn-circle, img {
+.btn-circle {
+  background-color: rgba(60, 60, 60, .4);
+  border: none;
+  font-weight: bold;
+  font-size: 150%;
   width: 60px;
   height: 60px;
   border-radius: 50%;
+  color: white;
   margin-bottom: 10px;
 }
 
@@ -36,10 +41,6 @@ button, img {
   top: 30px;
 }
 
-.legend button {
-  width: 110px;
-  padding: 10px;
-}
 
 .system {
   position: fixed;
@@ -137,15 +138,15 @@ button, img {
 
   .legend {
     position: absolute;
-    font-size: 60%;
     right: 0;
     top: 0;
   }
 
-  .legend button {
-    width: 110px;
-    padding: 10px;
+  .btn-circle {
+    width: 60px;
+    height: 60px;
   }
+
 
   .skip {
     bottom: 0;
@@ -153,11 +154,5 @@ button, img {
     margin: 0 auto;
   }
 
-  .skip button {
-    width: 15%;
-    font-size: 120%;
-    margin: 0;
-    padding: 20px 0 20px 0
-  }
-
+ 
 }

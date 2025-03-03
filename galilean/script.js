@@ -16,7 +16,7 @@ const ctx = canvas.getContext('2d');
 
 /* WORKS BAD WITH CIRCULAR ORBITS */
 //const today = new Date()
-const today = new Date(2026,2,14,8,40)
+const today = new Date(2027,7,25,8,40)
 //UTC
 //const referenceDate = new Date(2024, 8, 22, 14, 33)
 const referenceDate = new Date(2025, 0, 1, 0, 0)
@@ -146,6 +146,8 @@ if (deltaX > 0 && deltaY < 0) {
     deltaY = Math.abs(deltaY)
     viewAngle = toDegrees(Math.atan(deltaX / deltaY)) + 270
 }
+console.log(viewAngle);
+
 
 
 /* CALCULATING MOON POSITIONS BOTH LONGITUDE AND IN X,Y COORDS */
