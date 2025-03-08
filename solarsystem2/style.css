@@ -4,6 +4,7 @@ body {
   margin: 0;
   padding: 0;
 }
+
 /*
 button {
   font-weight: bold;
@@ -131,6 +132,16 @@ button {
   background-color: rgba(43, 43, 43, 0.546);
 }
 
+.controls {
+  color: rgba(255, 255, 255, 0.447);
+  font-size: 80%;
+  position: absolute;
+  width: fit-content;
+  height: fit-content;
+  bottom: 0;
+  line-height: 6px;
+}
+
 @media only screen and (max-width: 600px) {
   .zoom {
     left: 0;
@@ -154,5 +165,11 @@ button {
     margin: 0 auto;
   }
 
- 
+
+}
+
+@media only screen and (max-width: 1300px) {
+  .controls {
+    display: none;
+  }
 }

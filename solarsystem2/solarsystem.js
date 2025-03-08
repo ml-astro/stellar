@@ -31,22 +31,42 @@ const ctx = canvas.getContext('2d');
 //------------------------- CREATING EVENT LISTENERS ----------------------//
 
 window.addEventListener('keydown', e => {
-    switch (e.key) {
+    switch (e.key.toLowerCase()) {
         case '+': zoomView('in');
             break;
         case '-': zoomView('out');
             break;
-        case 'd': skip(1);
+        case 'q': skip(1);
             break;
-        case 's': skip(-1);
+        case 'a': skip(-1);
             break;
-        case 'a': skip(-10);
+        case 'w': skip(30);
             break;
-        case 'f': skip(10);
+        case 's': skip(-30);
+            break;
+        case 'e': skip(365);
+            break;
+        case 'd': skip(-365);
             break;
         case 'i': toggleInfo();
             break;
         case 'n': toggleNames();
+            break;
+        case 'й': skip(1);
+            break;
+        case 'ф': skip(-1);
+            break;
+        case 'ц': skip(30);
+            break;
+        case 'ы': skip(-30);
+            break;
+        case 'у': skip(365);
+            break;
+        case 'в': skip(-365);
+            break;
+        case 'ш': toggleInfo();
+            break;
+        case 'т': toggleNames();
             break;
     }
 })
@@ -244,14 +264,28 @@ function toggleNames() {
 
 function toggleInfo() {
     if (!isInfoActive) {
-        isInfoActive = true
         modal.style.display = 'initial'
         displayInfo()
     }
     else {
-        isInfoActive = false
         modal.style.display = 'none'
     }
+    isInfoActive=!isInfoActive
+}
+
+function displayInfo() {
+    let i = 1
+    planets.forEach(planet => {
+        if (planet.name!='Земля') {
+            let tr = document.getElementsByTagName('tr')[i]
+            tr.getElementsByTagName('td')[1].textContent = Math.round(calculateDistance(planet)) + ' м.км'
+            tr.getElementsByTagName('td')[2].textContent = Math.round(calculateElongation(planet)) + '\u00B0'
+            tr.getElementsByTagName('td')[3].textContent = Math.round(calculatePhase(planet)) + '%'
+            tr.getElementsByTagName('td')[4].textContent = Math.round(calculateSize(planet)) + '"'
+            tr.getElementsByTagName('td')[5].textContent = Math.round(calculateMag(planet) * 10) / 10
+            i++
+        }
+    })
 }
 
 
@@ -274,21 +308,6 @@ function calculatePositions() {
         planet.x = planet.r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
         planet.y = planet.r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
         planet.longitude = (toDegrees(Math.atan2(planet.y, planet.x)) + 360) % 360
-    })
-}
-
-function displayInfo() {
-    let i = 1
-    planets.forEach(planet => {
-        if (planet.name!='Земля') {
-            let tr = document.getElementsByTagName('tr')[i]
-            tr.getElementsByTagName('td')[1].textContent = Math.round(calculateDistance(planet)) + ' м.км'
-            tr.getElementsByTagName('td')[2].textContent = Math.round(calculateElongation(planet)) + '\u00B0'
-            tr.getElementsByTagName('td')[3].textContent = Math.round(calculatePhase(planet)) + '%'
-            tr.getElementsByTagName('td')[4].textContent = Math.round(calculateSize(planet)) + '"'
-            tr.getElementsByTagName('td')[5].textContent = Math.round(calculateMag(planet) * 10) / 10
-            i++
-        }
     })
 }
 
