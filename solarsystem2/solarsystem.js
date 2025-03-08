@@ -1,18 +1,16 @@
-//добавить видимый размер и на основе размера и фазы - блеск
-//переведи все ае в км
-
 var currentDate = new Date()
 
 //элементы орбит опираются на эту дату:
 const reference = new Date(2025, 0, 1, 0, 0)
 var d = (currentDate - reference) / 86400000
 let zoom = 2.5;
-//let info = false
 let namesVisible = false
 let isInfoActive = false
 let animate
+let intervalid
 
 var modal = document.getElementsByClassName('modal')[0]
+let playButton = document.getElementById('play')
 
 //-------------- CREATING CANVAS --------------------///
 
@@ -57,12 +55,9 @@ window.addEventListener('wheel', e => {
     (e.deltaY > 0) ? zoomView('out') : (zoomView('in'));
 })
 
-let button = document.getElementById('play')
-let intervalid
-
-button.addEventListener('click', () => {
+playButton.addEventListener('click', () => {
     if (!intervalid) {
-        document.getElementById('play').innerHTML = '||'
+        document.getElementById('play').innerHTML = 'II'
         intervalid = setInterval(() => {
             skip(3)
         }, 100)
@@ -79,7 +74,6 @@ button.addEventListener('click', () => {
 const planets = [
     {
         //in million km
-        num: 0,
         name: 'Меркурий',
         color: "#918E87",
         size: 0.00244,
@@ -87,7 +81,6 @@ const planets = [
         N: 48.2998053, //OM
         i: 7.003502, //IN
         w: 29.1956, //W
-        //a: 0.38709857, //A
         a: 57.909,
         e: 0.20563889, //EC
         M: 103.9465, //MA
@@ -96,7 +89,6 @@ const planets = [
         yoffset: 0
     },
     {
-        num: 1,
         name: 'Венера',
         color: "#D9C091",
         size: 0.006052,
@@ -104,7 +96,6 @@ const planets = [
         N: 76.61185393,
         i: 3.3943933,
         w: 55.15075,
-        //a: 0.7233282,
         a: 108.20835,
         e: 0.00674678,
         M: 280.074910,
@@ -118,7 +109,6 @@ const planets = [
         N: 190.71637577,
         i: 0.00297708,
         w: 272.9783,
-        //a: 1.00091255,
         a: 149.734386,
         e: 0.0175619,
         M: 357.412225,
@@ -128,7 +118,6 @@ const planets = [
         yoffset: 0
     },
     {
-        num: 2,
         name: 'Марс',
         color: "#C1440E",
         size: 0.003389,
@@ -136,7 +125,6 @@ const planets = [
         N: 49.48673,
         i: 1.84758,
         w: 286.7115,
-        //a: 1.523737,
         a: 227.948,
         e: 0.0934303,
         M: 124.444888,
@@ -145,7 +133,6 @@ const planets = [
         yoffset: 0
     },
     {
-        num: 3,
         name: 'Юпитер',
         color: "#D2B48C",
         size: 0.069911,
@@ -153,7 +140,6 @@ const planets = [
         N: 100.52021,
         i: 1.30346,
         w: 273.609,
-        //a: 5.202827,
         a: 778.33186,
         e: 0.0483062,
         M: 58.982826,
@@ -162,7 +148,6 @@ const planets = [
         yoffset: 25
     },
     {
-        num: 4,
         name: 'Сатурн',
         color: "#E6C28B",
         size: 0.058232,
@@ -170,7 +155,6 @@ const planets = [
         N: 113.5596,
         i: 2.485819,
         w: 337.1664,
-        //a: 9.55568,
         a: 1429.50914,
         e: 0.0522302,
         M: 264.9878,
@@ -179,7 +163,6 @@ const planets = [
         yoffset: 60
     },
     {
-        num: 5,
         name: 'Уран',
         color: "#7FBCD2",
         size: 0.025362,
@@ -187,7 +170,6 @@ const planets = [
         N: 0.025362,
         i: 0.772897,
         w: 90.4959,
-        //a: 19.30135,
         a: 2887.44094,
         e: 0.0456241,
         M: 255.88225,
@@ -196,7 +178,6 @@ const planets = [
         yoffset: -100
     },
     {
-        num: 6,
         name: 'Нептун',
         color: "#7F88AA",
         size: 0.024622,
@@ -204,7 +185,6 @@ const planets = [
         N: 131.9474,
         i: 1.77485,
         w: 268.1154,
-        //a: 30.1836,
         a: 4515.4065,
         e: 0.012661,
         M: 319.6851,
@@ -215,14 +195,12 @@ const planets = [
 ]
 
 //---------------------------------- INITIALIZATION -----------------------------//
-planets.forEach(planet => {
-    calculatePosition(planet)
-})
+calculatePositions()
 drawSystem()
-calculateDistances()
 showDate()
 
-//------------------------------------ FUNCTIONS ---------------------------------//
+//------------------------------------ CONVERSIONS ---------------------------------//
+
 function toRadians(degrees) {
     return degrees * (Math.PI / 180)
 }
@@ -231,14 +209,14 @@ function toDegrees(radians) {
     return radians * (180.0 / Math.PI)
 }
 
+//------------------------------------ UI FUNCTIONS ---------------------------------//
+
 function skip(days) {
     currentDate.setDate(currentDate.getDate() + days);
     d = (currentDate - reference) / 86400000
-    planets.forEach(planet => {
-        calculatePosition(planet)
-    })
+    calculatePositions()
     if (isInfoActive) {
-        calculateDistances()
+        displayInfo()
     }
     drawSystem()
     showDate()
@@ -258,47 +236,58 @@ function zoomView(mode) {
     drawSystem()
 }
 
-//расчет положений планет, радиуса вектора, угла
-function calculatePosition(planet) {
-    let N = planet.N// + planet.dN * d //Long of asc. node    
-    let i = planet.i// + planet.di * d //Inclination
-    let w = planet.w// + planet.dw * d //Argument of perihelion
-    let a = planet.a //Semi-major axis
-    let e = planet.e// + planet.de * d //Eccentricity
-    //put the updated numbers for dM later from horizons interface
-    let M = (planet.M + planet.dM * d) % 360 + 360 //Mean anonaly
-    let E0 = M + (180 / Math.PI) * e * Math.sin(toRadians(M)) * (1.0 + e * Math.cos(toRadians(M))) //eccentric anomaly
-    let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1.0 - e * Math.cos(toRadians(E0))) //eccentric anomaly
-    let v = toDegrees(2.0 * Math.atan(Math.sqrt((1.0 + e) / (1.0 - e)) * Math.tan(toRadians(E1) / 2.0))); //true anomaly
-    planet.r = (a * (1.0 - e * e)) / (1.0 + e * Math.cos(toRadians(v))); //current distance from sun
-
-    planet.x = planet.r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
-    planet.y = planet.r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
-    planet.longitude = (toDegrees(Math.atan2(planet.y, planet.x)) + 360) % 360
+//показать названия
+function toggleNames() {
+    namesVisible = !namesVisible
+    drawSystem();
 }
 
-//расчет расстояний от земли - после расчета положений
-function calculateDistances() {
-    planets.forEach(planet => {
-        if (planet.name != 'Земля') {
-            planet.distance = (Math.sqrt((planets[2].x - planet.x) ** 2 + (planets[2].y - planet.y) ** 2))
-        }
-        planets[2].distance = planets[2].r
-    });
-    if(isInfoActive){
+function toggleInfo() {
+    if (!isInfoActive) {
+        isInfoActive = true
+        modal.style.display = 'initial'
         displayInfo()
+    }
+    else {
+        isInfoActive = false
+        modal.style.display = 'none'
     }
 }
 
-function displayInfo() {
+
+//------------------------------------ CALCUATIONS ---------------------------------//
+
+//расчет положений планет, радиуса вектора, угла
+function calculatePositions() {
     planets.forEach(planet => {
-        if (!isNaN(planet.num)) {
-            let tr = document.getElementsByTagName('tr')[planet.num + 1]
-            tr.getElementsByTagName('td')[1].textContent = Math.round(planet.distance) + ' м.км'
+        let N = planet.N// + planet.dN * d //Long of asc. node    
+        let i = planet.i// + planet.di * d //Inclination
+        let w = planet.w// + planet.dw * d //Argument of perihelion
+        let a = planet.a //Semi-major axis
+        let e = planet.e// + planet.de * d //Eccentricity
+        //put the updated numbers for dM later from horizons interface
+        let M = (planet.M + planet.dM * d) % 360 + 360 //Mean anonaly
+        let E0 = M + (180 / Math.PI) * e * Math.sin(toRadians(M)) * (1.0 + e * Math.cos(toRadians(M))) //eccentric anomaly
+        let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1.0 - e * Math.cos(toRadians(E0))) //eccentric anomaly
+        let v = toDegrees(2.0 * Math.atan(Math.sqrt((1.0 + e) / (1.0 - e)) * Math.tan(toRadians(E1) / 2.0))); //true anomaly
+        planet.r = (a * (1.0 - e * e)) / (1.0 + e * Math.cos(toRadians(v))); //current distance from sun
+        planet.x = planet.r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
+        planet.y = planet.r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
+        planet.longitude = (toDegrees(Math.atan2(planet.y, planet.x)) + 360) % 360
+    })
+}
+
+function displayInfo() {
+    let i = 1
+    planets.forEach(planet => {
+        if (planet.name!='Земля') {
+            let tr = document.getElementsByTagName('tr')[i]
+            tr.getElementsByTagName('td')[1].textContent = Math.round(calculateDistance(planet)) + ' м.км'
             tr.getElementsByTagName('td')[2].textContent = Math.round(calculateElongation(planet)) + '\u00B0'
             tr.getElementsByTagName('td')[3].textContent = Math.round(calculatePhase(planet)) + '%'
             tr.getElementsByTagName('td')[4].textContent = Math.round(calculateSize(planet)) + '"'
             tr.getElementsByTagName('td')[5].textContent = Math.round(calculateMag(planet) * 10) / 10
+            i++
         }
     })
 }
@@ -308,23 +297,30 @@ function displayInfo() {
 //c - sun to earth
 //A - angle planet - sun - earth
 //B - angle sun - earth - planet = elongation
+//returns elongation
 function calculateElongation(planet) {
     let a = planet.distance
     let b = planet.r
     let c = planets[2].r
-    let elongation
-    elongation = toDegrees(Math.acos((a * a + c * c - b * b) / (2 * a * c)))
+    let elongation = toDegrees(Math.acos((a * a + c * c - b * b) / (2 * a * c)))
     if (!isNaN(elongation)) {
         planet.elongation = elongation
     }
     return (planet.elongation)
 }
 
-function calculateSize(planet) {
-    let size = planet.size / planet.distance * 206265 * 2
-    return size
+//returns distance from earth
+function calculateDistance(planet) {
+    planet.distance = (Math.sqrt((planets[2].x - planet.x) ** 2 + (planets[2].y - planet.y) ** 2))
+    return planet.distance
 }
 
+//returns angular size
+function calculateSize(planet) {
+    return planet.size / planet.distance * 206265 * 2
+}
+
+//returns phase
 function calculatePhase(planet) {
     let longitudeDifference = Math.abs(planet.longitude - planets[2].longitude)
     if (longitudeDifference > 180) {
@@ -348,6 +344,7 @@ function calculatePhase(planet) {
     return (planet.phase)
 }
 
+//returns magnitude
 function calculateMag(planet) {
     let r = planet.r / 149.6;
     let delta = planet.distance / 149.6
@@ -357,32 +354,13 @@ function calculateMag(planet) {
     return planet.mag0 + distanceFactor + phi;
 }
 
-
-//показать названия
-function toggleNames() {
-    namesVisible = !namesVisible
-    drawSystem()
-}
-
-function toggleInfo() {
-    if (!isInfoActive) {
-        isInfoActive = true
-        modal.style.display = 'initial'
-    }
-    else {
-        isInfoActive = false
-        modal.style.display = 'none'
-    }
-    calculateDistances()
-}
-
 function showDate() {
     let day = currentDate.getDate()
     if (day < 10) { day = '0' + day }
     let month = currentDate.getMonth() + 1
     if (month < 10) { month = '0' + month }
     let year = currentDate.getFullYear()
-    document.querySelector('#calendar p').innerHTML=day+'.'+month+'.'+year
+    document.querySelector('#calendar p').textContent = day + '.' + month + '.' + year
 }
 
 //нарисовать систему на холсте
@@ -399,43 +377,29 @@ function drawSystem() {
         ctx.fillStyle = planet.color;
         ctx.fill();
         //draw orbit
-        ctx.setLineDash([1, 5]);
+        ctx.setLineDash([1, 15]);
         ctx.strokeStyle = planet.color;
-        ctx.beginPath()
-        drawOrbit(planet.a, planet.e, planet.w, planet.xoffset, planet.yoffset)
-        ctx.stroke();
-        //show date
-        /*ctx.font = "100% Arial";
-        let day = currentDate.getDate()
-        if (day < 10) { day = '0' + day }
-        let month = currentDate.getMonth() + 1
-        if (month < 10) { month = '0' + month }
-        ctx.fillStyle = "white";
-        ctx.fillText(day + '.' + month + '.' + currentDate.getFullYear(), 30, 30);*/
-        //show names
-        ctx.font = "80% Arial";
         if (namesVisible) {
+            ctx.font = "80% Arial";
             ctx.fillStyle = planet.color;
             ctx.fillText(planet.name, planet.x * zoom - 5 + canvas.width / 2, -planet.y * zoom + 18 + canvas.height / 2);
         }
+        ctx.beginPath()
+        let omega = planet.w + 45//вот такое говно
+        // Малая полуось
+        let b = planet.a * Math.sqrt(1 - planet.e ** 2);
+        let focusOffset = planet.e * planet.a; // Смещение фокуса (Солнца)
+        ctx.save();
+        ctx.translate(canvas.clientWidth / 2, canvas.clientHeight / 2); // Перемещаем центр
+        ctx.rotate(((-omega) * Math.PI) / 180); // Поворот эллипса
+        ctx.beginPath();
+        //1 смещение по х - focus offset - смещение фокуса эллипса от центра - к солнцу
+        //2 смещение по оси у
+        //3 малая полуось
+        //4 большая полуось
+        //5.6.7 не надо
+        ctx.ellipse((-focusOffset + planet.xoffset) * zoom, zoom * planet.yoffset, planet.a * zoom, b * zoom, 0, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.restore();
     });
 }
-
-function drawOrbit(a, e, omega, x, y) {
-    omega += 45 //вот такое говно
-    // Малая полуось
-    let b = a * Math.sqrt(1 - e * e);
-    let focusOffset = e * a; // Смещение фокуса (Солнца)
-    ctx.save();
-    ctx.translate(canvas.clientWidth / 2, canvas.clientHeight / 2); // Перемещаем центр
-    ctx.rotate(((-omega) * Math.PI) / 180); // Поворот эллипса
-    ctx.beginPath();
-    //1 смещение по х - focus offset - смещение фокуса эллипса от центра - к солнцу
-    //2 смещение по оси у
-    //3 малая полуось
-    //4 большая полуось
-    //5.6.7 не надо
-    ctx.ellipse((-focusOffset + x) * zoom, zoom * y, a * zoom, b * zoom, 0, 0, 2 * Math.PI);
-    ctx.restore();
-}
-
