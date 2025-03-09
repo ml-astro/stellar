@@ -171,7 +171,7 @@ function caclulateSystem() {
         deltaY = Math.abs(deltaY)
         viewAngle = toDegrees(Math.atan(deltaX / deltaY)) + 270
     }
-    console.log(viewAngle);
+    //console.log(viewAngle);
 
 
 
@@ -181,25 +181,25 @@ function caclulateSystem() {
         {
             name: 'Io',
             sma: 1.0,
-            period: 1.769137786,
-            offset: 218.8,
+            period: 1.77134488,
+            offset: 234.8,
         },
         {
             name: 'Europa',
             sma: 1.5909,
-            period: 3.551181,
+            period: 3.55304998,
             offset: 4.88,
         },
         {
             name: 'Ganymede',
             sma: 2.5383,
-            period: 7.15455296,
+            period: 7.156980683,
             offset: 348.28,
         },
         {
             name: 'Callisto',
             sma: 4.4645,
-            period: 16.6890184,
+            period: 16.6872327,
             offset: 149.75,
         }
     ]

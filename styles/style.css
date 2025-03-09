@@ -52,13 +52,6 @@ figcaption {
     padding: 1em;
 }
 
-iframe {
-    aspect-ratio: 16 / 9;
-    height: auto;
-    width: 100%;
-    border: none;
-}
-
 @media (max-width: 1024px) {
     .gallery {
         width: 90%;
