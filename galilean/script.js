@@ -3,17 +3,14 @@ const systemId = document.createAttribute("id");
 const systemWidth = document.createAttribute("width");
 const systemHeight = document.createAttribute("height");
 systemId.value = "myCanvas";
-
 systemWidth.value = window.innerWidth + 'px';
 systemHeight.value = 400;
-
 system.setAttributeNode(systemId);
 system.setAttributeNode(systemWidth);
 system.setAttributeNode(systemHeight);
 document.getElementsByClassName('system')[0].appendChild(system);
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
-
 const today = new Date()
 //UTC
 const referenceDate = new Date(2025, 0, 1, 0, 0)
@@ -30,9 +27,9 @@ function toDegrees(radians) {
 
 window.addEventListener('keydown', e => {
     switch (e.key) {
-        case 'd': skip(0.1);
+        case 'd': skip(0.03);
             break;
-        case 's': skip(-0.1);
+        case 's': skip(-0.03);
             break;
         case 'a': skip(-1);
             break;
@@ -44,26 +41,10 @@ window.addEventListener('keydown', e => {
 function skip(days) {
     today.setTime(today.getTime() + days * 86400000);
     Ndays = (today - referenceDate) / 86400000    
-    calculatePosition(Earth)
-    calculatePosition(Jupiter)
+    calcPlanetCoordinates(Earth)
+    calcPlanetCoordinates(Jupiter)
     caclulateSystem()
-    console.log(today);
-    
 }
-
-/*
-const Jupiter = {
-    sma: 5.2038,
-    offset: 69.568,
-    daily: 360 / 4332.59,
-}
-
-const Earth = {
-    sma: 1,
-    offset: 0.0,
-    daily: 360 / 365.256363004
-}
-*/
 
 const Jupiter = {
     num: 3,
@@ -86,11 +67,38 @@ const Earth = {
     dM: 0.984262
 }
 
-calculatePosition(Earth)
-calculatePosition(Jupiter)
+const moons = [
+    {
+        name: 'Io',
+        sma: 1.0,
+        period: 1.769137786,
+        offset: 290.8,
+    },
+    {
+        name: 'Europa',
+        sma: 1.5909,
+        period: 3.551181,
+        offset: 76.2,
+    },
+    {
+        name: 'Ganymede',
+        sma: 2.5383,
+        period: 7.154553,
+        offset: 60.30,
+    },
+    {
+        name: 'Callisto',
+        sma: 4.4645,
+        period: 16.68902,
+        offset: 222.65,
+    }
+]
+
+calcPlanetCoordinates(Earth)
+calcPlanetCoordinates(Jupiter)
 caclulateSystem()
 
-function calculatePosition(planet) {
+function calcPlanetCoordinates(planet) {
     let N = planet.N// + planet.dN * d //Long of asc. node    
     let i = planet.i// + planet.di * d //Inclination
     let w = planet.w// + planet.dw * d //Argument of perihelion
@@ -102,58 +110,43 @@ function calculatePosition(planet) {
     let E1 = E0 - (E0 - (180 / Math.PI) * e * Math.sin(toRadians(E0)) - M) / (1.0 - e * Math.cos(toRadians(E0))) //eccentric anomaly
     let v = toDegrees(2.0 * Math.atan(Math.sqrt((1.0 + e) / (1.0 - e)) * Math.tan(toRadians(E1) / 2.0))); //true anomaly
     planet.r = (a * (1.0 - e * e)) / (1.0 + e * Math.cos(toRadians(v))); //current distance from sun
-
     planet.x = planet.r * (Math.cos(toRadians(N)) * Math.cos(toRadians(v + w)) - Math.sin(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.y = planet.r * (Math.sin(toRadians(N)) * Math.cos(toRadians(v + w)) + Math.cos(toRadians(N)) * Math.sin(toRadians(v + w)) * Math.cos(toRadians(i)))
     planet.longitude = (toDegrees(Math.atan2(planet.y, planet.x)) + 360) % 360
 }
 
-/*Earth.longitude = Earth.offset + Ndays * Earth.daily % 360
-Jupiter.longitude = Jupiter.offset + Ndays * Jupiter.daily % 360
-calculateXY(Earth)
-calculateXY(Jupiter)
-*/
-/* Calculating X,Y positions */
-
-function calculateXY(planet) {
-    planet.longitude = planet.longitude % 360
-    if (planet.longitude < 90) {
-        planet.x = planet.sma * Math.cos(toRadians(planet.longitude))
-        planet.y = planet.sma * Math.sin(toRadians(planet.longitude))
+function calcCanvasPosition(moon) {
+    moon.longitude = moon.longitude % 360
+    if (moon.longitude < 90) {
+        moon.x = moon.sma * Math.cos(toRadians(moon.longitude))
+        moon.y = moon.sma * Math.sin(toRadians(moon.longitude))
     }
-
-    if (planet.longitude < 180 && planet.longitude > 90) {
-        planet.longitude -= 90
-        planet.x = - planet.sma * Math.sin(toRadians(planet.longitude))
-        planet.y = planet.sma * Math.cos(toRadians(planet.longitude))
+    if (moon.longitude < 180 && moon.longitude > 90) {
+        //moon.longitude -= 90
+        moon.x = - moon.sma * Math.sin(toRadians(moon.longitude-90))
+        moon.y = moon.sma * Math.cos(toRadians(moon.longitude-90))
     }
-
-    if (planet.longitude < 270 && planet.longitude > 180) {
-        planet.longitude -= 180
-        planet.x = -planet.sma * Math.cos(toRadians(planet.longitude))
-        planet.y = -planet.sma * Math.sin(toRadians(planet.longitude))
+    if (moon.longitude < 270 && moon.longitude > 180) {
+        //moon.longitude -= 180
+        moon.x = -moon.sma * Math.cos(toRadians(moon.longitude-180))
+        moon.y = -moon.sma * Math.sin(toRadians(moon.longitude-180))
     }
-
-    if (planet.longitude > 270) {
-        planet.longitude -= 270
-        planet.x = planet.sma * Math.sin(toRadians(planet.longitude))
-        planet.y = -planet.sma * Math.cos(toRadians(planet.longitude))
+    if (moon.longitude > 270) {
+        //moon.longitude -= 270
+        moon.x = moon.sma * Math.sin(toRadians(moon.longitude-270))
+        moon.y = -moon.sma * Math.cos(toRadians(moon.longitude-270))
     }
 }
 
 function caclulateSystem() {
-
     /* Calculating Jupiter system view angle */
-
     var deltaX = Jupiter.x - Earth.x
     var deltaY = Jupiter.y - Earth.y
-    var viewAngle;
+    var viewAngle;   
     var distance = Math.sqrt(Math.abs(deltaX) ** 2 + Math.abs(deltaY) ** 2)
-    var timeDelay = distance * 0.0058
     var lightTravelTime = distance * 149597870.700 / 299792 / 3600 / 24
-
+    Ndays -= lightTravelTime
     document.getElementById("distance").textContent = 'Расстояние ' + Math.floor(lightTravelTime * 24 * 60) + ' световых минут'
-
 
     if (deltaX > 0 && deltaY > 0) {
         viewAngle = toDegrees(Math.atan(deltaY / deltaX))
@@ -171,52 +164,20 @@ function caclulateSystem() {
         deltaY = Math.abs(deltaY)
         viewAngle = toDegrees(Math.atan(deltaX / deltaY)) + 270
     }
-    //console.log(viewAngle);
-
-
-
     /* CALCULATING MOON POSITIONS BOTH LONGITUDE AND IN X,Y COORDS */
-
-    const moons = [
-        {
-            name: 'Io',
-            sma: 1.0,
-            period: 1.77134488,
-            offset: 234.8,
-        },
-        {
-            name: 'Europa',
-            sma: 1.5909,
-            period: 3.55304998,
-            offset: 4.88,
-        },
-        {
-            name: 'Ganymede',
-            sma: 2.5383,
-            period: 7.156980683,
-            offset: 348.28,
-        },
-        {
-            name: 'Callisto',
-            sma: 4.4645,
-            period: 16.6872327,
-            offset: 149.75,
-        }
-    ]
-
     moons.forEach(moon => {
-        moon.longitude = (((Ndays - lightTravelTime) / moon.period) % 1 * 360 + moon.offset) % 360
-        calculateXY(moon)
+        moon.longitude = ((Ndays / moon.period) % 1 * 360 + moon.offset) % 360
+        moon.longitude-=viewAngle
+        if(moon.longitude<0){
+            moon.longitude+=360
+        }
+        calcCanvasPosition(moon)
     });
-
-
-
+    
     /* DRAW VIEW OF SYSTEM */
     const centerX = canvas.width / 2
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    function drawMoon(moon) {
-        //canvas.width, canvas.height
-
+    function drawMoon(moon) {  
         var xPos = moon.x * canvas.width / 10 + centerX
         ctx.beginPath();
         ctx.arc(xPos, 200, 3, 0, 2 * Math.PI);
@@ -237,7 +198,6 @@ function caclulateSystem() {
     ctx.arc(centerX, 200, 0.16 * canvas.width / 10, 0, 2 * Math.PI);
     ctx.fillStyle = "orange";
     ctx.fill();
-
     //draw near moons
     moons.forEach(moon => {
         if (moon.y < 0) {
