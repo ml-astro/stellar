@@ -1,3 +1,10 @@
+//view angle 35 & 215 - system edge on
+//125 & 305 - system most tilted
+//tilt
+//y magnitude = x pos (sin?) (lower = higher y)
+//closer - lower, further - higher, and vice versa
+//Math.sin - 35
+
 const system = document.createElement("canvas");
 const systemId = document.createAttribute("id");
 const systemWidth = document.createAttribute("width");
@@ -13,7 +20,7 @@ const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 const today = new Date()
 //UTC
-const referenceDate = new Date(2025, 0, 1, 0, 0)
+const referenceDate = new Date(2026, 9, 10, 0, 0)
 var Ndays = ((today - referenceDate) / 86400000)
 
 function toRadians(degrees) {
@@ -164,6 +171,9 @@ function caclulateSystem() {
         deltaY = Math.abs(deltaY)
         viewAngle = toDegrees(Math.atan(deltaX / deltaY)) + 270
     }
+    //console.log(viewAngle);
+    var tilt = Math.sin(toRadians(viewAngle-35+360)%180)
+    
     /* CALCULATING MOON POSITIONS BOTH LONGITUDE AND IN X,Y COORDS */
     moons.forEach(moon => {
         moon.longitude = ((Ndays / moon.period) % 1 * 360 + moon.offset) % 360
@@ -177,8 +187,9 @@ function caclulateSystem() {
     /* DRAW VIEW OF SYSTEM */
     const centerX = canvas.width / 2
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    function drawMoon(moon) {  
+    function drawMoon(moon, position) {
         var xPos = moon.x * canvas.width / 10 + centerX
+        console.log(moon.x);
         ctx.beginPath();
         ctx.arc(xPos, 200, 3, 0, 2 * Math.PI);
         ctx.fillStyle = "white";
@@ -190,7 +201,7 @@ function caclulateSystem() {
     //draw far moons
     moons.forEach(moon => {
         if (moon.y > 0) {
-            drawMoon(moon)
+            drawMoon(moon,+1)
         }
     });
     //draw jupiter between far and near moons
@@ -201,7 +212,7 @@ function caclulateSystem() {
     //draw near moons
     moons.forEach(moon => {
         if (moon.y < 0) {
-            drawMoon(moon)
+            drawMoon(moon,-1)
         }
     });
 }
