@@ -1,9 +1,12 @@
 //view angle 35 & 215 - system edge on
 //125 & 305 - system most tilted
-//tilt
 //y magnitude = x pos (sin?) (lower = higher y)
 //closer - lower, further - higher, and vice versa
 //Math.sin - 35
+//jupiter axial tilt 3.13 deg
+//console.log(Math.sin(toRadians(0-35)));
+
+
 
 const system = document.createElement("canvas");
 const systemId = document.createAttribute("id");
@@ -47,7 +50,7 @@ window.addEventListener('keydown', e => {
 
 function skip(days) {
     today.setTime(today.getTime() + days * 86400000);
-    Ndays = (today - referenceDate) / 86400000    
+    Ndays = (today - referenceDate) / 86400000
     calcPlanetCoordinates(Earth)
     calcPlanetCoordinates(Jupiter)
     caclulateSystem()
@@ -123,7 +126,9 @@ function calcPlanetCoordinates(planet) {
 }
 
 function calcCanvasPosition(moon) {
-    moon.longitude = moon.longitude % 360
+    moon.x = moon.sma * Math.cos(toRadians(moon.longitude))
+    moon.y = moon.sma * Math.sin(toRadians(moon.longitude))
+    /*moon.longitude = moon.longitude % 360
     if (moon.longitude < 90) {
         moon.x = moon.sma * Math.cos(toRadians(moon.longitude))
         moon.y = moon.sma * Math.sin(toRadians(moon.longitude))
@@ -142,20 +147,22 @@ function calcCanvasPosition(moon) {
         //moon.longitude -= 270
         moon.x = moon.sma * Math.sin(toRadians(moon.longitude-270))
         moon.y = -moon.sma * Math.cos(toRadians(moon.longitude-270))
-    }
+    }*/
 }
 
+//do it before calc moon positions, then apply this angle to moons during moon pos calculation
 function caclulateSystem() {
     /* Calculating Jupiter system view angle */
     var deltaX = Jupiter.x - Earth.x
     var deltaY = Jupiter.y - Earth.y
-    var viewAngle;   
+    var viewAngle;
     var distance = Math.sqrt(Math.abs(deltaX) ** 2 + Math.abs(deltaY) ** 2)
     var lightTravelTime = distance * 149597870.700 / 299792 / 3600 / 24
     Ndays -= lightTravelTime
     document.getElementById("distance").textContent = 'Расстояние ' + Math.floor(lightTravelTime * 24 * 60) + ' световых минут'
+    viewAngle = toDegrees(Math.atan(deltaY / deltaX))
 
-    if (deltaX > 0 && deltaY > 0) {
+    /*if (deltaX > 0 && deltaY > 0) {
         viewAngle = toDegrees(Math.atan(deltaY / deltaX))
     }
     if (deltaX < 0 && deltaY > 0) {
@@ -170,38 +177,43 @@ function caclulateSystem() {
     if (deltaX > 0 && deltaY < 0) {
         deltaY = Math.abs(deltaY)
         viewAngle = toDegrees(Math.atan(deltaX / deltaY)) + 270
-    }
+    }*/
     //console.log(viewAngle);
-    var tilt = Math.sin(toRadians(viewAngle-35+360)%180)
-    
+    var tilt = Math.sin(toRadians(viewAngle - 35) * 3.13)
+    //console.log(tilt);
+
     /* CALCULATING MOON POSITIONS BOTH LONGITUDE AND IN X,Y COORDS */
     moons.forEach(moon => {
         moon.longitude = ((Ndays / moon.period) % 1 * 360 + moon.offset) % 360
-        moon.longitude-=viewAngle
-        if(moon.longitude<0){
-            moon.longitude+=360
+        moon.longitude -= viewAngle
+        if (moon.longitude < 0) {
+            moon.longitude += 360
         }
         calcCanvasPosition(moon)
     });
-    
+
+    //max moon y offset
+    //maxY = Math.sin(toRadians(3.13))*moons[0].sma
+
+    //console.log(moons[3].y * canvas.width / 10);
+
     /* DRAW VIEW OF SYSTEM */
     const centerX = canvas.width / 2
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    function drawMoon(moon, position) {
+    function drawMoon(moon) {
         var xPos = moon.x * canvas.width / 10 + centerX
-        console.log(moon.x);
+
         ctx.beginPath();
-        ctx.arc(xPos, 200, 3, 0, 2 * Math.PI);
+        ctx.arc(xPos, 200 + moon.y * tilt * 10, 3, 0, 2 * Math.PI);
         ctx.fillStyle = "white";
         ctx.fill();
         ctx.font = "80% Arial";
         ctx.fillText(moon.name.substring(0, 1), xPos - 5, 250);
     }
-
     //draw far moons
     moons.forEach(moon => {
         if (moon.y > 0) {
-            drawMoon(moon,+1)
+            drawMoon(moon)
         }
     });
     //draw jupiter between far and near moons
@@ -212,7 +224,7 @@ function caclulateSystem() {
     //draw near moons
     moons.forEach(moon => {
         if (moon.y < 0) {
-            drawMoon(moon,-1)
+            drawMoon(moon, -1)
         }
     });
 }
