@@ -27,6 +27,7 @@ var Ndays = ((today - referenceDate) / 86400000)
 var tilt
 
 const Saturn = {
+    color: "#E6C28B",
     N: 113.5596,
     i: 2.485819,
     w: 337.1664,
@@ -35,8 +36,6 @@ const Saturn = {
     M: 264.9878,
     dM: 0.03337136,
 }
-
-
 const Earth = {
     N: 190.71637577,
     i: 0.00297708,
@@ -46,39 +45,38 @@ const Earth = {
     M: 357.412225,
     dM: 0.984262
 }
-
 const moons = [
     {
-        name: 'I',
-        sma: 0.238*3,
-        period: 1.370,
+        name: '1',
+        sma: 0.238 * 3,
+        period: 1.370218,
         offset: 115.8,
         color: '#f7dc6f'
     },
     {
-        name: 'II',
-        sma: 0.295*3,
-        period: 1.890,
+        name: '2',
+        sma: 0.295 * 3,
+        period: 1.887802,
         offset: 71.2,
         color: '#f7dc6f'
     },
     {
-        name: 'III',
-        sma: 0.3774*3,
-        period: 2.740,
+        name: '3',
+        sma: 0.3774 * 3,
+        period: 2.736915,
         offset: 176.8,
         color: '#f7dc6f'
     },
     {
-        name: 'IV',
-        sma: 0.527*3,
-        period: 4.518,
+        name: '4',
+        sma: 0.527 * 3,
+        period: 4.518212,
         offset: 33.8,
         color: '#f7dc6f'
     },
     {
-        name: 'V',
-        sma: 1.222*3,
+        name: '5',
+        sma: 1.222 * 3,
         period: 15.945,
         offset: 105.7,
         color: '#f7dc6f'
@@ -90,14 +88,19 @@ const moons = [
 
 window.addEventListener('keydown', e => {
     switch (e.key) {
-        case 'd': skip(0.03);
+        case 'a': skip(-3);
             break;
-        case 's': skip(-0.03);
+        case 's': skip(-1);
             break;
-        case 'a': skip(-1);
+        case 'd': skip(-0.03);
             break;
-        case 'f': skip(+1);
+        case 'f': skip(0.03);
             break;
+        case 'g': skip(1);
+            break;
+        case 'h': skip(3);
+            break;
+
     }
 })
 
@@ -176,7 +179,7 @@ function caclulateSystem() {
         viewAngle = toDegrees(Math.atan(deltaX / deltaY)) + 270
     }
 
-    tilt = Math.sin(toRadians(viewAngle - 139)) * 8
+    tilt = Math.sin(toRadians(viewAngle - 353)) * 50
 
     /* CALCULATING MOON POSITIONS BOTH LONGITUDE AND IN X,Y COORDS */
     moons.forEach(moon => {
@@ -228,10 +231,28 @@ function drawSystem() {
         }
     });
 
+    //67 140
+
+
+
+
+    ctx.beginPath();
+    ctx.fillStyle = Saturn.color
+    ctx.ellipse(centerX, 200, 0.140 * 3 * canvas.width / 10, Math.abs(0.140*tilt*4), 0, 0, 2 * Math.PI);
+    ctx.fill()
+
+    ctx.beginPath();
+    ctx.fillStyle = '#111'
+    ctx.ellipse(centerX, 200, 0.074 * 3 * canvas.width / 10, Math.abs(0.074*tilt*4), 0, 0, 2 * Math.PI);
+    ctx.fill()
+
+
+
+
     //draw Saturn between far and near moons
     ctx.beginPath();
-    ctx.arc(centerX, 200, 0.16 * canvas.width / 10, 0, 2 * Math.PI);
-    ctx.fillStyle = "orange";
+    ctx.arc(centerX, 200, 0.058 * 3 * canvas.width / 10, 0, 2 * Math.PI);
+    ctx.fillStyle = Saturn.color;
     ctx.fill();
 
     //draw near moons
