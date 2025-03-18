@@ -8,6 +8,7 @@ let namesVisible = false
 let isInfoActive = false
 let animate
 let intervalid
+let planetCentered = 0
 
 var modal = document.getElementsByClassName('modal')[0]
 let playButton = document.getElementById('play')
@@ -68,6 +69,44 @@ window.addEventListener('keydown', e => {
             break;
         case 'т': toggleNames();
             break;
+        case '0':
+            planetCentered=0
+            drawSystem();
+            break;
+        case '1':
+            centerPlanet(1)
+            drawSystem();
+            break;
+            case '2':
+            centerPlanet(2)
+            drawSystem();
+            break;
+        case '3':
+            centerPlanet(3)
+            drawSystem();
+            break;
+        case '4':
+            centerPlanet(4)
+            drawSystem();
+            break;
+        case '5':
+            centerPlanet(5)
+            drawSystem();
+            break;
+        case '6':
+            centerPlanet(6)
+            drawSystem();
+            break;
+        case '7':
+            centerPlanet(7)
+            drawSystem();
+            break;
+        case '8':
+            centerPlanet(8)
+            drawSystem();
+            break;
+
+
     }
 })
 
@@ -218,6 +257,9 @@ const planets = [
 calculatePositions()
 drawSystem()
 showDate()
+var xCenter = 0
+var yCenter = 0
+
 
 //------------------------------------ CONVERSIONS ---------------------------------//
 
@@ -240,6 +282,10 @@ function skip(days) {
     }
     drawSystem()
     showDate()
+}
+
+function centerPlanet(num) {
+    planetCentered=num
 }
 
 function zoomView(mode) {
@@ -270,13 +316,13 @@ function toggleInfo() {
     else {
         modal.style.display = 'none'
     }
-    isInfoActive=!isInfoActive
+    isInfoActive = !isInfoActive
 }
 
 function displayInfo() {
     let i = 1
     planets.forEach(planet => {
-        if (planet.name!='Земля') {
+        if (planet.name != 'Земля') {
             let tr = document.getElementsByTagName('tr')[i]
             tr.getElementsByTagName('td')[1].textContent = Math.round(calculateDistance(planet)) + ' м.км'
             tr.getElementsByTagName('td')[2].textContent = Math.round(calculateElongation(planet)) + '\u00B0'
@@ -340,7 +386,7 @@ function calculateSize(planet) {
 }
 
 //returns phase
-function calculatePhase(planet) {
+function calculatePhase(planet) {   
     let longitudeDifference = Math.abs(planet.longitude - planets[2].longitude)
     if (longitudeDifference > 180) {
         longitudeDifference = 360 - longitudeDifference
@@ -384,15 +430,29 @@ function showDate() {
 
 //нарисовать систему на холсте
 function drawSystem() {
+    if (planetCentered == 0) {
+        xCenter = 0
+        yCenter = 0
+    }
+    else {
+        xCenter = planets[planetCentered-1].x * zoom
+        yCenter = planets[planetCentered-1].y * zoom
+    }
+   console.log(planetCentered);
+   
+    //xCenter=planets[2].x*zoom
+    //yCenter=planets[2].y*zoom
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, 6, 0, 2 * Math.PI);
+    //ctx.arc(canvas.width / 2, canvas.height / 2, 6, 0, 2 * Math.PI);
+    ctx.arc(canvas.width / 2 - xCenter, canvas.height / 2 + yCenter, 6, 0, 2 * Math.PI);
     ctx.fillStyle = "yellow";
     ctx.fill();
     planets.forEach(planet => {
         //draw planet
         ctx.beginPath();
-        ctx.arc(planet.x * zoom + canvas.width / 2, -planet.y * zoom + canvas.height / 2, 4, 0, 2 * Math.PI); //planets
+        ctx.arc(planet.x * zoom + canvas.width / 2 - xCenter, -planet.y * zoom + canvas.height / 2 + yCenter, 4, 0, 2 * Math.PI); //planets
+        //ctx.arc(planet.x * zoom + canvas.width / 2, -planet.y * zoom + canvas.height / 2, 4, 0, 2 * Math.PI); //planets
         ctx.fillStyle = planet.color;
         ctx.fill();
         //draw orbit
@@ -401,7 +461,7 @@ function drawSystem() {
         if (namesVisible) {
             ctx.font = "80% Arial";
             ctx.fillStyle = planet.color;
-            ctx.fillText(planet.name, planet.x * zoom - 5 + canvas.width / 2, -planet.y * zoom + 18 + canvas.height / 2);
+            ctx.fillText(planet.name, planet.x * zoom - 5 + canvas.width / 2 -xCenter, -planet.y * zoom +yCenter + 18 + canvas.height / 2);
         }
         ctx.beginPath()
         let omega = planet.w + 45//вот такое говно
@@ -409,7 +469,8 @@ function drawSystem() {
         let b = planet.a * Math.sqrt(1 - planet.e ** 2);
         let focusOffset = planet.e * planet.a; // Смещение фокуса (Солнца)
         ctx.save();
-        ctx.translate(canvas.clientWidth / 2, canvas.clientHeight / 2); // Перемещаем центр
+        ctx.translate(canvas.clientWidth / 2 - xCenter, canvas.clientHeight / 2 + yCenter); // Перемещаем центр
+        //ctx.translate(canvas.clientWidth / 2, canvas.clientHeight / 2); // Перемещаем центр
         ctx.rotate(((-omega) * Math.PI) / 180); // Поворот эллипса
         ctx.beginPath();
         //1 смещение по х - focus offset - смещение фокуса эллипса от центра - к солнцу
