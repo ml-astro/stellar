@@ -165,7 +165,7 @@ function caclulateSystem() {
         viewAngle = toDegrees(Math.atan(deltaX / deltaY)) + 270
     }
 
-    tilt = Math.sin(toRadians(viewAngle - 353)) * 50
+    tilt = Math.sin(toRadians(viewAngle - 353)) * 150
 
     /* CALCULATING MOON POSITIONS BOTH LONGITUDE AND IN X,Y COORDS */
     moons.forEach(moon => {
