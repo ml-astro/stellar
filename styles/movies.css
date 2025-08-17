@@ -1,0 +1,67 @@
+.gridcontainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.gridcontainer .header {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.header {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.header p {
+    text-align: right;
+}
+
+h1 {
+    text-align: left;
+}
+
+.gridcontainer {
+    margin: 0 auto;
+    max-width: 1000px;
+    border-bottom: 1px solid hsla(0, 0%, 50%, 1);
+}
+
+.aboutmelink h1 {
+    position: absolute;
+    top: 0;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.gridcontainer:last-child {
+    border-bottom: none;
+}
+
+img {
+    width: 100%;
+}
+
+p {
+    padding-top: 1em;
+}
+
+figure {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    /*border: 1px solid #FFF;*/
+}
+
+@media (max-width: 760px) {
+    .gridcontainer {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .gridcontainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
