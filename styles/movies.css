@@ -1,6 +1,6 @@
 .gridcontainer {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(6, 1fr);
 }
 
 .gridcontainer .header {
@@ -22,7 +22,7 @@ h1 {
 
 .gridcontainer {
     margin: 0 auto;
-    max-width: 1000px;
+    max-width: 1900px;
     border-bottom: 1px solid hsla(0, 0%, 50%, 1);
 }
 
