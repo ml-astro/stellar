@@ -62,6 +62,7 @@ renderMovie("diehard3","Крепкий орешек 3")
 renderMovie("doctor_who_partners_in_crime", "Доктор Кто: Соучастники")
 renderMovie("doctor_who_the_moonbase", "Доктор Кто: Лунная база")
 renderMovie("doktor_kto", "Доктор Кто")
+renderMovie("dobrovolcy", "Добровольцы поневоле")
 renderMovie("dontlookup", "Не смотрите наверх")
 renderMovie("dontlookup2", "Не смотрите наверх")
 renderMovie("dzhango", "Джанго освобожденный")
@@ -83,6 +84,7 @@ renderMovie("heroes_s03e07", "Герои s03e07")
 renderMovie("hotshots", "Горячие головы")
 renderMovie("housewives", "Отчаянные домохозяйки")
 renderMovie("i_eto_vsjo_o_nem3","И это всё о нём")
+renderMovie("it_came_from_outer_space", "It came from outer space")
 renderMovie("indiana1","Индиана Джонс 1")
 renderMovie("inoplanetnoe_vtorzhenie", "Инопланетное вторжение")
 renderMovie("insidious", "Астрал")
@@ -139,6 +141,7 @@ renderMovie("pro_krasnuyu_shapochku", "Про красную шапочку")
 renderMovie("prosti_za_lyubov", "Прости за любовь")
 renderMovie("pyatyy_element", "Пятый элемент")
 renderMovie("raven", "Ворон")
+renderMovie("ridiculous", "Нелепая шестерка")
 renderMovie("robin_hood", "Робин Гуд")
 renderMovie("roxanna","Роксанна")
 renderMovie("roxanne", "Роксанна")
@@ -147,8 +150,10 @@ renderMovie("ruthless_people","Безжалостные люди")
 renderMovie("sabrina1x16", "Сабрина")
 renderMovie("sashatanya12", "СашаТаня")
 renderMovie("scream2022", "Крик")
+renderMovie("science_fiction_theatre", "Science fiction theatre")
 renderMovie("scrooged", "Новая рождественская сказка")
 renderMovie("seks_po_druzhbe_2", "Секс по дружбе")
+renderMovie("tibet", "Семь лет в Тибете")
 renderMovie("seks_po_druzhbe", "Секс по дружбе")
 renderMovie("serdca_chetyreh","Сердца четырёх")
 renderMovie("sherlok_3_seriya", "Шерлок. 3 серия")
@@ -215,10 +220,10 @@ renderMovie("zvezdy_na_kryljah","Звёзды на крыльях")
 
 <li>
                 <figure>
-                    <a href="./movies/office_s7deleted.jpg">
-                        <img src="./movies/office_s7deleted_min.jpg">
+                    <a href="./movies/*.jpg">
+                        <img src="./movies/*_min.jpg">
                     </a>
-                    <figcaption>Офис. Удаленные сцены</figcaption>
+                    <figcaption>*</figcaption>
                 </figure>
             </li>
 
