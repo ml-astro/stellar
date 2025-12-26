@@ -1,228 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./styles/commonStyle.css">
+        <link rel="stylesheet" href="./styles/gridgallery.css">
+        <link rel="stylesheet" href="./styles/nav.css">
+        <link rel="icon" type="image/png" href="./icon.ico">
+        <title>Солнце</title>
+        <style>
+            p {
+                margin: 1em auto;
+                width: 100%;
+                max-width: 1000px;
+                text-align: justify;
+            }
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles/commonStyle.css">
-    <link rel="stylesheet" href="./styles/style.css">
-    <link rel="stylesheet" href="./styles/nav.css">
-    <link rel="icon" type="image/png" href="./icon.ico">
-    <title>Солнце</title>
-</head>
+            h2 {
+                max-width: 1000px;
+                margin: 2em auto 1em;
+            }
+            .additional {
+                padding: 2%;
+                margin-top: 0;
+                color: rgba(255, 255, 255, 30%)
+            }
 
-<body>
-    <h1>Солнце</h1>
-    
-    <ul class="gallery">
+            .gridcontainer {
+                border-bottom: 0;
+            }
+
+            figcaption {
+                padding: 2%;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Солнечные наблюдения</h1>
         <script src="./components/commonCode.js"></script>
-        <li>
-            <h2 id="mg_3950a">Пятна AR2108 и AR2109</h2>
-            <figure>
-                <a href="./sun/mg_3950a.jpg">
-                    <img src="./sun/mg_3950a_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Крупные солнечные пятна AR2104, AR2107, AR2108 и AR2109 во время максимума 24-го цикла солнечной
-                        активности. Солнечные пятна — тёмные области на Солнце, температура которых понижена примерно на
-                        1500 К по сравнению с окружающими участками фотосферы. Наблюдаются на диске Солнца (с помощью
-                        оптических приборов, а в случае крупных пятен — и невооружённым глазом) в виде тёмных пятен.</p>
-                    <p class="additional">Sky Watcher 150/750 Explorer BD, Canon 1100D, линза барлоу 2х</p>
-                    <p class="additional">6 июля 2014 г.</p>
-                    <p align="right" class="share" onclick="share('mg_3950a')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="sun-peri-apo2">Солнце в перигелии и афелии</h2>
-            <figure>
-                <a href="./sun/sun-peri-apo2.jpg">
-                    <img src="./sun/sun-peri-apo2_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Земля летает вокруг Солнца по вытянутой, эллиптической орбите. Мы то подлетаем к Солнцу в январе,
-                        то удаляемся в июле. Видимый размер Солнца, соответсвенно, увеличивается и уменьшается.
-                        Изменение в размерах можно зафиксировать в телескоп и замерить.</p>
-                    <p class="additional">Sky Watcher Skymax 90/1250, Canon 1100D</p>
-                    
-                    <p align="right" class="share" onclick="share('sun-peri-apo2')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="sun140907">Солнечный диск</h2>
-            <figure>
-                <a href="./sun/sun140907.jpg">
-                    <img src="./sun/sun140907_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Солнечная мозаика. Крупные солнечные пятна AR2157 и AR2158 во время максимума 24-го цикла
-                        солнечной активности.</p>
-                    <p class="additional">Sky Watcher Skymax 90/1250, Canon 1100D, линза барлоу 2х</p>
-                    <p class="additional">7 сентября 2014 г.</p>
-                    <p align="right" class="share" onclick="share('sun140907')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="mg_4023">Пятна AR2673 и AR2674</h2>
-            <figure>
-                <a href="./sun/mg_4023.jpg">
-                    <img src="./sun/mg_4023_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Взгяд на крупные солнечные пятна AR2673 и AR2674 сквозь облачность.</p>
-                    <p class="additional">Sky Watcher Skymax 90/1250, Canon 1100D</p>
-                    <p class="additional">6 сентября 2017 г.</p>
-                    <p align="right" class="share" onclick="share('mg_4023')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="mg_9204">Сердечко AR2529</h2>
-            <figure>
-                <a href="./sun/mg_9204.jpg">
-                    <img src="./sun/mg_9204_min.jpg">
-                </a>
-                <figcaption>
-                    <p> Солнечное пятно AR2529 в форме сердечка смогло бы вместить 4 такие планеты, как Земля.</p>
-                    <p class="additional">Sky Watcher Skymax 90/1250, Canon 1100D</p>
-                    <p class="additional">14 апреля 2014 г.</p>
-                    <p align="right" class="share" onclick="share('mg_9204')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="sunspot_201109">Пятно AR2781</h2>
-            <figure>
-                <a href="./sun/sunspot_201109.jpg">
-                    <img src="./sun/sunspot_201109_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Группа пятен AR2781 в одном масштабе с Землёй (синий кружок)</p>
-                    <p class="additional">Sky Watcher 150/750 Explorer BD, ASI183MC, линза барлоу 2х</p>
-                    <p class="additional">9 ноября 2020 г.</p>
-                    <p align="right" class="share" onclick="share('sunspot_201109')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="sun1">Пятно AR2339</h2>
-            <figure>
-                <a href="./sun/sun1.jpg">
-                    <img src="./sun/sun1_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Группа пятен AR2339 в одном масштабе с Землёй (синий кружок)</p>
-                    <p class="additional">Sky Watcher 150/750 Explorer BD, Canon 1100D</p>
-                    <p class="additional">7 мая 2015 г.</p>
-                    <p align="right" class="share" onclick="share('sun1')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="ar3014">Пятна AR3014 и AR3017</h2>
-            <figure>
-                <a href="./sun/ar3014.jpg">
-                    <img src="./sun/ar3014_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Две большие группы пятен перед заходом за правую сторону солнечного диска.</p>
-                    <p class="additional">Sky Watcher 150/750 Explorer BD, ASI 183MC</p>
-                    <p class="additional">23 мая 2022 г.</p>
-                    <p align="right" class="share" onclick="share('ar3014')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="ar3014_2x_scale">Пятно AR3014</h2>
-            <figure>
-                <a href="./sun/ar3014_2x_scale.jpg">
-                    <img src="./sun/ar3014_2x_scale_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Две большие группы пятен в сравнении с размером Земли.</p>
-                    <p class="additional">Sky Watcher 150/750 Explorer BD, ASI 183MC, линза барлоу 2х</p>
-                    <p class="additional">23 мая 2022 г.</p>
-                    <p align="right" class="share" onclick="share('ar3014_2x_scale')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="ar2993">Эволюция группы пятен</h2>
-            <figure>
-                <a href="./sun/ar2993.jpg">
-                    <img src="./sun/ar2993_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Группа пятен во главе с пятном AR2993 пересекает солнечный диск. Снимки сделаны в течение 9
-                        дней.<br><a href="./sun/ar2993.gif">ПОСМОТРЕТЬ АНИМАЦИЮ</a></p>
-                    <p class="additional">Sky Watcher 150/750 Explorer BD, ASI 183MC, линза барлоу 2х</p>
-                    <p class="additional">23 мая 2022 г.</p>
-                    <p align="right" class="share" onclick="share('ar2993')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="ar3363">Пятно AR3363</h2>
-            <figure>
-                <a href="./sun/ar3363.jpg">
-                    <img src="./sun/ar3363_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Пятно AR3363 в центре солнечного диска.</p>
-                    <p class="additional">Omegon 80/400, ASI 183MC</p>
-                    <p class="additional">12 июля 2023 г.</p>
-                    <p align="right" class="share" onclick="share('ar3363')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="230530">Пятна 3315 и 3310</h2>
-            <figure>
-                <a href="./sun/230530.jpg">
-                    <img src="./sun/230530_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Крупные солнечные пятна 3315 и 3310 в конце низкой солнечной активности.</p>
-                    <p class="additional">Omegon 80/400, ASI 183MC</p>
-                    <p class="additional">30 мая 2023 г.</p>
-                    <p align="right" class="share" onclick="share('230530')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="240622">Пятна 3713 и 3719</h2>
-            <figure>
-                <a href="./sun/240622.jpg">
-                    <img src="./sun/240622_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Группы пятен 3719 левее центра и 3713 на правом краю диска.</p>
-                    <p class="additional">Omegon 80/400, ASI 183MC</p>
-                    <p class="additional">22 июня 2024 г.</p>
-                    <p align="right" class="share" onclick="share('240622')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-        <li>
-            <h2 id="240805">Пятно AR3780</h2>
-            <figure>
-                <a href="./sun/240805.jpg">
-                    <img src="./sun/240805_min.jpg">
-                </a>
-                <figcaption>
-                    <p>Крупная группа пятен AR3780 выходит на видимую сторону Солнца.</p>
-                    <p class="additional">Omegon 80/400, ASI 183MC</p>
-                    <p class="additional">22 июня 2024 г.</p>
-                    <p align="right" class="share" onclick="share('240805')"><a>Скопировать ссылку</a></p>
-                </figcaption>
-            </figure>
-        </li>
-    </ul>
-    <script src="./components/nav.js"></script>
-    <script>footer();</script>
-</body>
-
+        <main>
+            <h2>Солнце в белом свете</h2>
+            <p>Фотосфера - самая яркая часть солнечной атмосферы. Именно ее слепящий белый свет мы видим невооруженным глазом. Специальный нейтральный солнечный фильтр приглушает ее яркость в 10000 раз и позволяет нам с легкостью наблюдать такие солнечные явления, как пятна и грануляцию. Солнечные пятна — тёмные области на Солнце, температура которых понижена примерно на 1500 градусов по сравнению с окружающими участками.</p>
+            <p>Кроме того, Земля летает вокруг Солнца по вытянутой орбите. Мы подлетаем к Солнцу в январе и удаляемся в июле. Видимый размер Солнца, соответсвенно, увеличивается и уменьшается. Изменение в размерах тоже можно зафиксировать с таким фильтром.</p>
+            <ul class="gridcontainer">
+                <li>
+                    <figure>
+                        <a href="./sun/sun-peri-apo2.jpg">
+                            <img src="./sun/sun-peri-apo2_min.jpg">
+                        </a>
+                        <figcaption>Перигелий и афелий</figcaption>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/mg_3950a.jpg">
+                            <img src="./sun/mg_3950a_min.jpg">
+                        </a>
+                        <figcaption>Пятна AR2104, AR2107, AR2108 и AR2109</figcaption>
+                        <p class="additional">6 июля 2014 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/sun140907.jpg">
+                            <img src="./sun/sun140907_min.jpg">
+                        </a>
+                        <figcaption>Пятна AR2157 и AR2158</figcaption>
+                        <p class="additional">7 сентября 2014 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/mg_4023.jpg">
+                            <img src="./sun/mg_4023_min.jpg">
+                        </a>
+                        <figcaption>Пятна AR2673 и AR2674</figcaption>
+                        <p class="additional">6 сентября 2017 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/mg_9204.jpg">
+                            <img src="./sun/mg_9204_min.jpg">
+                        </a>
+                        <figcaption>Сердечко AR2529. Пятно смогло бы вместить 4 такие планеты, как Земля</figcaption>
+                        <p class="additional">14 апреля 2014 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/sunspot_201109.jpg">
+                            <img src="./sun/sunspot_201109_min.jpg">
+                        </a>
+                        <figcaption>Пятно AR2781 в одном масштабе с Землёй (синий кружок)</figcaption>
+                        <p class="additional">9 ноября 2020 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/sun1.jpg">
+                            <img src="./sun/sun1_min.jpg">
+                        </a>
+                        <figcaption>Пятно AR2339</figcaption>
+                        <p class="additional">7 мая 2015 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/ar3014.jpg">
+                            <img src="./sun/ar3014_min.jpg">
+                        </a>
+                        <figcaption>Пятна AR3014 и AR3017</figcaption>
+                        <p class="additional">23 мая 2022 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/ar3014_2x_scale.jpg">
+                            <img src="./sun/ar3014_2x_scale_min.jpg">
+                        </a>
+                        <figcaption>Пятно AR3014</figcaption>
+                        <p class="additional">23 мая 2022 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/ar2993.jpg">
+                            <img src="./sun/ar2993_min.jpg">
+                        </a>
+                        <figcaption>Эволюция группы пятен AR2993 <a href="./sun/ar2993.gif">ПОСМОТРЕТЬ АНИМАЦИЮ</a></figcaption>
+                        <p class="additional">23 мая 2022 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/ar3363.jpg">
+                            <img src="./sun/ar3363_min.jpg">
+                        </a>
+                        <figcaption>Пятно AR3363</figcaption>
+                        <p class="additional">12 июля 2023 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/230530.jpg">
+                            <img src="./sun/230530_min.jpg">
+                        </a>
+                        <figcaption>Пятна 3315 и 3310</figcaption>
+                        <p class="additional">30 мая 2023 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/240622.jpg">
+                            <img src="./sun/240622_min.jpg">
+                        </a>
+                        <figcaption>Пятна 3713 и 3719</figcaption>
+                        <p class="additional">22 июня 2024 г.</p>
+                    </figure>
+                </li>
+                <li>
+                    <figure>
+                        <a href="./sun/240805.jpg">
+                            <img src="./sun/240805_min.jpg">
+                        </a>
+                        <figcaption>Пятно AR3780</figcaption>
+                        <p class="additional">22 июня 2024 г.</p>
+                    </figure>
+                </li>
+            </ul>
+            <h2>Солнце в линии H-альфа</h2>
+            <p>Если из яркого белого света Солнца выделить лишь узкую часть красного света при помощи специального солнечного телескопа, то глазу станет доступна невидимая ранее линия излучения атомов водорода. На Солнце в таком свете станут доступны изучению совершенно новые явления: спикулы, факелы, вспышки, протуберанцы и филаменты.</p>
+            <ul class="gridcontainer">
+                <li>
+                    <figure>
+                        <a href="./chromoshpere/"><img src="./chromoshpere/"></a>
+                    </figure>
+                </li>
+            </ul>
+        </main>
+        <script src="./components/nav.js"></script>
+        <script>
+            footer()
+        </script>
+    </body>
 </html>
