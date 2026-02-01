@@ -1,0 +1,44 @@
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            width: 95%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 150%;
+        }
+
+        label {
+            display: inline-block;
+            width: 120px;
+        }
+
+        input {
+            margin-right: 15px;
+            margin-bottom: 10px;
+            padding: 4px 6px;
+        }
+
+        hr {
+            margin: 20px 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 950px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            width: 20%;
+            max-width: 200px;
+        }
+
+        #result {
+            font-weight: bold;
+        }

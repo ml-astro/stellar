@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор расстояния до Луны</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <script src="distance_calculator.js"></script>
+    <script>
+        observers = []
+        function addObservation(form) {
+            lat = form.lat.value
+            lon = form.lon.value
+            ra = form.ra.value
+            dec = form.dec.value
+            if (lat != '' || lon != '' || ra != '' || dec != '') {
+                const table = document.querySelector('#observations');
+                const row = document.createElement('tr');
+                observers.push(
+                    {
+                        lat: lat,
+                        lon: lon,
+                        ra: ra,
+                        dec: dec
+                    })
+                row.innerHTML += `
+                    <td>${lat}</td>
+                    <td>${lon}</td>
+                    <td>${ra}</td>
+                    <td>${dec}</td>
+                `
+                table.appendChild(row);
+                document.querySelector("#lat").value = ''
+                document.querySelector("#lon").value = ''
+                document.querySelector("#ra").value = ''
+                document.querySelector("#dec").value = ''
+
+            }
+        }
+
+    </script>
+    <h1>КАЛЬКУЛЯТОР РАССТОЯНИЯ ДО ЛУНЫ МЕТОДОМ ПАРАЛЛАКСА</h1>
+    <h3>НОВОЕ НАБЛЮДЕНИЕ</h3>
+    <form id="obervations">
+        <p><b>Место</b></p>
+        <label>Широта:</label>
+        <input type="number" name="lat" id="lat">
+        <label>Долгота:</label>
+        <input type="number" name="lon" id="lon">
+        <br>
+        <p><b>Положение Луны</b></p>
+        <label>Часовой угол:</label>
+        <input type="number" name="ra" id="ra">
+        <label>Склонение:</label>
+        <input type="number" name="dec" id="dec">
+        <br><br>
+        <input onclick="addObservation(this.form)" type="button" name="calc" value="ДОБАВИТЬ">
+    </form>
+
+    <hr>
+    <div id="observations">
+        <h3>Наблюдения</h3>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>широта</th>
+                        <th>долгота</th>
+                        <th>часовой угол</th>
+                        <th>склонение</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <br><br>
+    <input onclick="calculate(observers)" type="button" name="calc" value="РАССЧИТАТЬ ДЛЯ ВСЕХ">
+    <hr>
+    <h2 id="result"></h2>
+</body>
+
+</html>
