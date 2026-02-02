@@ -17,7 +17,8 @@
             lon = form.lon.value
             ra = form.ra.value
             dec = form.dec.value
-            if (lat != '' || lon != '' || ra != '' || dec != '') {
+            if (lat != '' && lon != '' && ra != '' && dec != '') {
+                console.log(lon!='')
                 const table = document.querySelector('#observations');
                 const row = document.createElement('tr');
                 observers.push(
@@ -62,7 +63,7 @@
     </form>
 
     <hr>
-    <div id="observations">
+    <div>
         <h3>Наблюдения</h3>
         <div>
             <table>
@@ -74,7 +75,7 @@
                         <th>склонение</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="observations"></tbody>
             </table>
         </div>
     </div>
