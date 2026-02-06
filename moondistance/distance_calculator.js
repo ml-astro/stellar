@@ -1,136 +1,84 @@
-const R_EARTH = 6371e3; // метры
+const R_EARTH = 6371e3;
 
-// БАЗОВАЯ ГЕОМЕТРИЯ
-function ecefFromLatLon(lat, lon, h = 0) {
-    lat = lat * Math.PI / 180;
-    lon = lon * Math.PI / 180;
-    const x = (R_EARTH + h) * Math.cos(lat) * Math.cos(lon);
-    const y = (R_EARTH + h) * Math.cos(lat) * Math.sin(lon);
-    const z = (R_EARTH + h) * Math.sin(lat);
-    return [x, y, z];
+function toDegrees(rad) {
+return rad * 180 / Math.PI;
 }
 
-function dirFromRaDec(ra, dec) {
-    ra = ra * 15 * Math.PI / 180; // часы -> градусы -> радианы
-    dec = dec * Math.PI / 180;
-    const x = Math.cos(dec) * Math.cos(ra);
-    const y = Math.cos(dec) * Math.sin(ra);
-    const z = Math.sin(dec);
-    const n = Math.sqrt(x * x + y * y + z * z);
-    return [x / n, y / n, z / n];
+function toRadians(deg) {
+return deg * Math.PI / 180;
 }
 
-// ЛИНЕЙНАЯ АЛГЕБРА
-function dot(a, b) {
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+function vectorMagnitude(v) {
+    return Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
-function outer(a, b) {
-    return [
-        [a[0] * b[0], a[0] * b[1], a[0] * b[2]],
-        [a[1] * b[0], a[1] * b[1], a[1] * b[2]],
-        [a[2] * b[0], a[2] * b[1], a[2] * b[2]]
-    ];
-}
-
-function matAdd(A, B) {
-    return A.map((row, i) =>
-        row.map((val, j) => val + B[i][j])
-    );
-}
-
-function matVec(A, v) {
-    return [
-        A[0][0] * v[0] + A[0][1] * v[1] + A[0][2] * v[2],
-        A[1][0] * v[0] + A[1][1] * v[1] + A[1][2] * v[2],
-        A[2][0] * v[0] + A[2][1] * v[1] + A[2][2] * v[2]
-    ];
-}
-
-function solve3x3(A, b) {
-    const [a, b1, c] = A[0];
-    const [d, e, f] = A[1];
-    const [g, h, i] = A[2];
-
-    const det =
-        a * (e * i - f * h) -
-        b1 * (d * i - f * g) +
-        c * (d * h - e * g);
-
-    if (Math.abs(det) < 1e-12)
-        throw "Вырожденная система";
-
-    const inv = [
-        [(e * i - f * h) / det, (c * h - b1 * i) / det, (b1 * f - c * e) / det],
-        [(f * g - d * i) / det, (a * i - c * g) / det, (c * d - a * f) / det],
-        [(d * h - e * g) / det, (b1 * g - a * h) / det, (a * e - b1 * d) / det]
-    ];
-
-    return matVec(inv, b);
-}
-
-// ОСНОВНОЙ АЛГОРИТМ
-
-function estimateMoonPosition(observers) {
-    let A = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
-    let b = [0, 0, 0];
-    const I = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-
-    for (const obs of observers) {
-        const O = ecefFromLatLon(obs.lat, obs.lon);
-        const D = dirFromRaDec(obs.ra, obs.dec);
-
-        const DD = outer(D, D);
-        const M = I.map((row, i) =>
-            row.map((val, j) => val - DD[i][j])
-        );
-
-        A = matAdd(A, M);
-        const Mb = matVec(M, O);
-        b = b.map((val, i) => val + Mb[i]);
+function calculateDistance(observationDate,observers,moonParallax){
+    
+    JD = observationDate / 1000 / 3600 / 24 + 2440587.5
+    T = (JD-2451545.0)/36525
+    parallax = toRadians(moonParallax)
+    
+    function calculateLST(longitude){
+        GMST = 280.46061837+ 360.98564736629*(JD-2451545)+ 0.000387933*T*T - T*T*T/38710000
+        GMST = GMST%360
+        LST = GMST + longitude
+        LST = (LST%360 + 360)%360
+        return LST
     }
 
-    return solve3x3(A, b);
-}
+    lst1 = calculateLST(observers[0].lon)
+    lst2 = calculateLST(observers[1].lon)
+    hours = (lst2)/360*24
 
-function distance(a, b) {
-    return Math.sqrt(
-        (a[0] - b[0]) ** 2 +
-        (a[1] - b[1]) ** 2 +
-        (a[2] - b[2]) ** 2
-    );
-}
-
-/* ПРИМЕР
-observers = [
-    {
-        lat: 59.47,
-        lon: 25.02,
-        ra: 8.79,
-        dec: 19.88
-    },
-    {
-        lat: 11.48,
-        lon: 77.78,
-        ra: 8.82,
-        dec: 20.73
-    },
-    {
-        lat: 71.4815,
-        lon: 110.37,
-        ra: 8.77,
-        dec: 19.98
+    function observerVector(latDeg, lstDeg) {
+        const lat = toRadians(latDeg);
+        const lst = toRadians(lstDeg);
+        return {
+            x: R_EARTH * Math.cos(lst) * Math.cos(lat),
+            y: R_EARTH * Math.sin(lst) * Math.cos(lat),
+            z: R_EARTH * Math.sin(lat)
+        };
     }
-]*/
 
-function calculate(observers) {
-    console.log(observers)
-    const P = estimateMoonPosition(observers);
-    const d = observers.reduce((sum, o) =>
-        sum + distance(P, ecefFromLatLon(o.lat, o.lon)), 0
-    ) / observers.length;
+    function sub(a, b) {
+        return {
+            x: a.x - b.x,
+            y: a.y - b.y,
+            z: a.z - b.z
+        };
+    }
 
-    console.log("Положение Луны (ECEF):", P);
-    console.log("Расстояние:", (d / 1000).toFixed(1), "км");
-    document.querySelector('#result').innerHTML = ("Расстояние: " + (d / 1000).toFixed(1) + " км")
+    const rL1 = observerVector(observers[0].lat, lst1);
+    const rL2 = observerVector(observers[1].lat, lst2);
+    const rL2L1 = sub(rL2, rL1);
+    const chord = vectorMagnitude(rL2L1);
+    //Now that vector rL2L1 is determined, the directional vector rM to the moon needs to be calculated
+
+    function moonDirection(raDeg, decDeg) {
+        const ra  = toRadians(raDeg);
+        const dec = toRadians(decDeg);
+        return {
+            x: Math.cos(ra) * Math.cos(dec),
+            y: Math.sin(ra) * Math.cos(dec),
+            z: Math.sin(dec)
+        };
+    }
+
+    const rM = moonDirection(observers[1].ra, observers[1].dec);
+
+    //Now use the dot product method for computing angle between the moon vector rM and rL2L1 as follows:
+
+    function dot(a, b) {
+        return a.x*b.x + a.y*b.y + a.z*b.z;
+    }
+
+    function angleBetween(a, b) {
+        const cos = dot(a, b) / (vectorMagnitude(a) * vectorMagnitude(b));
+        return Math.acos(cos); // в радианах
+    }
+
+    const beta = angleBetween(rL2L1, rM);
+    baseline = chord * Math.sin(beta)
+    distance = baseline / Math.sin(parallax)
+    document.getElementById('result').innerHTML="Расчетное расстояние до Луны:<br>~ "+Math.floor(distance/1000) + " км"
 }
