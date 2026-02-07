@@ -1,3 +1,4 @@
+
 const R_EARTH = 6371e3;
 
 function toDegrees(rad) {
@@ -13,6 +14,8 @@ function vectorMagnitude(v) {
 }
 
 function calculateDistance(observationDate,observers,moonParallax){
+    console.log(observers[0]);
+    console.log(observers[1]);
     
     JD = observationDate / 1000 / 3600 / 24 + 2440587.5
     T = (JD-2451545.0)/36525
@@ -80,5 +83,9 @@ function calculateDistance(observationDate,observers,moonParallax){
     const beta = angleBetween(rL2L1, rM);
     baseline = chord * Math.sin(beta)
     distance = baseline / Math.sin(parallax)
-    document.getElementById('result').innerHTML="Расчетное расстояние до Луны:<br>~ "+Math.floor(distance/1000) + " км"
+    document.getElementById('result').innerHTML="Расчетное расстояние до Луны:<br>~ "+(distance/1000) + " км"
+    document.getElementById('extrainfo').innerHTML=`
+    <p>Расстояние между наблюдателями: ${chord}</p>
+    <p>Базис: ${baseline}</p>
+    `
 }
