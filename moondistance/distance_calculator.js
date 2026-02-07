@@ -80,9 +80,10 @@ function calculateDistance(observationDate,observers,moonParallax){
         return Math.acos(cos); // в радианах
     }
 
+
     const beta = angleBetween(rL2L1, rM);
     baseline = chord * Math.sin(beta)
-    distance = baseline / Math.sin(parallax)
+    distance = baseline / Math.sin(parallax)    
     document.getElementById('result').innerHTML="Расчетное расстояние до Луны:<br>~ "+Math.floor(distance/1000) + " км"
     document.getElementById('extrainfo').innerHTML=`
     <p>Расстояние между наблюдателями: ${Math.floor(chord/1000)}</p>
