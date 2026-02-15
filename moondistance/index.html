@@ -34,7 +34,7 @@
                 alert("Неверный формат: " + value)
             }
         }    
-
+        
     </script>
     <script src="./distance_calculator.js">
     </script>
@@ -55,13 +55,13 @@
             observers[0] = {
                 lat: hoursToDegrees(form.lat1.value),
                 lon: hoursToDegrees(form.lon1.value),
-                ra: hoursToDegrees(form.ra1.value),
+                ra: hoursToDegrees(form.ra1.value)*15,
                 dec: hoursToDegrees(form.dec1.value)
             };
             observers[1] = {
                 lat: hoursToDegrees(form.lat2.value),
                 lon: hoursToDegrees(form.lon2.value),
-                ra: hoursToDegrees(form.ra2.value),
+                ra: hoursToDegrees(form.ra2.value)*15,
                 dec: hoursToDegrees(form.dec2.value)
             };
             if (
