@@ -27,7 +27,7 @@
                         result = hours - minutes - seconds
                     }
                     else {result = hours + minutes + seconds};                    
-                    return result
+                    return result*15
                 }
             }
             else {
@@ -55,13 +55,13 @@
             observers[0] = {
                 lat: hoursToDegrees(form.lat1.value),
                 lon: hoursToDegrees(form.lon1.value),
-                ra: hoursToDegrees(form.ra1.value)*15,
+                ra: hoursToDegrees(form.ra1.value),
                 dec: hoursToDegrees(form.dec1.value)
             };
             observers[1] = {
                 lat: hoursToDegrees(form.lat2.value),
                 lon: hoursToDegrees(form.lon2.value),
-                ra: hoursToDegrees(form.ra2.value)*15,
+                ra: hoursToDegrees(form.ra2.value),
                 dec: hoursToDegrees(form.dec2.value)
             };
             if (
