@@ -48,15 +48,18 @@ function calculate_orbit_radius(apos) { return Math.sqrt(apos[0] ** 2 + apos[1] 
 function calculate_next_phase(R, timediff, angle0) {
     period = Math.sqrt(R ** 3)
     phasechange = timediff / (period * year) * 360
-    console.log("period in years", period)
-    console.log("orbital shift", phasechange)
+    //console.log("period in years", period)
+    //console.log("orbital shift", phasechange)
     newphase = (phasechange + angle0) % 360
-    console.log('new phase', newphase);
+    //console.log('new phase', newphase);
     return newphase
 }
 
 function deg2decimal(value) {
     degArray = value.split(':')
+    if(degArray[0] < 0){
+        return parseInt(degArray[0]) - degArray[1] / 60
+    }
     return parseInt(degArray[0]) + degArray[1] / 60
 }
 
@@ -71,6 +74,7 @@ function to_ecliptic(R, D) {
     if (lon < 0) lon += 360
     return lon
 }
+//console.log(to_ecliptic(deg2decimal("10:56.5")*15, deg2decimal("-1:49")));
 
 function parseDate(data) {
     var [timePart, datePart] = data.split(' ')
@@ -80,18 +84,17 @@ function parseDate(data) {
     return julian_date(dateSplit[2], parseInt(dateSplit[1]), parseInt(dateSplit[0]), time)
 }
 
-function parseRA(data) {
-    var [deg, min] = data.split(':')
-    return parseInt(deg) + parseFloat(min / 60)
-}
-
-//console.log(to_ecliptic(4.06*15, 16.5));
-
 function parseForm(form) {
     JD1 = parseDate(form.date1.value)
     JD2 = parseDate(form.date2.value)
-    ra1 = parseRA(form.ra1.value)
-    ra2 = parseRA(form.ra2.value)
+    ra1temp = deg2decimal(form.ra1.value)*15
+    ra2temp = deg2decimal(form.ra2.value)*15
+    dec1temp = deg2decimal(form.dec1.value)
+    dec2temp = deg2decimal(form.dec2.value)
+    ra1 = to_ecliptic(ra1temp,dec1temp)
+    ra2 = to_ecliptic(ra2temp,dec2temp)
+    
+    
     D = form.distance.value
     calculation(JD1, JD2, ra1, ra2, D)
 }
@@ -125,7 +128,6 @@ function calculation(JD1, JD2, ra1, ra2, D) {
     document.getElementById('output').value=`
     asteroid position 1:  ${asteroid1}
     earth position 1:     ${earth1}
-    orbit radius:         ${roundNumber(aradius)}
     asteroid phase 1:     ${roundNumber(aphase1)}
     asteroid phase 2:     ${roundNumber(aphase2)}
     asteroid position 2:  ${asteroid2}
@@ -133,7 +135,7 @@ function calculation(JD1, JD2, ra1, ra2, D) {
     observed direction:   ${ra2}
     calculated direction: ${roundNumber(direction2)}
     direction difference: ${roundNumber(direction2 - ra2)}
-    orbit radius':        ${calculate_orbit_radius(asteroid1)}
+    orbit radius':        ${roundNumber(calculate_orbit_radius(asteroid1))}
     `
 
 
