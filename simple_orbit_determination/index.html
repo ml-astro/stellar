@@ -10,7 +10,7 @@
 <body>
     <script src="./minimal.js"></script>
     <form id="observationData">
-        <p><b>Координаты астероида (эклиптика)</b></p>
+        <p><b>Координаты объекта (эклиптика)</b></p>
         <p><b>Наблюдение 1</b></p>
         <label>Дата и время</label>
         <input type="text" name="date1" id="date1" placeholder="чч:мм дд.мм.гггг">
@@ -33,7 +33,7 @@
         <br><br>-->
         <label>D</label>
         <input type="number" name="distance" id="distance" value="1">
-        <br><br><input onclick="parseForm(this.form)" type="button" name="calc" value="РАССЧИТАТЬ ОРБИТУ АСТЕРОИДА">
+        <br><br><input onclick="parseForm(this.form)" type="button" name="calc" value="РАССЧИТАТЬ ОРБИТУ ОБЪЕКТА">
         <hr>
     </form>
     <textarea style="height: 300px; width: 500px;" id="output"></textarea>

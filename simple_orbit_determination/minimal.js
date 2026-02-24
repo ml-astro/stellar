@@ -60,13 +60,14 @@ function deg2decimal(value) {
 }
 
 //не работает как надо
-function to_ecliptic(ra, dec) {
-    e = deg2rad(23.439291)
-    ra = deg2rad(ra)
-    dec = deg2rad(dec)
-    lon = rad2deg(Math.atan((Math.sin(ra) * Math.cos(e) + Math.tan(dec) * Math.sin(e)) / Math.cos(ra)))
-    lat = Math.asin(Math.sin(dec) * Math.cos(e) - Math.cos(dec) * Math.sin(e) * Math.sin(ra))
-    if (lon < 0) { lon += 360 }
+function to_ecliptic(R, D) {
+    const e = deg2rad(23.439291)
+    const ra = deg2rad(R)
+    const dec = deg2rad(D)
+    const y = Math.sin(ra) * Math.cos(e) + Math.tan(dec) * Math.sin(e)
+    const x = Math.cos(ra)
+    let lon = rad2deg(Math.atan2(y, x))
+    if (lon < 0) lon += 360
     return lon
 }
 
