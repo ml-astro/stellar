@@ -7,6 +7,7 @@ earth_distance = 1
 function rad2deg(radians) { return radians * 180.0 / Math.PI }
 function deg2rad(deg) { return deg * Math.PI / 180 }
 function earth_phase_angle(date) { return (equinox_date_correction + ((date - JD0) / year % 1 * 360)) % 360 }
+function roundNumber(n){return Math.round(n*1000)/1000}
 
 //относительное направление
 function xy_to_direction(center, target) {
@@ -124,14 +125,14 @@ function calculation(JD1, JD2, ra1, ra2, D) {
     document.getElementById('output').value=`
     asteroid position 1:  ${asteroid1}
     earth position 1:     ${earth1}
-    orbit radius:         ${aradius}
-    asteroid phase 1:     ${aphase1}
-    asteroid phase 2:     ${aphase2}
+    orbit radius:         ${roundNumber(aradius)}
+    asteroid phase 1:     ${roundNumber(aphase1)}
+    asteroid phase 2:     ${roundNumber(aphase2)}
     asteroid position 2:  ${asteroid2}
     earth position 2:     ${earth2}
     observed direction:   ${ra2}
-    calculated direction: ${direction2}
-    direction difference: ${direction2 - ra2}
+    calculated direction: ${roundNumber(direction2)}
+    direction difference: ${roundNumber(direction2 - ra2)}
     orbit radius':        ${calculate_orbit_radius(asteroid1)}
     `
 
