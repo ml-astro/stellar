@@ -7,7 +7,7 @@ earth_distance = 1
 function rad2deg(radians) { return radians * 180.0 / Math.PI }
 function deg2rad(deg) { return deg * Math.PI / 180 }
 function earth_phase_angle(date) { return (equinox_date_correction + ((date - JD0) / year % 1 * 360)) % 360 }
-function roundNumber(n){return Math.round(n*1000)/1000}
+function roundNumber(n) { return Math.round(n * 1000) / 1000 }
 
 //относительное направление
 function xy_to_direction(center, target) {
@@ -48,22 +48,18 @@ function calculate_orbit_radius(apos) { return Math.sqrt(apos[0] ** 2 + apos[1] 
 function calculate_next_phase(R, timediff, angle0) {
     period = Math.sqrt(R ** 3)
     phasechange = timediff / (period * year) * 360
-    //console.log("period in years", period)
-    //console.log("orbital shift", phasechange)
     newphase = (phasechange + angle0) % 360
-    //console.log('new phase', newphase);
     return newphase
 }
 
 function deg2decimal(value) {
     degArray = value.split(':')
-    if(degArray[0] < 0){
+    if (degArray[0] < 0) {
         return parseInt(degArray[0]) - degArray[1] / 60
     }
     return parseInt(degArray[0]) + degArray[1] / 60
 }
 
-//не работает как надо
 function to_ecliptic(R, D) {
     const e = deg2rad(23.439291)
     const ra = deg2rad(R)
@@ -74,7 +70,6 @@ function to_ecliptic(R, D) {
     if (lon < 0) lon += 360
     return lon
 }
-//console.log(to_ecliptic(deg2decimal("10:56.5")*15, deg2decimal("-1:49")));
 
 function parseDate(data) {
     var [timePart, datePart] = data.split(' ')
@@ -87,19 +82,16 @@ function parseDate(data) {
 function parseForm(form) {
     JD1 = parseDate(form.date1.value)
     JD2 = parseDate(form.date2.value)
-    ra1temp = deg2decimal(form.ra1.value)*15
-    ra2temp = deg2decimal(form.ra2.value)*15
+    ra1temp = deg2decimal(form.ra1.value) * 15
+    ra2temp = deg2decimal(form.ra2.value) * 15
     dec1temp = deg2decimal(form.dec1.value)
     dec2temp = deg2decimal(form.dec2.value)
-    ra1 = to_ecliptic(ra1temp,dec1temp)
-    ra2 = to_ecliptic(ra2temp,dec2temp)
-    
-    
-    D = form.distance.value
-    calculation(JD1, JD2, ra1, ra2, D)
+    ra1 = to_ecliptic(ra1temp, dec1temp)
+    ra2 = to_ecliptic(ra2temp, dec2temp)
+    approximation(JD1, JD2, ra1, ra2)
 }
 
-function calculation(JD1, JD2, ra1, ra2, D) {
+function approximation(JD1, JD2, ra1, ra2) {
     tdiff = JD2 - JD1
     phase1 = earth_phase_angle(JD1)
     phase2 = calculate_next_phase(1, tdiff, phase1)
@@ -108,35 +100,43 @@ function calculation(JD1, JD2, ra1, ra2, D) {
 
     //НАЧИНАЕМ ПЕРЕБОР РАССТОЯНИЙ ДЛЯ ПЕРВОГО НАБЛЮДЕНИЯ, ПРИ ЭТОМ СРАВНИВАЕМ НАПРАВЛЕНИЯ 1 И 2
     //это будем перебирать для алгоритма приближения
-    //существует как минимум два решения для тех астероидов у которых малая элонгация с солнцем - подмешиваются расчеты для внутренней солнечной системы
+    //существует как минимум два решения для тех объектов у которых малая элонгация с солнцем - подмешиваются расчеты для внутренней солнечной системы
     //для юпитера решила большая дуга наблюдений
     //посмотреть как будет с марсом. он дал мне большую погрешность при 3 месяцах
 
+    step = 1
+    D = 1
+    var prevDiff = 360
+    var asteroid1, asteroid2, aradius, aphase1, aphase2, direction2, direction_difference
+    for (let i = 0; i < 50; i++) {
+        asteroid1 = calculate_asteroid_position(earth1, ra1, D)
+        aradius = calculate_orbit_radius(asteroid1)
+        aphase1 = xy_to_direction([0, 0], asteroid1)
+        aphase2 = calculate_next_phase(aradius, tdiff, aphase1)
+        asteroid2 = direction_to_xy(aphase2, aradius)
+        direction2 = xy_to_direction(earth2, asteroid2)
+        //сравниваем направление от земли 2 с расчетным
+        direction_difference = Math.abs(direction2 - ra2)
+        if (direction_difference > prevDiff) {
+            step = -step / 2
+        }
+        prevDiff = direction_difference
+        D = D + step
+    }
 
-    asteroid1 = calculate_asteroid_position(earth1, ra1, D)
-    
-    aradius = calculate_orbit_radius(asteroid1)
-    aphase1 = xy_to_direction([0, 0], asteroid1)
-    aphase2 = calculate_next_phase(aradius, tdiff, aphase1)
-    asteroid2 = direction_to_xy(aphase2, aradius)
-    //у нас есть интервал времени
-    //за это время знаем сколько прошел астероид и его новое положение ху
-    //считаем направление от земли 2
-    direction2 = xy_to_direction(earth2, asteroid2)
-    //сравниваем направление от земли 2 с расчетным
-    
-    document.getElementById('output').value=`
-    asteroid position 1:  ${asteroid1}
-    earth position 1:     ${earth1}
-    asteroid phase 1:     ${roundNumber(aphase1)}
-    asteroid phase 2:     ${roundNumber(aphase2)}
-    asteroid position 2:  ${asteroid2}
-    earth position 2:     ${earth2}
-    observed direction:   ${ra2}
-    calculated direction: ${roundNumber(direction2)}
-    direction difference: ${roundNumber(direction2 - ra2)}
-    orbit radius':        ${roundNumber(calculate_orbit_radius(asteroid1))}
+    document.getElementById('output').value = `
+    наблюдение 1:
+    координаты объекта:      ${roundNumber(asteroid1[0])} ${roundNumber(asteroid1[1])}
+    координаты земли:        ${roundNumber(earth1[0])} ${roundNumber(earth1[1])}
+    расстояние:              ${roundNumber(D)}
+
+    наблюдение 2:
+    координаты объекта:      ${roundNumber(asteroid2[0])} ${roundNumber(asteroid2[1])}
+    координаты земли:        ${roundNumber(earth2[0])} ${roundNumber(earth2[1])}
+    наблюдаемое направление: ${roundNumber(ra2)}
+    расчетное направление:   ${roundNumber(direction2)}
+    погрешность направления: ${roundNumber(direction_difference)}
+
+    радиус орбиты:           ${roundNumber(calculate_orbit_radius(asteroid1))}
     `
-
-
 }

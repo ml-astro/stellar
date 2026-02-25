@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой расчет орбиты</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            background-color: #444;
+        }
+
+        h1 {
+            font-size:x-large
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            width: 500px;
+            margin: 0 auto;
+        }
+
+        #observationData {
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        #observationData label {
+            display: block;
+            font-size: 14px;
+            margin-top: 8px;
+            color: #444;
+        }
+
+        #observationData input[type="text"] {
+            width: 100%;
+            padding: 6px 8px;
+            margin-top: 3px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        #observationData input[type="button"] {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background: #2f80ed;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #observationData input[type="button"]:hover {
+            background: #1c60b3;
+        }
+
+        #output {
+            height: 250px;
+            width: 100%;
+            padding: 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="observationData">
+        <h1>Калькулятор круглых орбит</h1>
+        <p><b>Наблюдение 1</b></p>
+        <label>Время и дата</label>
+        <input type="text" name="date1" id="date1" placeholder="чч:мм дд.мм.гггг">
+        <br>
+        <label>П.В.</label>
+        <input type="text" name="ra1" id="ra1" placeholder="час:мин">
+        <br>
+        <label>Скл</label>
+        <input type="text" name="dec1" id="dec1" placeholder="градус:мин">
+        <br><br>
+        <p><b>Наблюдение 2</b></p>
+        <label>Время и дата</label>
+        <input type="text" name="date2" id="date2" placeholder="чч:мм дд.мм.гггг">
+        <br>
+        <label>П.В.</label>
+        <input type="text" name="ra2" id="ra2" placeholder="час:мин">
+        <br>
+        <label>Скл</label>
+        <input type="text" name="dec2" id="dec2" placeholder="градус:мин">
+        <br><br><input onclick="parseForm(this.form)" type="button" name="calc" value="РАССЧИТАТЬ ОРБИТУ ОБЪЕКТА">
+        <hr>
+    </form>
+    <textarea id="output"></textarea>
+    <script src="./minimal.js"></script>
+</body>
+
+</html>
