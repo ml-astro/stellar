@@ -1,18 +1,60 @@
 //tropical year
 year = 365.24219
-JD0 = 2451544.417
+JD0 = julian_date(2000, 1, 1)
 equinox_date_correction = 101.88
 earth_distance = 1
 
 function rad2deg(radians) { return radians * 180.0 / Math.PI }
 function deg2rad(deg) { return deg * Math.PI / 180 }
-function earth_phase_angle(date) { return (equinox_date_correction + ((date - JD0) / year % 1 * 360)) % 360 }
 function roundNumber(n) { return Math.round(n * 1000) / 1000 }
+function normalizeAngle(deg) {deg = deg % 360; return deg < 0 ? deg + 360 : deg;}
+
+
+function solveKeplerEarth(M, e, tol = 1e-6) {
+    let E = M; // начальное приближение
+    let delta;
+    do {
+        delta = E - e * Math.sin(E) - M;
+        E = E - delta / (1 - e * Math.cos(E));
+    } while (Math.abs(delta) > tol);
+    return E;
+}
+
+function earthPosition(jd, earth) {
+    const d = jd - julian_date(2021, 1, 1, 0);
+    let M = earth.M + earth.dM * d;
+    M = normalizeAngle(M);
+    M = deg2rad(M);
+    const e = earth.e;
+    const a = earth.a; // в млн км
+    const E = solveKeplerEarth(M, e);
+    const v = 2 * Math.atan2(
+        Math.sqrt(1 + e) * Math.sin(E / 2),
+        Math.sqrt(1 - e) * Math.cos(E / 2)
+    );
+    const r = a * (1 - e * Math.cos(E));
+    const w = deg2rad(earth.w);
+    const x = - r * Math.cos(v + w)
+    const y = - r * Math.sin(v + w) 
+    return { x, y, r };
+}
+
+const earth = {
+    N: 176.6624,
+    i: 0,
+    w: 286.3605,
+    a: 1,
+    e: 0.01672,
+    M: 357.55703,
+    dM: (1.1407E-5) * 86400
+};
+
+
 
 //относительное направление
 function xy_to_direction(center, target) {
-    dx = target[0] - center[0]
-    dy = target[1] - center[1]
+    dx = target[0] - center.x
+    dy = target[1] - center.y
     direction = rad2deg(Math.atan(dy / dx))
     if (dx < 0) { direction += 180 }
     else if (dy < 0) { direction += 360 }
@@ -30,13 +72,13 @@ function direction_to_xy(phase, distance) {
 //расчет абсолютной позиции
 function calculate_asteroid_position(earthpos, ra, distance) {
     ra = deg2rad(ra)
-    xa = earthpos[0] + distance * Math.cos(ra)
-    ya = earthpos[1] + distance * Math.sin(ra)
+    xa = earthpos.x + distance * Math.cos(ra)
+    ya = earthpos.y + distance * Math.sin(ra)
     return [xa, ya]
 }
 
 //нужно для расчета интервалов
-function julian_date(year, month, day, time) {
+function julian_date(year, month, day, time = 0) {
     const observationDate = new Date(year, month - 1, day, time);
     JD = observationDate / 1000 / 3600 / 24 + 2440587.5
     return JD
@@ -89,21 +131,20 @@ function parseForm(form) {
     ra1 = to_ecliptic(ra1temp, dec1temp)
     ra2 = to_ecliptic(ra2temp, dec2temp)
     approximation(JD1, JD2, ra1, ra2)
+    
 }
 
 function approximation(JD1, JD2, ra1, ra2) {
     tdiff = JD2 - JD1
-    phase1 = earth_phase_angle(JD1)
-    phase2 = calculate_next_phase(1, tdiff, phase1)
-    earth1 = direction_to_xy(phase1, earth_distance)
-    earth2 = direction_to_xy(phase2, earth_distance)
+    earth1 = earthPosition(JD1,earth)
+    earth2 = earthPosition(JD2,earth)
 
     //НАЧИНАЕМ ПЕРЕБОР РАССТОЯНИЙ ДЛЯ ПЕРВОГО НАБЛЮДЕНИЯ, ПРИ ЭТОМ СРАВНИВАЕМ НАПРАВЛЕНИЯ 1 И 2
     //это будем перебирать для алгоритма приближения
     //существует как минимум два решения для тех объектов у которых малая элонгация с солнцем - подмешиваются расчеты для внутренней солнечной системы
     //для юпитера решила большая дуга наблюдений
     //посмотреть как будет с марсом. он дал мне большую погрешность при 3 месяцах
-
+        
     step = 1
     D = 1
     var prevDiff = 360
@@ -111,7 +152,7 @@ function approximation(JD1, JD2, ra1, ra2) {
     for (let i = 0; i < 50; i++) {
         asteroid1 = calculate_asteroid_position(earth1, ra1, D)
         aradius = calculate_orbit_radius(asteroid1)
-        aphase1 = xy_to_direction([0, 0], asteroid1)
+        aphase1 = xy_to_direction({x:0,y:0}, asteroid1)
         aphase2 = calculate_next_phase(aradius, tdiff, aphase1)
         asteroid2 = direction_to_xy(aphase2, aradius)
         direction2 = xy_to_direction(earth2, asteroid2)
@@ -127,12 +168,12 @@ function approximation(JD1, JD2, ra1, ra2) {
     document.getElementById('output').value = `
     наблюдение 1:
     координаты объекта:      ${roundNumber(asteroid1[0])} ${roundNumber(asteroid1[1])}
-    координаты земли:        ${roundNumber(earth1[0])} ${roundNumber(earth1[1])}
+    координаты земли:        ${roundNumber(earth1.x)} ${roundNumber(earth1.y)}
     расстояние:              ${roundNumber(D)}
 
     наблюдение 2:
     координаты объекта:      ${roundNumber(asteroid2[0])} ${roundNumber(asteroid2[1])}
-    координаты земли:        ${roundNumber(earth2[0])} ${roundNumber(earth2[1])}
+    координаты земли:        ${roundNumber(earth2.x)} ${roundNumber(earth2.y)}
     наблюдаемое направление: ${roundNumber(ra2)}
     расчетное направление:   ${roundNumber(direction2)}
     погрешность направления: ${roundNumber(direction_difference)}
