@@ -165,6 +165,7 @@ function approximation(JD1, JD2, ra1, ra2) {
         D = D + step
     }
 
+    radius = calculate_orbit_radius(asteroid1)
     document.getElementById('output').value = `
     наблюдение 1:
     координаты объекта:      ${roundNumber(asteroid1[0])} ${roundNumber(asteroid1[1])}
@@ -178,6 +179,7 @@ function approximation(JD1, JD2, ra1, ra2) {
     расчетное направление:   ${roundNumber(direction2)}
     погрешность направления: ${roundNumber(direction_difference)}
 
-    радиус орбиты:           ${roundNumber(calculate_orbit_radius(asteroid1))}
+    радиус орбиты:           ${roundNumber(radius)}
+    период (лет):            ${roundNumber(Math.sqrt(radius**3))}
     `
 }
