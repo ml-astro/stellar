@@ -10,31 +10,18 @@
 
 <body>
     <script>
-    function hoursToDegrees(value){ 
-            if(/^-?\d+(?:[./]\d+)*$/.test(value)){
-                if(!value.includes("/")){
-                    return parseFloat(value)
-                }
-                else {
-                    hoursArray = value.split('/')
-                    hours = parseFloat(hoursArray[0])
-                    minutes = parseFloat(hoursArray[1]/60)
-                    seconds = 0
-                    if(hoursArray.length == 3){
-                        seconds = (hoursArray[2]/3600)
-                    }
-                    if(hours<0){
-                        result = hours - minutes - seconds
-                    }
-                    else {result = hours + minutes + seconds};                    
-                    return result*15
-                }
+        function toDecimalDegrees(value) {
+            degArray = value.split(":")
+            seconds = 0
+            if (degArray.length == 3) {
+                seconds = degArray[2] / 3600
             }
-            else {
-                alert("Неверный формат: " + value)
+            if (degArray[0] < 0) {
+                return parseInt(degArray[0]) - degArray[1] / 60 - seconds
             }
-        }    
-        
+            return parseInt(degArray[0]) + degArray[1] / 60 + seconds
+        }
+
     </script>
     <script src="./distance_calculator.js">
     </script>
@@ -42,36 +29,24 @@
         let observers = [];
         function calculate(form) {
             const rawDate = document.getElementById("datetime").value;
-            if (!rawDate) {
-                alert("Укажи дату и время")
-                return
-            }
             //get date and time
             const [datePart, timePart] = rawDate.split('T');
             const [year, month, day] = datePart.split('-').map(Number);
             const [hour, minute] = timePart.split(':').map(Number);
             const observationDate = new Date(year, month - 1, day, hour, minute, 0);
-            const parallax = form.px.value;
             observers[0] = {
-                lat: hoursToDegrees(form.lat1.value),
-                lon: hoursToDegrees(form.lon1.value),
-                ra: hoursToDegrees(form.ra1.value),
-                dec: hoursToDegrees(form.dec1.value)
+                lat: toDecimalDegrees(form.lat1.value),
+                lon: toDecimalDegrees(form.lon1.value),
+                ra: toDecimalDegrees(form.ra1.value) * 15,
+                dec: toDecimalDegrees(form.dec1.value)
             };
             observers[1] = {
-                lat: hoursToDegrees(form.lat2.value),
-                lon: hoursToDegrees(form.lon2.value),
-                ra: hoursToDegrees(form.ra2.value),
-                dec: hoursToDegrees(form.dec2.value)
+                lat: toDecimalDegrees(form.lat2.value),
+                lon: toDecimalDegrees(form.lon2.value),
+                ra: toDecimalDegrees(form.ra2.value) * 15,
+                dec: toDecimalDegrees(form.dec2.value)
             };
-            if (
-                isNaN(parallax) ||
-                observers.some(o => Object.values(o).some(v => isNaN(v)))
-            ) {
-                alert("Заполни форму до конца");
-                return;
-            }
-            calculateDistance(observationDate, observers, parallax);
+            calculateDistance(observationDate, observers);
         }
     </script>
 
@@ -79,40 +54,34 @@
     <h1>КАЛЬКУЛЯТОР РАССТОЯНИЯ ДО ЛУНЫ МЕТОДОМ ПАРАЛЛАКСА</h1>
     <form id="obervations">
         <p><b>Время наблюдений</b></p>
-        <label>UTC
             <input type="datetime-local" id="datetime" name="datetime">
-        </label>
         <hr>
         <p><b>Место #1</b></p>
         <label>Широта:</label>
-            <input type="text" name="lat1" id="lat1" placeholder="ГРАД или ГРАД/МИН/СЕК">
+        <input type="text" name="lat1" id="lat1" placeholder="ГРАД:МИН:СЕК">
         <label>Долгота:</label>
-            <input type="text" name="lon1" id="lon1" placeholder="ГРАД или ГРАД/МИН/СЕК">
+        <input type="text" name="lon1" id="lon1" placeholder="ГРАД:МИН:СЕК">
         <br>
         <p><b>Положение Луны</b></p>
         <label>Часовой угол:</label>
-            <input type="text" name="ra1" id="ra1" placeholder="ЧАС или ЧАС/МИН/СЕК">
+        <input type="text" name="ra1" id="ra1" placeholder="ЧАС:МИН:СЕК">
         <label>Склонение:</label>
-            <input type="text" name="dec1" id="dec1" placeholder="ГРАД или ГРАД/МИН/СЕК">
+        <input type="text" name="dec1" id="dec1" placeholder="ГРАД:МИН:СЕК">
         <br><br>
         <hr>
         <p><b>Место #2</b></p>
         <label>Широта:</label>
-            <input type="text" name="lat2" id="lat2" placeholder="ГРАД или ГРАД/МИН/СЕК">
+        <input type="text" name="lat2" id="lat2" placeholder="ГРАД:МИН:СЕК">
         <label>Долгота:</label>
-            <input type="text" name="lon2" id="lon2" placeholder="ГРАД или ГРАД/МИН/СЕК">
+        <input type="text" name="lon2" id="lon2" placeholder="ГРАД:МИН:СЕК">
         <br>
         <p><b>Положение Луны</b></p>
         <label>Часовой угол:</label>
-            <input type="text" name="ra2" id="ra2" placeholder="ЧАС или ЧАС/МИН/СЕК">
+        <input type="text" name="ra2" id="ra2" placeholder="ЧАС:МИН:СЕК">
         <label>Склонение:</label>
-            <input type="text" name="dec2" id="dec2" placeholder="ГРАД или ГРАД/МИН/СЕК">
+        <input type="text" name="dec2" id="dec2" placeholder="ГРАД:МИН:СЕК">
         <br><br>
         <hr>
-        <p><b>Лунный параллакс в градусах</b></p>
-        <label>Величина:</label>
-            <input type="number" name="px" id="px" placeholder="ГРАДУСЫ">
-        <br><br>
         <input onclick="calculate(this.form)" type="button" name="calc" value="РАССЧИТАТЬ РАССТОЯНИЕ ДО ЛУНЫ">
         <hr>
     </form>

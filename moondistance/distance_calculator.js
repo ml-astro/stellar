@@ -1,38 +1,51 @@
+//на дом компе в браузере вводится местное время почему-то
+// не utc
+
 
 const R_EARTH = 6371e3;
 
 function toDegrees(rad) {
-return rad * 180 / Math.PI;
+    return rad * 180 / Math.PI;
 }
 
 function toRadians(deg) {
-return deg * Math.PI / 180;
+    return deg * Math.PI / 180;
 }
 
 function vectorMagnitude(v) {
-    return Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    return Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-function calculateDistance(observationDate,observers,moonParallax){
+function angularSeparation(ra1, dec1, ra2, dec2) {
+    x = Math.cos(dec1) * Math.sin(dec2) - Math.sin(dec1) * Math.cos(dec2) * Math.cos(ra2 - ra1);
+    y = Math.cos(dec2) * Math.sin(ra2 - ra1);
+    z = Math.sin(dec1) * Math.sin(dec2) + Math.cos(dec1) * Math.cos(dec2) * Math.cos(ra2 - ra1);
+    d = Math.atan2(Math.sqrt(x * x + y * y), z);
+    return d;
+}
+
+function calculateDistance(observationDate, observers) {
     console.log(observers[0]);
     console.log(observers[1]);
-    
+
     JD = observationDate / 1000 / 3600 / 24 + 2440587.5
-    T = (JD-2451545.0)/36525
-    parallax = toRadians(moonParallax)
+    T = (JD - 2451545.0) / 36525
+
+    parallax = angularSeparation(toRadians(observers[0].ra), toRadians(observers[0].dec), toRadians(observers[1].ra), toRadians(observers[1].dec))
     
-    function calculateLST(longitude){
-        GMST = 280.46061837+ 360.98564736629*(JD-2451545)+ 0.000387933*T*T - T*T*T/38710000
-        GMST = GMST%360
+    function calculateLST(longitude) {
+        GMST = 280.46061837 + 360.98564736629 * (JD - 2451545) + 0.000387933 * T * T - T * T * T / 38710000
+        GMST = GMST % 360
         LST = GMST + longitude
-        LST = (LST%360 + 360)%360
+        LST = (LST % 360 + 360) % 360
         return LST
     }
 
     lst1 = calculateLST(observers[0].lon)
     lst2 = calculateLST(observers[1].lon)
-    hours = (lst2)/360*24
-
+    hours = (lst2) / 360 * 24
+    console.log(lst1, lst2);
+    
     function observerVector(latDeg, lstDeg) {
         const lat = toRadians(latDeg);
         const lst = toRadians(lstDeg);
@@ -58,7 +71,7 @@ function calculateDistance(observationDate,observers,moonParallax){
     //Now that vector rL2L1 is determined, the directional vector rM to the moon needs to be calculated
 
     function moonDirection(raDeg, decDeg) {
-        const ra  = toRadians(raDeg);
+        const ra = toRadians(raDeg);
         const dec = toRadians(decDeg);
         return {
             x: Math.cos(ra) * Math.cos(dec),
@@ -72,7 +85,7 @@ function calculateDistance(observationDate,observers,moonParallax){
     //Now use the dot product method for computing angle between the moon vector rM and rL2L1 as follows:
 
     function dot(a, b) {
-        return a.x*b.x + a.y*b.y + a.z*b.z;
+        return a.x * b.x + a.y * b.y + a.z * b.z;
     }
 
     function angleBetween(a, b) {
@@ -83,10 +96,11 @@ function calculateDistance(observationDate,observers,moonParallax){
 
     const beta = angleBetween(rL2L1, rM);
     baseline = chord * Math.sin(beta)
-    distance = baseline / Math.sin(parallax)    
-    document.getElementById('result').innerHTML="Расчетное расстояние до Луны:<br>~ "+Math.floor(distance/1000) + " км"
-    document.getElementById('extrainfo').innerHTML=`
-    <p>Расстояние между наблюдателями: ${Math.floor(chord/1000)}</p>
-    <p>Базис: ${Math.floor(baseline/1000)}</p>
+    distance = baseline / Math.sin(parallax)
+    document.getElementById('result').innerHTML = "Расчетное расстояние до Луны:<br>~ " + Math.floor(distance / 1000) + " км"
+    document.getElementById('extrainfo').innerHTML = `
+    <p>Расстояние между наблюдателями: ${Math.floor(chord / 1000)}</p>
+    <p>Базис: ${Math.floor(baseline / 1000)}</p>
+    <p>Параллакс: ${toDegrees(parallax)}</p>
     `
 }
