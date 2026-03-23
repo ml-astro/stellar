@@ -51,18 +51,18 @@
     </script>
 
     </script>
-    <h1>КАЛЬКУЛЯТОР РАССТОЯНИЯ ДО ЛУНЫ МЕТОДОМ ПАРАЛЛАКСА</h1>
+    <h1>КАЛЬКУЛЯТОР ОКОЛОЗЕМНЫХ РАССТОЯНИЙ</h1>
     <form id="obervations">
         <p><b>Время наблюдений</b></p>
             <input type="datetime-local" id="datetime" name="datetime">
         <hr>
-        <p><b>Место #1</b></p>
+        <p><b>Место #1</b> - <i>ближайшее к объекту</i></p>
         <label>Широта:</label>
         <input type="text" name="lat1" id="lat1" placeholder="ГРАД:МИН:СЕК">
         <label>Долгота:</label>
         <input type="text" name="lon1" id="lon1" placeholder="ГРАД:МИН:СЕК">
         <br>
-        <p><b>Положение Луны</b></p>
+        <p><b>Положение объекта</b></p>
         <label>Часовой угол:</label>
         <input type="text" name="ra1" id="ra1" placeholder="ЧАС:МИН:СЕК">
         <label>Склонение:</label>
@@ -75,14 +75,14 @@
         <label>Долгота:</label>
         <input type="text" name="lon2" id="lon2" placeholder="ГРАД:МИН:СЕК">
         <br>
-        <p><b>Положение Луны</b></p>
+        <p><b>Положение объекта</b></p>
         <label>Часовой угол:</label>
         <input type="text" name="ra2" id="ra2" placeholder="ЧАС:МИН:СЕК">
         <label>Склонение:</label>
         <input type="text" name="dec2" id="dec2" placeholder="ГРАД:МИН:СЕК">
         <br><br>
         <hr>
-        <input onclick="calculate(this.form)" type="button" name="calc" value="РАССЧИТАТЬ РАССТОЯНИЕ ДО ЛУНЫ">
+        <input onclick="calculate(this.form)" type="button" name="calc" value="РАССЧИТАТЬ РАССТОЯНИЕ ДО ОБЪЕКТА">
         <hr>
     </form>
     <h2 id="result"></h2>
