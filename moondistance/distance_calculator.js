@@ -68,9 +68,9 @@ function calculateDistance(observationDate, observers) {
     const rL2 = observerVector(observers[1].lat, lst2);
     const rL2L1 = sub(rL2, rL1);
     const chord = vectorMagnitude(rL2L1);
-    //Now that vector rL2L1 is determined, the directional vector rM to the moon needs to be calculated
+    //Now that vector rL2L1 is determined, the directional vector rM needs to be calculated
 
-    function moonDirection(raDeg, decDeg) {
+    function direction(raDeg, decDeg) {
         const ra = toRadians(raDeg);
         const dec = toRadians(decDeg);
         return {
@@ -80,9 +80,9 @@ function calculateDistance(observationDate, observers) {
         };
     }
 
-    const rM = moonDirection(observers[1].ra, observers[1].dec);
+    const rM = direction(observers[1].ra, observers[1].dec);
 
-    //Now use the dot product method for computing angle between the moon vector rM and rL2L1 as follows:
+    //Now use the dot product method for computing angle between rM and rL2L1:
 
     function dot(a, b) {
         return a.x * b.x + a.y * b.y + a.z * b.z;
