@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,40 +21,36 @@
             }
             return parseInt(degArray[0]) + degArray[1] / 60 + seconds
         }
-
     </script>
     <script src="./distance_calculator.js">
     </script>
     <script>
-        let observers = [];
+        let observations = [];
         function calculate(form) {
             const rawDate = document.getElementById("datetime").value;
-            //get date and time
             const [datePart, timePart] = rawDate.split('T');
             const [year, month, day] = datePart.split('-').map(Number);
             const [hour, minute] = timePart.split(':').map(Number);
-            const observationDate = new Date(year, month - 1, day, hour, minute, 0);
-            observers[0] = {
+            const observationDate = new Date(year, month - 1, day, hour, minute);
+            observations[0] = {
                 lat: toDecimalDegrees(form.lat1.value),
                 lon: toDecimalDegrees(form.lon1.value),
                 ra: toDecimalDegrees(form.ra1.value) * 15,
                 dec: toDecimalDegrees(form.dec1.value)
             };
-            observers[1] = {
+            observations[1] = {
                 lat: toDecimalDegrees(form.lat2.value),
                 lon: toDecimalDegrees(form.lon2.value),
                 ra: toDecimalDegrees(form.ra2.value) * 15,
                 dec: toDecimalDegrees(form.dec2.value)
             };
-            calculateDistance(observationDate, observers);
+            calculateDistance(observationDate, observations);
         }
-    </script>
-
     </script>
     <h1>КАЛЬКУЛЯТОР ОКОЛОЗЕМНЫХ РАССТОЯНИЙ</h1>
     <form id="obervations">
         <p><b>Время наблюдений</b></p>
-            <input type="datetime-local" id="datetime" name="datetime">
+        <input type="datetime-local" id="datetime" name="datetime">
         <hr>
         <p><b>Место #1</b> - <i>ближайшее к объекту</i></p>
         <label>Широта:</label>
