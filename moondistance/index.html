@@ -11,27 +11,32 @@
 <body>
     <script>
         function toDecimalDegrees(value) {
-            degArray = value.split(":")
-            seconds = 0
-            if (degArray.length == 3) {
-                seconds = degArray[2] / 3600
+            if(isNaN(value)){
+                degArray = value.split(":")
+                seconds = 0
+                if (degArray.length == 3) {
+                    seconds = degArray[2] / 3600
+                }
+                if (degArray[0] < 0) {
+                    return parseInt(degArray[0]) - degArray[1] / 60 - seconds
+                }
+                return parseInt(degArray[0]) + degArray[1] / 60 + seconds
             }
-            if (degArray[0] < 0) {
-                return parseInt(degArray[0]) - degArray[1] / 60 - seconds
-            }
-            return parseInt(degArray[0]) + degArray[1] / 60 + seconds
+            else return value
         }
     </script>
     <script src="./distance_calculator.js">
     </script>
     <script>
         let observations = [];
+        
         function calculate(form) {
             const rawDate = document.getElementById("datetime").value;
             const [datePart, timePart] = rawDate.split('T');
             const [year, month, day] = datePart.split('-').map(Number);
             const [hour, minute] = timePart.split(':').map(Number);
             const observationDate = new Date(year, month - 1, day, hour, minute);
+            
             observations[0] = {
                 lat: toDecimalDegrees(form.lat1.value),
                 lon: toDecimalDegrees(form.lon1.value),
@@ -47,38 +52,38 @@
             calculateDistance(observationDate, observations);
         }
     </script>
-    <h1>КАЛЬКУЛЯТОР ОКОЛОЗЕМНЫХ РАССТОЯНИЙ</h1>
+    <h1>КАЛЬКУЛЯТОР ОКОЛОЗЕМНЫХ ОРБИТ</h1>
     <form id="obervations">
         <p><b>Время наблюдений</b></p>
         <input type="datetime-local" id="datetime" name="datetime">
         <hr>
         <p><b>Место #1</b> - <i>ближайшее к объекту</i></p>
         <label>Широта:</label>
-        <input type="text" name="lat1" id="lat1" placeholder="ГРАД:МИН:СЕК">
+        <input type="text" name="lat1" id="lat1" placeholder="1.2345 или 12:34:56">
         <label>Долгота:</label>
-        <input type="text" name="lon1" id="lon1" placeholder="ГРАД:МИН:СЕК">
+        <input type="text" name="lon1" id="lon1" placeholder="1.2345 или 12:34:56">
         <br>
         <p><b>Положение объекта</b></p>
         <label>Часовой угол:</label>
-        <input type="text" name="ra1" id="ra1" placeholder="ЧАС:МИН:СЕК">
+        <input type="text" name="ra1" id="ra1" placeholder="12:34:56">
         <label>Склонение:</label>
-        <input type="text" name="dec1" id="dec1" placeholder="ГРАД:МИН:СЕК">
+        <input type="text" name="dec1" id="dec1" placeholder="12:34:56">
         <br><br>
         <hr>
         <p><b>Место #2</b></p>
         <label>Широта:</label>
-        <input type="text" name="lat2" id="lat2" placeholder="ГРАД:МИН:СЕК">
+        <input type="text" name="lat2" id="lat2" placeholder="1.2345 или 12:34:56">
         <label>Долгота:</label>
-        <input type="text" name="lon2" id="lon2" placeholder="ГРАД:МИН:СЕК">
+        <input type="text" name="lon2" id="lon2" placeholder="1.2345 или 12:34:56">
         <br>
         <p><b>Положение объекта</b></p>
         <label>Часовой угол:</label>
-        <input type="text" name="ra2" id="ra2" placeholder="ЧАС:МИН:СЕК">
+        <input type="text" name="ra2" id="ra2" placeholder="12:34:56">
         <label>Склонение:</label>
-        <input type="text" name="dec2" id="dec2" placeholder="ГРАД:МИН:СЕК">
+        <input type="text" name="dec2" id="dec2" placeholder="12:34:56">
         <br><br>
         <hr>
-        <input onclick="calculate(this.form)" type="button" name="calc" value="РАССЧИТАТЬ РАССТОЯНИЕ ДО ОБЪЕКТА">
+        <input onclick="calculate(this.form)" type="button" name="calc" value="РАССЧИТАТЬ ОРБИТУ">
     </form>
     <table><tbody id="result"></tbody></table>
     <pre id="extra"></pre>
