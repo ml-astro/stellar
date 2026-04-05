@@ -82,11 +82,12 @@ function calculateDistance(observationDate, observation) {
     baseline = chord * Math.sin(beta)
     distance = baseline / Math.sin(parallax)
 
-    objectDirection = direction(observation[0].ra, observation[0].dec, distance)
+    objVector = direction(observation[0].ra, observation[0].dec, distance)
+    
     objectXYZ = {
-        x: (rL1.x + objectDirection.x),
-        y: (rL1.y + objectDirection.y),
-        z: (rL1.z + objectDirection.z),
+        x: (rL1.x + objVector.x),
+        y: (rL1.y + objVector.y),
+        z: (rL1.z + objVector.z),
     }
     orbitRadius = magnitude(objectXYZ)
     orbitG = g / ((orbitRadius / R_EARTH) ** 2);
