@@ -79,8 +79,7 @@ function calculateDistance(observationDate, observation) {
     const rM = direction(observation[1].ra, observation[1].dec);
     //Now use the dot product method for computing angle between rM and rL2L1:
     const beta = angleBetween(rL2L1, rM);
-    baseline = chord * Math.sin(beta)
-    distance = baseline / Math.sin(parallax)
+    distance = (chord * Math.sin(beta))/ Math.sin(parallax)
 
     objectDirection = direction(observation[0].ra, observation[0].dec, distance)
     objectXYZ = {
@@ -109,7 +108,6 @@ function calculateDistance(observationDate, observation) {
     <tr><td>Высота орбиты:</td><td>${Math.round((orbitRadius - R_EARTH) / 1000)} км</td></tr>
     <tr><td>Период обращения:</td><td>${periodString}</td></tr>
     <tr><td>Расстояние между наблюдателями:</td><td>${Math.floor(chord / 1000)} км</td></tr>
-    <tr><td>Базис:</td><td>${Math.floor(baseline / 1000)} км</td></tr>
     <tr><td>Параллакс:</td><td>${Math.round(rad2deg(parallax) * 100) / 100} градусов</td></tr>
     `
     document.getElementById('extra').innerHTML =`
