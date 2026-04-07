@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Небольшие утилиты</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <h1>Полезные утилиты</h1>
+    <h2>Местное звездное время и Юлианская дата</h2>
+    <form>
+        <input type="datetime-local" id="datetimeLST" name="datetime">
+        <label>Долгота:</label>
+        <input type="text" name="lon" id="lon">
+        <input onclick="calculateLST(this.form)" type="button" name="calc" value="ПЕРЕСЧИТАТЬ">
+        <pre id="LST"></pre>
+    </form>
+    <hr>
+    <h2>Градусы и радианы</h2>
+    <p>Градусы в радианы</p>
+    <pre></pre>
+    <p>Радианы в градусы</p>
+    <pre></pre>
+    <hr>
+    <h2>Угловое расстояние</h2>
+    <hr>
+    <h2>Перевод в десятичные и обратно</h2>
+    <script src="./utils.js"></script>
+</body>
+
+</html>
