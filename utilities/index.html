@@ -20,10 +20,15 @@
     </form>
     <hr>
     <h2>Градусы и радианы</h2>
-    <p>Градусы в радианы</p>
-    <pre></pre>
-    <p>Радианы в градусы</p>
-    <pre></pre>
+    <form action="">
+        <label>Градусы</label>
+        <input type="number" id="degrees">
+        <input onclick="deg2rad(this.form)" type="button" name="calc" value="В РАДИАНЫ"><input readonly="" id="radiansFromDegrees"  style="display: inline-block">
+        <br>
+        <label>Радианы</label>
+        <input type="number" id="radians">
+        <input onclick="rad2deg(this.form)" type="button" name="calc" value="В ГРАДУСЫ"><input id="degreesFromRadians" readonly="" style="display: inline-block">
+    </form>
     <hr>
     <h2>Угловое расстояние</h2>
     <hr>
