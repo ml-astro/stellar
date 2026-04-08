@@ -117,5 +117,6 @@ function calculateDistance(observationDate, observation) {
     rL1 ${JSON.stringify(rL1)}
     rL2 ${JSON.stringify(rL2)}
     rL2L1 ${JSON.stringify(rL2L1)}
+    objectXYZ: ${JSON.stringify(objectXYZ)}
     `
 }
