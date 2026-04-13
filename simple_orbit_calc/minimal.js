@@ -1,4 +1,4 @@
-//solve 1: scan for obs1 + obs2
+//solve 1: scanMinimums for obs1 + obs2
 //solve 2: <0.0001
 //solve 3: solve 2 with obs1 + obs3
 
@@ -74,7 +74,7 @@ function direction_to_xy(phase, distance) {
 }
 
 //расчет абсолютной позиции
-function calculate_asteroid_position(earthpos, ra, distance) {
+function calculate_object_position(earthpos, ra, distance) {
     ra = deg2rad(ra)
     xa = earthpos.x + distance * Math.cos(ra)
     ya = earthpos.y + distance * Math.sin(ra)
@@ -137,30 +137,42 @@ function parseForm(form) {
     dec2temp = deg2decimal(form.dec2.value)
     ra1 = to_ecliptic(ra1temp, dec1temp)
     ra2 = to_ecliptic(ra2temp, dec2temp)
-    innerFlag = form.inner.checked
-    solve(JD1, JD2, ra1, ra2, innerFlag)
+    obs1 = { JD: JD1, ra: ra1 }
+    obs2 = { JD: JD2, ra: ra2 }
+    if (isNaN(form.date3.value)) {
+        JD3 = parseDate(form.date3.value)
+        ra3temp = deg2decimal(form.ra3.value) * 15
+        dec3temp = deg2decimal(form.dec3.value)
+        ra3 = to_ecliptic(ra3temp, dec3temp)
+        obs3 = { JD: JD3, ra: ra3 }
+        solve(obs1, obs2, obs3)
+    }
+    else {
+        JD3 = null
+        ra3 = null
+        solve(obs1, obs2)
+    }
 }
 
 
-minimums = []
-
-function scan(tdiff, earth1, earth2) {
+function scanMinimums(tdiff, earthFirst, earthLast, raFirst, raLast) {
+    //scanMinimums откладывает минимумы в массив
+    minimums = []
     step = 0.05
     D = 0.1
     D5Flag = false
     D10Flag = false
     var prepre = 360 //предпредыдущее значение расхождения RA
     var pre = 360
-    var asteroid1, asteroid2, aradius, aphase1, aphase2, raCalculated, direction_difference
     //шаг 1 - сканирование до 40 а.е. в поисках потенциальных решений
     while (D < 40) {
-        asteroid1 = calculate_asteroid_position(earth1, ra1, D)
-        aradius = calculate_orbit_radius(asteroid1)
-        aphase1 = xy_to_direction({ x: 0, y: 0 }, asteroid1)
-        aphase2 = calculate_next_phase(aradius, tdiff, aphase1)
-        asteroid2 = direction_to_xy(aphase2, aradius)
-        raCalculated = xy_to_direction(earth2, asteroid2)
-        direction_difference = Math.abs(raCalculated - ra2)
+        objectFirst = calculate_object_position(earthFirst, raFirst, D)
+        orbitRadius = calculate_orbit_radius(objectFirst)
+        objectPhaseFirst = xy_to_direction({ x: 0, y: 0 }, objectFirst)
+        objectPhaseLast = calculate_next_phase(orbitRadius, tdiff, objectPhaseFirst)
+        objectLast = direction_to_xy(objectPhaseLast, orbitRadius)
+        raCalculated = xy_to_direction(earthLast, objectLast)
+        direction_difference = Math.abs(raCalculated - raLast)
         if (direction_difference > 180) {
             direction_difference = Math.abs(direction_difference - 360)
         }
@@ -180,34 +192,24 @@ function scan(tdiff, earth1, earth2) {
         }
         else { D = D + step }
     }
+    return minimums
 }
 
-function solve(JD1, JD2, ra1, ra2) {
-    document.getElementById('output').value = `
-    Возможные решения:
-    `
-    tdiff = JD2 - JD1
-    earth1 = earthPosition(JD1, earth)
-    earth2 = earthPosition(JD2, earth)
-
-    //scan откладывает минимумы в массив
-    //шаг2 for ищет вокруг минимумов
-    //все решения где разница <0.0001 запишет в массив потенциальных решений
-    scan(tdiff, earth1, earth2)
+function getSolutions(minimums, earthFirst, ra1, earthLast, ra2, tdiff) {
+    //ищет вокруг минимумов все решения. где разница <0.0001 запишет в массив потенциальных решений
     solutions = []
-
     for (var i = 0; i < minimums.length; i++) {
         D = minimums[i]
         step = 0.01
         var prevDiff = 180
-        var asteroid1, asteroid2, aradius, aphase1, aphase2, raCalculated, direction_difference
-        for (let i = 0; i < 200; i++) {
-            asteroid1 = calculate_asteroid_position(earth1, ra1, D)
-            aradius = calculate_orbit_radius(asteroid1)
-            aphase1 = xy_to_direction({ x: 0, y: 0 }, asteroid1)
-            aphase2 = calculate_next_phase(aradius, tdiff, aphase1)
-            asteroid2 = direction_to_xy(aphase2, aradius)
-            raCalculated = xy_to_direction(earth2, asteroid2)
+        var objectFirst, objectLast, aradius, objectPhaseFirst, objectPhaseLast, raCalculated, direction_difference
+        for (let i = 0; i < 500; i++) {
+            objectFirst = calculate_object_position(earthFirst, ra1, D)
+            aradius = calculate_orbit_radius(objectFirst)
+            objectPhaseFirst = xy_to_direction({ x: 0, y: 0 }, objectFirst)
+            objectPhaseLast = calculate_next_phase(aradius, tdiff, objectPhaseFirst)
+            objectLast = direction_to_xy(objectPhaseLast, aradius)
+            raCalculated = xy_to_direction(earthLast, objectLast)
             //сравниваем направление от земли 2 с расчетным
             direction_difference = Math.abs(raCalculated - ra2)
             if (direction_difference > 180) {
@@ -217,42 +219,78 @@ function solve(JD1, JD2, ra1, ra2) {
                 step = -step / 2
             }
             if (direction_difference < 0.0001) {
-                radius = calculate_orbit_radius(asteroid1)
-                solutions.push([roundNumber(radius), roundNumber(Math.sqrt(radius ** 3))])
+                radius = calculate_orbit_radius(objectFirst)
+                //solutions D используем для следующего приближения
+                solutions.push([roundNumber(radius), roundNumber(Math.sqrt(radius ** 3)), roundNumber(D)])
                 break
             }
             prevDiff = direction_difference
             D = D + step
         }
+    }
+    return solutions
+}
 
+function compareSolutions(short, long) {
+    bestGuess = []
+    for (i = 0; i < short.length; i++) {
+        if (Math.abs(short[i][0] - 1) > 0.2) {
+            for (j = 0; j < long.length; j++) {
+                if (Math.abs(short[i][0] - long[j][0]) / short[i][0] < 0.3) {
+                    //длинная дуга наблюдений в приоритете. короткая только для отбора если несколько длинных решений
+                    bestGuess.push(long[j])
+                }
+            }
+        }
+    }
+    return bestGuess
+}
+
+
+
+function solve(obs1, obs2, obs3 = null) {
+    document.getElementById('output').value = `
+    Возможные решения:
+    `
+
+    obs1.earth = earthPosition(obs1.JD, earth)
+    obs2.earth = earthPosition(obs2.JD, earth)
+
+    var uniqueSolutions = []
+    var uniqueMidSolutions = []
+    var best = []
+    //если указано третье наблюдение, ищет решения для промежуточного
+    if (!obs3) {
+        tdiff = obs2.JD - obs1.JD
+        minimums = scanMinimums(tdiff, obs1.earth, obs2.earth, obs1.ra, obs2.ra)
+        solutions = getSolutions(minimums, obs1.earth, obs1.ra, obs2.earth, obs2.ra, tdiff)
+        uniqueSolutions = [...new Set(solutions.map(JSON.stringify))].map(JSON.parse);
+        best = [...uniqueSolutions]
+    }
+    else {
+        obs3.earth = earthPosition(obs3.JD, earth)
+        tdiff = obs3.JD - obs1.JD
+        minimums = scanMinimums(tdiff, obs1.earth, obs3.earth, obs1.ra, obs3.ra)
+        solutions = getSolutions(minimums, obs1.earth, obs1.ra, obs3.earth, obs3.ra, tdiff)
+        uniqueSolutions = [...new Set(solutions.map(JSON.stringify))].map(JSON.parse);
+        console.log('uniqueSolutions',uniqueSolutions);
+        tdiffControl = obs2.JD - obs1.JD
+        newMinimums = []
+        for (i = 0; i < uniqueSolutions.length; i++) {
+            newMinimums.push(uniqueSolutions[i][2])
+        }
+        midSolutions = getSolutions(newMinimums, obs1.earth, obs1.ra, obs2.earth, obs2.ra, tdiffControl)
+        console.log('midSolutions',midSolutions);
+        uniqueMidSolutions = [...new Set(solutions.map(JSON.stringify))].map(JSON.parse);
+        best = compareSolutions(uniqueMidSolutions, uniqueSolutions)
     }
 
-    const uniqueSolutions = [...new Set(solutions.map(JSON.stringify))].map(JSON.parse);
-
-    for (i = 0; i < uniqueSolutions.length; i++) {
+    for (i = 0; i < best.length; i++) {
         document.getElementById('output').value += `
-    радиус орбиты:           ${uniqueSolutions[i][0]}
-    период (лет):            ${uniqueSolutions[i][1]}
+    радиус орбиты:       ${best[i][0]} а.е
+    период:              ${best[i][1]} г.
+    расстояние:          ${best[i][2]} а.е (набл.1)
     `
     }
 
-
-    /*document.getElementById('output').value = `
-    наблюдение 1:
-    координаты объекта:      ${roundNumber(asteroid1.x)} ${roundNumber(asteroid1.y)}
-    координаты земли:        ${roundNumber(earth1.x)} ${roundNumber(earth1.y)}
-    наблюдаемое направление: ${roundNumber(ra1)}
-    расстояние:              ${roundNumber(D)}
-    
-    наблюдение 2:
-    координаты объекта:      ${roundNumber(asteroid2.x)} ${roundNumber(asteroid2.y)}
-    координаты земли:        ${roundNumber(earth2.x)} ${roundNumber(earth2.y)}
-    наблюдаемое направление: ${roundNumber(ra2)}
-    расчетное направление:   ${roundNumber(raCalculated)}
-    погрешность направления: ${roundNumber(direction_difference)}
-    
-    радиус орбиты:           ${roundNumber(radius)}
-    период (лет):            ${roundNumber(Math.sqrt(radius ** 3))}
-        `
-    }*/
 }
