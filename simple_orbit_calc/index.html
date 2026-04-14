@@ -15,7 +15,7 @@
         }
 
         h1 {
-            font-size:x-large
+            font-size: x-large
         }
 
         body {
@@ -71,6 +71,11 @@
             border: 1px solid #ccc;
             font-family: monospace;
         }
+
+        label#innerlabel {
+            display: inline;
+            width: 200px;
+        }
     </style>
 </head>
 
@@ -96,8 +101,19 @@
         <br>
         <label>Скл</label>
         <input type="text" name="dec2" id="dec2" placeholder="градус:мин">
-        <br><br><input onclick="parseForm(this.form)" type="button" name="calc" value="РАССЧИТАТЬ ОРБИТУ ОБЪЕКТА">
-        <hr>
+        <br><br>
+        <p><b>Наблюдение 3</b></p>
+        <label>Время и дата</label>
+        <input type="text" name="date3" id="date3" placeholder="чч:мм дд.мм.гггг">
+        <br>
+        <label>П.В.</label>
+        <input type="text" name="ra3" id="ra3" placeholder="час:мин">
+        <br>
+        <label>Скл</label>
+        <input type="text" name="dec3" id="dec3" placeholder="градус:мин">
+        <br><br>
+        <input onclick="parseForm(this.form)" type="button" name="calc" value="РАССЧИТАТЬ ОРБИТУ ОБЪЕКТА">
+        <br><br>
     </form>
     <textarea id="output"></textarea>
     <script src="./minimal.js"></script>
