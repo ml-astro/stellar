@@ -23,14 +23,30 @@
     <form action="">
         <label>Градусы</label>
         <input type="number" id="degrees">
-        <input onclick="deg2rad(this.form)" type="button" name="calc" value="В РАДИАНЫ"><input readonly="" id="radiansFromDegrees"  style="display: inline-block">
+        <input onclick="deg2rad(this.form)" type="button" name="calc" value="В РАДИАНЫ"><input readonly=""
+            id="radiansFromDegrees" style="display: inline-block">
         <br>
         <label>Радианы</label>
         <input type="number" id="radians">
-        <input onclick="rad2deg(this.form)" type="button" name="calc" value="В ГРАДУСЫ"><input id="degreesFromRadians" readonly="" style="display: inline-block">
+        <input onclick="rad2deg(this.form)" type="button" name="calc" value="В ГРАДУСЫ"><input id="degreesFromRadians"
+            readonly="" style="display: inline-block">
     </form>
     <hr>
     <h2>Угловое расстояние</h2>
+    <form action="">
+        <label>RA</label>
+        <input id="ra1">
+        <label>RA</label>
+        <input id="ra2">
+        <br>
+        <label>dec</label>
+        <input id="dec1">
+        <label>dec</label>
+        <input id="dec2">
+        <br>
+        <input onclick="angularSeparation(this.form)" type="button" name="calc" value="РАССЧИТАТЬ"><input id="angle"
+            readonly="">
+    </form>
     <hr>
     <h2>Перевод в десятичные и обратно</h2>
     <script src="./utils.js"></script>

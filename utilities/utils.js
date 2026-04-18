@@ -32,17 +32,26 @@ function deg2rad(degForm) {
     document.getElementById('radiansFromDegrees').value = deg * Math.PI / 180;
 }
 
+
 //угловое расстояние
-function angularSeparation(ra1, dec1, ra2, dec2) {
+function toRadians(value){
+    return value * Math.PI / 180;
+}
+function angularSeparation(angleForm) {
+    ra1 = toRadians(toDecimalDegrees(angleForm.ra1.value,true))
+    ra2 = toRadians(toDecimalDegrees(angleForm.ra2.value,true))
+    dec1 = toRadians(toDecimalDegrees(angleForm.dec1.value))
+    dec2 = toRadians(toDecimalDegrees(angleForm.dec2.value))
+    console.log(ra1,ra2,dec1,dec2);
     x = Math.cos(dec1) * Math.sin(dec2) - Math.sin(dec1) * Math.cos(dec2) * Math.cos(ra2 - ra1);
     y = Math.cos(dec2) * Math.sin(ra2 - ra1);
     z = Math.sin(dec1) * Math.sin(dec2) + Math.cos(dec1) * Math.cos(dec2) * Math.cos(ra2 - ra1);
     d = Math.atan2(Math.sqrt(x * x + y * y), z);
-    return d;
+    document.getElementById("angle").value = d * 180 / Math.PI;
 }
 
 //часы в градусы
-function toDecimalDegrees(value) {
+function toDecimalDegrees(value,ra=false) {
     if (isNaN(value)) {
         degArray = value.split(":")
         seconds = 0
@@ -50,9 +59,17 @@ function toDecimalDegrees(value) {
             seconds = degArray[2] / 3600
         }
         if (degArray[0] < 0) {
-            return parseInt(degArray[0]) - degArray[1] / 60 - seconds
+            if(ra){
+                return 15*(parseInt(degArray[0]) - degArray[1] / 60 - seconds)
+            }
+            else return parseInt(degArray[0]) - degArray[1] / 60 - seconds
         }
-        return parseInt(degArray[0]) + degArray[1] / 60 + seconds
+        if(ra){
+            return 15*(parseInt(degArray[0]) + degArray[1] / 60 + seconds)
+        }
+        else  return parseInt(degArray[0]) + degArray[1] / 60 + seconds
     }
     else return value
 }
+
+//parallax = angularSeparation(deg2rad(observation[0].ra), deg2rad(observation[0].dec), deg2rad(observation[1].ra), deg2rad(observation[1].dec))
