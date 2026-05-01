@@ -10,6 +10,7 @@
 
 <body>
     <h1>Полезные утилиты</h1>
+    <hr>
     <h2>Местное звездное время и Юлианская дата</h2>
     <form>
         <input type="datetime-local" id="datetimeLST" name="datetime">
@@ -63,9 +64,18 @@
         <input id="extinction" readonly="">
     </form>
     <hr>
-
-
-    <h2>Перевод в десятичные и обратно</h2>
+    <h2>Градусы и часы</h2>
+    <form action="">
+        <label>Часы в градусы</label>
+        <input id="time">
+        <input onclick="time2degrees(this.form)" type="button" name="calc" value="В ГРАДУСЫ">
+        <input readonly="" id="degreesFromTime" style="display: inline-block">
+        <br>
+        <label>Градусы в часы</label>
+        <input id="degrees">
+        <input onclick="degrees2time(this.form)" type="button" name="calc" value="В ЧАСЫ">
+        <input id="timeFromDegrees" readonly="" style="display: inline-block">
+    </form>
     <script src="./utils.js"></script>
 </body>
 
