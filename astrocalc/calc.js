@@ -2,11 +2,6 @@ function roundup(number, degree) {
 	return parseInt(number * degree) / degree;
 }
 
-function JDnow() {
-	var now = new Date().getTime();
-	document.getElementById("JD").innerHTML = roundup((now / 1000 / 3600 / 24 + 2440587.5), 100000);
-}
-
 function show(unhidden, hidden) {
 	let unh = document.getElementsByClassName(unhidden)
 	for (let index = 0; index < unh.length; index++) {
@@ -54,44 +49,4 @@ function telescope(form) {
 	document.getElementById('limitFocal').value = parseInt(206280 * matrix / resolution / blue) + " mm";
 	//предельная длина фокуса для глаза
 
-}
-
-function refraction(form) {
-	var alt = parseFloat(document.getElementById('altHor').value);
-	if (alt < 0) {
-		document.getElementById('ref').value = 'Ниже горизонта';
-	}
-	else if (alt > 80) {
-		document.getElementById('ref').value = 0 + "'";
-	}
-	else if (alt > 15 && alt <= 80) {
-		alt = alt / 57.29577951308232;
-		var refraction = 271.2 / (283 * Math.tan(alt));
-		document.getElementById('ref').value = roundup(refraction, 10) + "'";
-	}
-	else {
-		subRef = 283 * (1.0 + 0.505 * alt + 0.0845 * alt * alt);
-		refraction = 60000 * (0.1594 + 0.0196 * alt + 0.00002 * alt * alt) / subRef;
-		document.getElementById('ref').value = roundup(refraction, 10) + "'";
-	}
-
-	var ok = true;
-	var height = document.getElementById('altHor').value;
-	var v = document.getElementById('altObs').value;
-	if (height < 0) {
-		document.getElementById('extinction').value = 'Ниже горизонта';
-		ok = false;
-	}
-	if (height > 90) {
-		height = 90 - (90 - height);
-		ok = false;
-	}
-	if (ok) {
-		var x1 = 0;
-		x1 = (1 / (Math.cos((90 - height) * 0.01745329251) + 0.025 * Math.exp(-11 * Math.cos((90 - height) * 0.01745329251))));
-		x2 = (0.1451 * Math.exp(-v * 0.001 / 7.996)) * x1;
-		x3b = (0.12 * Math.exp(-v * 0.001 / 1.5)) * x1;
-		x4 = 0.016 * x1;
-		document.getElementById('extinction').value = roundup(x2 + x3b + x4, 100) + 'm';
-	}
 }

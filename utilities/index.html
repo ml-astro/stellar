@@ -44,10 +44,27 @@
         <label>dec</label>
         <input id="dec2">
         <br>
-        <input onclick="angularSeparation(this.form)" type="button" name="calc" value="РАССЧИТАТЬ"><input id="angle"
-            readonly="">
+        <input onclick="angularSeparation(this.form)" type="button" name="calc" value="РАССЧИТАТЬ">
+        <input id="angle" readonly="">
     </form>
     <hr>
+    <h2>Рефракция и атмосферное поглощение</h2>
+    <form action="">
+        <label>Высота над горизонтом (градусы)</label>
+        <input id="altHor" type="number">
+        <label>Высота над уровнем моря (м)</label>
+        <input id="altObs" type="number">
+        <br>
+        <input type="button" onclick="refraction(this.form)" value="РАССЧИТАТЬ РЕФРАКЦИЮ">
+        <br>
+        <label>Рефракция</label>
+        <input id="ref" readonly="">
+        <label>Поглощение</label>
+        <input id="extinction" readonly="">
+    </form>
+    <hr>
+
+
     <h2>Перевод в десятичные и обратно</h2>
     <script src="./utils.js"></script>
 </body>
