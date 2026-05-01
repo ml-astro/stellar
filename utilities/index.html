@@ -76,6 +76,16 @@
         <input onclick="degrees2time(this.form)" type="button" name="calc" value="В ЧАСЫ">
         <input id="timeFromDegrees" readonly="" style="display: inline-block">
     </form>
+    <hr>
+    <h2>Разница во времени</h2>
+    <form>
+        <label>Начало:</label>
+        <input type="datetime-local" id="start" name="datetime">
+        <label>Конец:</label>
+        <input type="datetime-local" id="end" name="datetime">
+        <input onclick="calculateTimeDiff(this.form)" type="button" value="РАССЧИТАТЬ">
+        <input id="timeDiff" readonly="" style="display: inline-block">
+    </form>
     <script src="./utils.js"></script>
 </body>
 

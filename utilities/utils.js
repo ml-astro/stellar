@@ -129,7 +129,34 @@ function degrees2time(form) {
     minute = Math.floor(decimal)
     decimal = (decimal - minute) * 60
     second = decimal
-    form.timeFromDegrees.value = hour +':'+minute+':'+second
+    form.timeFromDegrees.value = hour + ':' + minute + ':' + second
 }
 
+
+function parseDate(rawDate) {
+    const [datePart, timePart] = rawDate.split('T');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hour, minute] = timePart.split(':').map(Number);
+    const parsedDate = new Date(year, month - 1, day, hour, minute);
+    return parsedDate
+}
+
+function calculateTimeDiff(form) {
+    const startDate = parseDate(form.start.value);
+    const endDate = parseDate(form.end.value);
+    timeDiff = (endDate - startDate) / 1000
+    var days, hours, minutes, seconds, daysPart, hoursPart, minutesPart
+    if (timeDiff > 86400) {
+        days = Math.floor(timeDiff / 86400)
+        timeDiff = timeDiff - days * 86400
+        if (days > 0) { daysPart = days + ' сут ' }
+    }
+    if (timeDiff > 3600) {
+        hours = Math.floor(timeDiff / 3600)
+        timeDiff = timeDiff - hours * 3600
+        if (hours > 0) { hoursPart = hours + ' ч ' }
+    }
+    if (timeDiff > 0) { minutesPart = timeDiff / 60 + ' мин' }
+    form.timeDiff.value = daysPart + hoursPart + minutesPart
+}
 //parallax = angularSeparation(deg2rad(observation[0].ra), deg2rad(observation[0].dec), deg2rad(observation[1].ra), deg2rad(observation[1].dec))
