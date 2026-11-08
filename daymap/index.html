@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Солнце и Луна на карте мира</title>
+<style>
+  :root { color-scheme: dark; font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
+  body { margin:0; background:#101820; color:#eaf1f5; }
+  main { max-width:1100px; margin:0 auto; padding:22px; }
+  h1 { font-size:1.45rem; margin:0 0 8px; }
+  p { color:#b8c7d1; line-height:1.45; }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:end; padding:14px; background:#1b2933; border-radius:12px; margin:16px 0; }
+  label { display:grid; gap:6px; font-size:.9rem; color:#c8d5dc; }
+  input,button { font:inherit; color:inherit; background:#101b23; border:1px solid #496170; border-radius:7px; padding:9px; }
+  button { cursor:pointer; background:#24516a; }
+  button:hover { background:#306985; }
+  .map-wrap { position:relative; background:#071018; border:1px solid #496170; border-radius:10px; overflow:hidden; }
+  canvas { display:block; width:100%; height:auto; aspect-ratio:2/1; }
+  .legend { display:flex; flex-wrap:wrap; gap:14px; margin:12px 0; font-size:.88rem; color:#c8d5dc; }
+  .swatch { display:inline-block; width:13px; height:13px; border-radius:3px; vertical-align:-2px; margin-right:5px; }
+  .status { margin-top:12px; padding:12px; background:#1b2933; border-radius:9px; line-height:1.55; }
+  .small { font-size:.82rem; color:#9fb1bd; }
+  @media(max-width:600px) { main {padding:12px} .controls {align-items:stretch} label {flex:1 1 100%} }
+</style>
+</head>
+<body>
+<main>
+  <h1>Карта дня и ночи</h1>
+  <div class="controls">
+    <label>Дата и время (местное время устройства)
+      <input id="dateTime" type="datetime-local">
+    </label>
+    <button id="nowBtn" type="button">Сейчас</button>
+    <button id="updateBtn" type="button">Обновить</button>
+  </div>
+  <div class="map-wrap"><canvas id="map" width="1440" height="720"></canvas></div>
+  <div class="legend">
+    <span><i class="swatch" style="background:#ffd34e"></i>День (Солнце выше −6°)</span>
+    <span><i class="swatch" style="background:#f39b50"></i>Гражданские сумерки (−6…−12°)</span>
+    <span><i class="swatch" style="background:#8068a8"></i>Навигационные сумерки (−12…−18°)</span>
+    <span><i class="swatch" style="background:#172b55"></i>Ночь</span>
+    <span>☀ Подсолнечная точка</span><span>● Подлунная точка</span>
+  </div>
+  <div class="status" id="status">Загрузка расчёта…</div>
+  <p class="small">Расчёт Солнца основан на приближённых астрономических формулах. Положение Луны вычисляется по упрощённой орбитальной модели. Сумеречные зоны определяются по высоте центра Солнца: −6°, −12° и −18°.</p>
+</main>
+<script>
+(() => {
+  const canvas = document.getElementById('map');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const dateInput = document.getElementById('dateTime');
+  let mapImage = new Image();
+  mapImage.onload = render;
+  mapImage.src = './earth_map.jpg';
+
+  function localInputValue(d) {
+    const pad = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  dateInput.value = localInputValue(new Date());
+
+  function jd(date) { return date.getTime()/86400000 + 2440587.5; }
+  const rad = Math.PI/180, deg = 180/Math.PI;
+  const norm360 = x => ((x%360)+360)%360;
+  const norm180 = x => ((x+180)%360+360)%360-180;
+
+  // Солнце: геоцентрические экваториальные координаты (приближение NOAA).
+  function sunPosition(date) {
+    const T = (jd(date)-2451545.0)/36525;
+    const L0 = norm360(280.46646 + T*(36000.76983 + 0.0003032*T));
+    const M = norm360(357.52911 + T*(35999.05029 - 0.0001537*T));
+    const e = 0.016708634 - T*(0.000042037 + 0.0000001267*T);
+    const C = Math.sin(M*rad)*(1.914602-T*(0.004817+0.000014*T))
+      + Math.sin(2*M*rad)*(0.019993-0.000101*T) + Math.sin(3*M*rad)*0.000289;
+    const trueLong = L0+C;
+    const omega = 125.04-1934.136*T;
+    const lambda = trueLong-0.00569-0.00478*Math.sin(omega*rad);
+    const eps0 = 23+(26+((21.448-T*(46.815+T*(0.00059-T*0.001813)))/60))/60;
+    const eps = eps0+0.00256*Math.cos(omega*rad);
+    const ra = Math.atan2(Math.cos(eps*rad)*Math.sin(lambda*rad),Math.cos(lambda*rad))*deg;
+    const dec = Math.asin(Math.sin(eps*rad)*Math.sin(lambda*rad))*deg;
+    return {ra:norm360(ra), dec};
+  }
+
+  // Луна: упрощённая модель орбиты (Schlyter), затем переход в экваториальные координаты.
+  function moonPosition(date) {
+    const d = jd(date)-2451543.5;
+    const N = norm360(125.1228-0.0529538083*d);
+    const i = 5.1454;
+    const w = norm360(318.0634+0.1643573223*d);
+    const a = 60.2666, e = 0.054900;
+    const M = norm360(115.3654+13.0649929509*d);
+    let E = M + e*deg*Math.sin(M*rad)*(1+e*Math.cos(M*rad));
+    for(let k=0;k<5;k++) E -= (E-e*deg*Math.sin(E*rad)-M)/(1-e*Math.cos(E*rad));
+    const xv = a*(Math.cos(E*rad)-e);
+    const yv = a*Math.sqrt(1-e*e)*Math.sin(E*rad);
+    const v = Math.atan2(yv,xv)*deg, r = Math.hypot(xv,yv);
+    const xh = r*(Math.cos(N*rad)*Math.cos((v+w)*rad)-Math.sin(N*rad)*Math.sin((v+w)*rad)*Math.cos(i*rad));
+    const yh = r*(Math.sin(N*rad)*Math.cos((v+w)*rad)+Math.cos(N*rad)*Math.sin((v+w)*rad)*Math.cos(i*rad));
+    const zh = r*Math.sin((v+w)*rad)*Math.sin(i*rad);
+    // Главные возмущения долготы и широты Луны.
+    const Ls = norm360(280.460+0.9856474*d);
+    const Ms = norm360(356.0470+0.9856002585*d);
+    const Lm = norm360(N+w+M);
+    const D = norm360(Lm-Ls), F = norm360(Lm-N);
+    let lon = Math.atan2(yh,xh)*deg + (-1.274*Math.sin((M-2*D)*rad)
+      +0.658*Math.sin(2*D*rad)-0.186*Math.sin(Ms*rad)-0.059*Math.sin((2*M-2*D)*rad)
+      -0.057*Math.sin((M-2*D+Ms)*rad)+0.053*Math.sin((M+2*D)*rad)
+      +0.046*Math.sin((2*D-Ms)*rad)+0.041*Math.sin((M-Ms)*rad))*1;
+    let lat = Math.atan2(zh,Math.hypot(xh,yh))*deg
+      -0.173*Math.sin((F-2*D)*rad)-0.055*Math.sin((M-F-2*D)*rad)
+      -0.046*Math.sin((M+F-2*D)*rad)+0.033*Math.sin((F+2*D)*rad)
+      +0.017*Math.sin((2*M+F)*rad);
+    lon = norm360(lon);
+    const eps = (23.4393-3.563e-7*d)*rad;
+    const x = Math.cos(lon*rad)*Math.cos(lat*rad);
+    const y = Math.sin(lon*rad)*Math.cos(lat*rad);
+    const z = Math.sin(lat*rad);
+    const ye = y*Math.cos(eps)-z*Math.sin(eps);
+    const ze = y*Math.sin(eps)+z*Math.cos(eps);
+    return {ra:norm360(Math.atan2(ye,x)*deg), dec:Math.atan2(ze,Math.hypot(x,ye))*deg};
+  }
+
+  function gmst(date) {
+    const D = jd(date)-2451545.0;
+    const T = D/36525;
+    return norm360(280.46061837+360.98564736629*D+0.000387933*T*T-T*T*T/38710000);
+  }
+  function subpoint(eq, date) {
+    return {lat:eq.dec, lon:norm180(eq.ra-gmst(date))};
+  }
+  function xy(lat,lon) {
+    return {x:(norm180(lon)+180)/360*W, y:(90-lat)/180*H};
+  }
+  function drawMarker(point, symbol, color, label) {
+    const p=xy(point.lat,point.lon);
+    ctx.save(); ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=3;
+    ctx.font='bold 30px system-ui'; ctx.fillText(symbol,p.x-15,p.y+15);
+    ctx.restore();
+  }
+
+  function render() {
+    const date = new Date(dateInput.value);
+    if (!dateInput.value || Number.isNaN(date.getTime())) return;
+    if (mapImage && mapImage.complete && mapImage.naturalWidth > 0) {
+        ctx.drawImage(mapImage, 0, 0, W, H);
+    }
+    else {
+      ctx.fillStyle='#213746'; ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle='#547080'; ctx.lineWidth=1;
+      for(let lon=-180;lon<=180;lon+=30){let x=(lon+180)/360*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+      for(let lat=-60;lat<=60;lat+=30){let y=(90-lat)/180*H;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+      ctx.strokeStyle='#d3e0e8';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+      ctx.fillStyle='#dce8ee';ctx.font='16px system-ui';ctx.fillText('Загрузите изображение карты',24,34);
+    }
+    const sun=sunPosition(date), moon=moonPosition(date);
+    const sunPoint=subpoint(sun,date), moonPoint=subpoint(moon,date);
+    // Полупрозрачная классификация освещённости по высоте Солнца.
+    const overlay=document.createElement('canvas'); overlay.width=W; overlay.height=H;
+    const octx=overlay.getContext('2d');
+    const img=octx.createImageData(W,H);
+    const gm=gmst(date);
+    for(let y=0;y<H;y++){
+      const lat=(90-y/H*180)*rad, sinLat=Math.sin(lat), cosLat=Math.cos(lat);
+      for(let x=0;x<W;x++){
+        const lon=(x/W*360-180);
+        const Hangle=(gm+lon-sun.ra)*rad;
+        const sinAlt=sinLat*Math.sin(sun.dec*rad)+cosLat*Math.cos(sun.dec*rad)*Math.cos(Hangle);
+        const alt=Math.asin(Math.max(-1,Math.min(1,sinAlt)))*deg;
+        let c, a=105;
+        if(alt>=-6) c=[255,190,48];
+        else if(alt>=-12) c=[238,126,53];
+        else if(alt>=-18) c=[107,91,157];
+        else c=[9,24,62];
+        const k=(y*W+x)*4; img.data[k]=c[0];img.data[k+1]=c[1];img.data[k+2]=c[2];img.data[k+3]=a;
+      }
+    }
+    octx.putImageData(img,0,0); ctx.drawImage(overlay,0,0);
+    drawMarker(sunPoint,'☀','#fff06a','Солнце');
+    drawMarker(moonPoint,'●','#9ee8ff','Луна');
+    const fmt=p=>`${p.lat.toFixed(2)}° ${p.lat>=0?'с.ш.':'ю.ш.'}, ${p.lon.toFixed(2)}° ${p.lon>=0?'в.д.':'з.д.'}`;
+    document.getElementById('status').innerHTML =
+      `<b>${date.toLocaleString('ru-RU',{dateStyle:'full',timeStyle:'medium'})}</b><br>`+
+      `Подсолнечная точка: <b>${fmt(sunPoint)}</b><br>`+
+      `Подлунная точка: <b>${fmt(moonPoint)}</b><br>`+
+      `<span class="small">Время интерпретируется в часовом поясе устройства. Долгота точек рассчитана относительно Гринвича.</span>`;
+  }
+  document.getElementById('updateBtn').addEventListener('click',render);
+  document.getElementById('nowBtn').addEventListener('click',()=>{dateInput.value=localInputValue(new Date());render();});
+  dateInput.addEventListener('change',render);
+  render();
+})();
+</script>
+</body>
+</html>
