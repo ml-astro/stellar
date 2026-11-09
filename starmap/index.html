@@ -1,0 +1,651 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Небо сейчас</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #05070c;
+    color: #dce5f2;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+}
+
+h1 {
+    font-size: 19px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    margin: 10px 0 8px;
+}
+
+#info {
+    color: #8491a5;
+    font-size: 12px;
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 1.8;
+}
+
+#sky {
+    width: min(90vw, 750px);
+    aspect-ratio: 1;
+    display: block;
+}
+
+.controls {
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+button, input {
+    background: #111a29;
+    color: #dce5f2;
+    border: 1px solid #29384d;
+    padding: 10px 13px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1c2a40;
+}
+
+#status {
+    color: #8491a5;
+    font-size: 12px;
+    margin-top: 16px;
+    text-align: center;
+    max-width: 600px;
+}
+
+input[type="number"] {
+    width: 90px;
+}
+
+input[type="file"] {
+    max-width: 240px;
+}
+
+</style>
+</head>
+<body>
+<h1>НЕБО СЕЙЧАС</h1>
+<canvas id="sky"></canvas>
+<div class="controls">
+    <button id="gpsButton">
+        Опрелить местоположение
+    </button>
+    <input id="latitude" type="number"
+        step="any" placeholder="Latitude">
+    <input id="longitude" type="number"
+        step="any" placeholder="Longitude">
+    <button id="setLocation">
+        Ввести местоположение
+    </button>
+</div>
+<div id="status">
+</div>
+
+<script>
+
+// ==========================================
+// STATE
+// ==========================================
+
+const canvas = document.getElementById("sky");
+const ctx = canvas.getContext("2d");
+let stars = [];
+let constellations = [];
+let starByHR = new Map();
+
+// Load all datasets automatically
+async function loadAllData() {
+    document.getElementById("status").textContent =
+        "Loading astronomical catalogues...";
+    try {
+        const [starResponse, lineResponse] = await Promise.all([
+            fetch("./stars.csv"),
+            fetch("./lines.csv")
+        ]);
+        if (!starResponse.ok || !lineResponse.ok) {
+            throw new Error("Cannot load CSV files");
+        }
+        const [starText, lineText] = await Promise.all([
+            starResponse.text(),
+            lineResponse.text()
+        ]);
+        loadCSV(starText);
+        loadConstellationCSV(lineText);
+        // Build HR index
+        starByHR.clear();
+        for (const star of stars) {
+            if (Number.isFinite(star.hr)) {
+                starByHR.set(star.hr, star);
+            }
+        }
+        renderSky();
+    } catch (error) {
+        console.error(error);
+        document.getElementById("status").textContent =
+            "Error loading catalogues: " + error.message;
+    }
+}
+
+let latitude = null;
+let longitude = null;
+let visibleStars = 0;
+
+// ==========================================
+// CANVAS
+// ==========================================
+function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    renderSky();
+}
+window.addEventListener("resize", resizeCanvas);
+
+// ==========================================
+// CSV PARSER
+// ==========================================
+
+function parseCSVLine(line) {
+    const result = [];
+    let current = "";
+    let quoted = false;
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+            if (quoted && line[i + 1] === '"') {
+                current += '"';
+                i++;
+            } else {
+                quoted = !quoted;
+            }
+        } else if (char === "," && !quoted) {
+            result.push(current.trim());
+            current = "";
+        } else {
+            current += char;
+        }
+    }
+    result.push(current.trim());
+    return result;
+}
+
+
+function loadCSV(text) {
+    const lines = text.split(/\r?\n/);
+    const headerIndex = lines.findIndex(line => line.trim());
+    if (headerIndex === -1) {
+        throw new Error("CSV header not found");
+    }
+    const headers = parseCSVLine(
+        lines[headerIndex].replace(/^#\s*/, "")
+    ).map(h => h.toLowerCase().trim());
+    const index = name =>
+        headers.indexOf(name);
+    const starsResult = [];
+    for (let i = headerIndex + 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line || line.startsWith("#")) continue;
+        const row = parseCSVLine(line);
+        const get = name => row[index(name)];
+        const star = {
+            ra: Number(get("ra")),
+            dec: Number(get("dec")),
+            mag: Number(get("mag")),
+            bv: Number(get("bv")),
+            spectral: get("spectral"),
+            hd: get("hd"),
+            hip: get("hip"),
+            dist: Number(get("dist_pc")),
+            hr: Number(get("hr")),
+            name: get("name") || ""
+        };
+        if (
+            !Number.isFinite(star.ra) ||
+            !Number.isFinite(star.dec) ||
+            !Number.isFinite(star.mag) ||
+            !Number.isFinite(star.bv) ||
+            star.ra < 0 || star.ra >= 360 ||
+            star.dec < -90 || star.dec > 90
+        ) {
+            continue;
+        }
+        starsResult.push(star);
+    }
+    stars = starsResult;
+}
+
+
+// ==========================================
+// LOCATION
+// ==========================================
+
+function setCoordinates(lat, lon) {
+    if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lon) ||
+        lat < -90 || lat > 90 ||
+        lon < -180 || lon > 180
+    ) {
+        document.getElementById("status").textContent =
+            "Invalid coordinates.";
+        return;
+    }
+    latitude = lat;
+    longitude = lon;
+    document.getElementById("latitude").value = lat;
+    document.getElementById("longitude").value = lon;
+    renderSky();
+}
+
+function loadConstellationCSV(text) {
+    const lines = text.split(/\r?\n/);
+    const result = [];
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const row = parseCSVLine(lines[i]);
+        const abbreviation = row[0];
+        const count = Number(row[1]);
+        if (!abbreviation || !Number.isInteger(count)) {
+            continue;
+        }
+        const hrNumbers = row
+            .slice(2, 2 + count)
+            .map(value => Number(value))
+            .filter(value => Number.isInteger(value) && value > 0);
+        result.push({
+            abbreviation,
+            stars: hrNumbers
+        });
+    }
+    constellations = result;
+}
+
+
+function getGPS() {
+    if (!navigator.geolocation) {
+        document.getElementById("status").textContent =
+            "Geolocation is not supported by this browser.";
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            setCoordinates(
+                position.coords.latitude,
+                position.coords.longitude
+            );
+            document.getElementById("status").textContent =
+                "Местоположение установлено.";
+        },
+        error => {
+            document.getElementById("status").textContent =
+                "Введите координаты вручную.";
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+        }
+    );
+}
+
+document.getElementById("gpsButton")
+    .addEventListener("click", getGPS);
+
+document.getElementById("setLocation")
+    .addEventListener("click", () => {
+
+        setCoordinates(
+            Number(document.getElementById("latitude").value),
+            Number(document.getElementById("longitude").value)
+        );
+    });
+
+// ==========================================
+// ASTRONOMY
+// ==========================================
+
+// Julian Date from UTC
+
+function getJulianDate(date) {
+    return date.getTime() / 86400000 + 2440587.5;
+}
+
+// Greenwich Mean Sidereal Time
+
+function getGMST(date) {
+    const JD = getJulianDate(date);
+    const T = (JD - 2451545.0) / 36525;
+    let gmst =
+        280.46061837 +
+        360.98564736629 * (JD - 2451545.0) +
+        0.000387933 * T * T -
+        T * T * T / 38710000;
+    return ((gmst % 360) + 360) % 360;
+}
+
+// RA / DEC -> Altitude / Azimuth
+
+function equatorialToHorizontal(ra, dec, lat, lst) {
+    const toRad = Math.PI / 180;
+    const phi = lat * toRad;
+    const delta = dec * toRad;
+    const H = ((lst - ra + 540) % 360 - 180) * toRad;
+    const sinAlt =
+        Math.sin(delta) * Math.sin(phi) +
+        Math.cos(delta) * Math.cos(phi) * Math.cos(H);
+    const altitude = Math.asin(
+        Math.max(-1, Math.min(1, sinAlt))
+    );
+    const azimuth = Math.atan2(
+        -Math.cos(delta) * Math.sin(H),
+        Math.sin(delta) * Math.cos(phi) -
+        Math.cos(delta) * Math.sin(phi) * Math.cos(H)
+    );
+    return {
+        altitude: altitude / toRad,
+        azimuth: (
+            (azimuth / toRad + 360) % 360
+        )
+    };
+}
+
+// ==========================================
+// STAR COLOR FROM B-V
+// ==========================================
+
+const colorStops = [
+    [-0.4, [155, 190, 255]],
+    [ 0.0, [205, 220, 255]],
+    [ 0.3, [245, 242, 255]],
+    [ 0.6, [255, 230, 180]],
+    [ 1.0, [255, 185, 110]],
+    [ 1.5, [255, 135, 90]],
+    [ 2.0, [255, 105, 85]]
+];
+
+function starColor(bv) {
+    if (!Number.isFinite(bv)) {
+        return "rgb(220,225,245)";
+    }
+    if (bv <= colorStops[0][0]) {
+        return "rgb(155,190,255)";
+    }
+    if (bv >= colorStops[colorStops.length - 1][0]) {
+        return "rgb(255,105,85)";
+    }
+    for (let i = 0; i < colorStops.length - 1; i++) {
+        const a = colorStops[i];
+        const b = colorStops[i + 1];
+        if (bv >= a[0] && bv <= b[0]) {
+            const t = (bv - a[0]) / (b[0] - a[0]);
+            const rgb = a[1].map((value, j) => {
+                return Math.round(
+                    value + (b[1][j] - value) * t
+                );
+            });
+            return `rgb(${rgb.join(",")})`;
+        }
+    }
+}
+
+// ==========================================
+// MAGNITUDE -> SIZE
+// ==========================================
+
+function starRadius(mag) {
+    const radius =
+        2.0 * Math.pow(10, -0.12 * (mag - 1));
+    return Math.max(0.55, Math.min(4.0, radius));
+}
+
+function starOpacity(mag) {
+    return Math.max(
+        0.35,
+        Math.min(1, 1.05 - (mag + 1.5) * 0.055)
+    );
+}
+
+// ==========================================
+// PROJECTION
+// ==========================================
+
+// Azimuthal Equidistant Projection
+// Zenith = center
+// Horizon = edge
+// North = top
+// East = right
+
+function projectStar(altitude, azimuth, cx, cy, R) {
+    const az = azimuth * Math.PI / 180;
+    const r = R * (90 - altitude) / 90;
+    return {
+        x: cx - r * Math.sin(az),
+        y: cy - r * Math.cos(az)
+    };
+}
+
+
+function starVector(star) {
+    const ra = star.ra * Math.PI / 180;
+    const dec = star.dec * Math.PI / 180;
+    return [
+        Math.cos(dec) * Math.cos(ra),
+        Math.cos(dec) * Math.sin(ra),
+        Math.sin(dec)
+    ];
+}
+
+function drawConstellationSegment(
+    starA, starB, cx, cy, R, lst
+) {
+    const a = starVector(starA);
+    const b = starVector(starB);
+    const dot = Math.max(-1, Math.min(1,
+        a[0]*b[0] + a[1]*b[1] + a[2]*b[2]
+    ));
+    const omega = Math.acos(dot);
+    if (omega < 0.000001) return;
+    const steps = Math.max(
+        4,
+        Math.ceil(omega / (Math.PI / 180))
+    );
+    ctx.beginPath();
+    let drawing = false;
+    for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const sinOmega = Math.sin(omega);
+        const wa = Math.sin((1-t)*omega) / sinOmega;
+        const wb = Math.sin(t*omega) / sinOmega;
+        const x = wa*a[0] + wb*b[0];
+        const y = wa*a[1] + wb*b[1];
+        const z = wa*a[2] + wb*b[2];
+        const ra = (
+            Math.atan2(y, x) * 180 / Math.PI + 360
+        ) % 360;
+        const dec = Math.asin(
+            Math.max(-1, Math.min(1, z))
+        ) * 180 / Math.PI;
+        const horizontal = equatorialToHorizontal(
+            ra, dec, latitude, lst
+        );
+        if (horizontal.altitude > 0) {
+            const point = projectStar(
+                horizontal.altitude,
+                horizontal.azimuth,
+                cx, cy, R
+            );
+            if (!drawing) {
+                ctx.moveTo(point.x, point.y);
+                drawing = true;
+            } else {
+                ctx.lineTo(point.x, point.y);
+            }
+        } else {
+            drawing = false;
+        }
+    }
+    ctx.stroke();
+}
+
+function drawConstellationLines(cx, cy, R, lst) {
+    ctx.save();
+    ctx.strokeStyle = "rgba(115, 145, 190, 0.38)";
+    ctx.lineWidth = 0.8;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    for (const constellation of constellations) {
+        const ids = constellation.stars;
+        for (let i = 0; i < ids.length - 1; i++) {
+            const starA = starByHR.get(ids[i]);
+            const starB = starByHR.get(ids[i + 1]);
+            if (!starA || !starB) continue;
+            drawConstellationSegment(
+                starA, starB, cx, cy, R, lst
+            );
+        }
+    }
+    ctx.restore();
+}
+
+
+// ==========================================
+// RENDERING
+// ==========================================
+
+function renderSky() {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    if (!width || !height) return;
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "#05070c";
+    ctx.fillRect(0, 0, width, height);
+    const cx = width / 2;
+    const cy = height / 2;
+    const R = Math.min(width, height) * 0.47;
+    // Wait for location and catalogue
+    if (latitude === null || stars.length === 0) {
+        drawHorizon(cx, cy, R);
+        return;
+    }
+    const now = new Date();
+    const gmst = getGMST(now);
+    const lst = (
+        gmst + longitude + 360
+    ) % 360;
+    visibleStars = 0;
+    // Clip everything to the sky circle
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.clip();
+    // Draw constellation lines first
+    drawConstellationLines(cx, cy, R, lst);
+    // Draw stars
+    for (const star of stars) {
+        const horizontal = equatorialToHorizontal(
+            star.ra,
+            star.dec,
+            latitude,
+            lst
+        );
+        // Only stars above horizon
+        if (horizontal.altitude <= 0) {
+            continue;
+        }
+        const point = projectStar(
+            horizontal.altitude,
+            horizontal.azimuth,
+            cx,
+            cy,
+            R
+        );
+        const radius = starRadius(star.mag);
+        const color = starColor(star.bv);
+        const opacity = starOpacity(star.mag);
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = color;
+        // Small glow for bright stars
+        if (star.mag < 1.5) {
+            ctx.shadowBlur = 7;
+            ctx.shadowColor = color;
+        } else {
+            ctx.shadowBlur = 0;
+        }
+        ctx.beginPath();
+        ctx.arc(
+            point.x,
+            point.y,
+            radius,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+        visibleStars++;
+    }
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+    // Horizon boundary
+    drawHorizon(cx, cy, R);
+
+}
+
+// ==========================================
+// HORIZON
+// ==========================================
+
+function drawHorizon(cx, cy, R) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(
+        cx,
+        cy,
+        R,
+        0,
+        Math.PI * 2
+    );
+    ctx.strokeStyle = "#42516a";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.restore();
+}
+
+// ==========================================
+// INIT
+// ==========================================
+
+resizeCanvas();
+getGPS();
+loadAllData();
+
+</script>
+
+</body>
+</html>
