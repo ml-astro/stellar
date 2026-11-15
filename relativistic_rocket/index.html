@@ -1,0 +1,496 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Релятивистский калькулятор полёта</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 25px;
+    background: #0b1020;
+    color: #e5e7eb;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+}
+
+h1 {
+    color: #8ab4ff;
+    text-align: center;
+}
+
+h2 {
+    color: #8ab4ff;
+    font-size: 19px;
+}
+
+.panel {
+    background: #151e33;
+    border: 1px solid #293957;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 18px 0;
+}
+
+label {
+    display: block;
+    margin: 14px 0 6px;
+    color: #aabbd5;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 7px;
+    border: 1px solid #405477;
+    background: #0b1427;
+    color: white;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 13px;
+    border: none;
+    border-radius: 7px;
+    background: #3678dc;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #4b91fa;
+}
+
+.results {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.result {
+    background: #0d172b;
+    border-radius: 9px;
+    padding: 15px;
+}
+
+.result .caption {
+    color: #8fa6c8;
+    font-size: 13px;
+}
+
+.result .value {
+    font-size: 23px;
+    color: #70b8ff;
+    font-weight: bold;
+    margin-top: 8px;
+    overflow-wrap: anywhere;
+}
+
+canvas {
+    width: 100%;
+    height: 260px;
+    background: #0b1427;
+    border-radius: 8px;
+}
+
+.note {
+    color: #9aacc5;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+@media(max-width: 550px) {
+    body { padding: 12px; }
+    .results { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🚀 Релятивистский калькулятор</h1>
+
+<p style="text-align:center;color:#9aacc5">
+Полет с постоянным собственным ускорением:
+разгон на первой половине пути, торможение на второй.
+</p>
+
+<div class="panel">
+
+<h2>Параметры полёта</h2>
+
+<label>Космический объект</label>
+<select id="objectSelect" onchange="selectObject()"></select>
+
+<label>Расстояние до объекта (световых лет)</label>
+<input id="distance" type="number"
+       value="2537000" min="0.000001" step="any">
+
+<label>Ускорение ракеты (м/с²)</label>
+<input id="acceleration" type="number"
+       value="9.81" min="0.000001" step="any">
+
+<button onclick="calculate()">
+Рассчитать полёт
+</button>
+
+</div>
+
+<div class="panel">
+
+<h2>Результаты</h2>
+
+<div class="results">
+
+<div class="result">
+<div class="caption">Время на борту ракеты</div>
+<div class="value" id="shipTime">—</div>
+</div>
+
+<div class="result">
+<div class="caption">Время на Земле</div>
+<div class="value" id="earthTime">—</div>
+</div>
+
+<div class="result">
+<div class="caption">Максимальная скорость</div>
+<div class="value" id="maxSpeed">—</div>
+</div>
+
+<div class="result">
+<div class="caption">Фактор Лоренца γ</div>
+<div class="value" id="gamma">—</div>
+</div>
+
+</div>
+</div>
+
+<div class="panel">
+
+<h2>График скорости ракеты</h2>
+<p class="note">
+Скорость относительно Земли. Сначала разгон,
+затем симметричное торможение.
+</p>
+
+<canvas id="chart" width="800" height="300"></canvas>
+
+</div>
+
+<div class="panel">
+
+<h2>Физическая модель</h2>
+
+<p class="note">
+Используется постоянное собственное ускорение.
+В середине пути ускорение меняет знак.
+Ракета начинает и заканчивает полёт в состоянии покоя
+относительно системы отсчёта Земли.
+</p>
+
+<p>
+Время на борту:
+</p>
+
+<p>
+τ = (2c/a) · arcosh(1 + aD/2c²)
+</p>
+
+<p>
+Время на Земле:
+</p>
+
+<p>
+T = √(4D/a + D²/c²)
+</p>
+
+<p class="note">
+D — расстояние в метрах, a — собственное
+ускорение в м/с², c — скорость света.
+</p>
+
+</div>
+</div>
+
+<script>
+
+// ==========================================
+// КОНСТАНТЫ
+// ==========================================
+
+const C = 299792458;
+const LIGHT_YEAR = 9.460730472e15;
+const YEAR = 365.25 * 24 * 3600;
+
+// ==========================================
+// СПИСОК КОСМИЧЕСКИХ ОБЪЕКТОВ
+// Добавляйте новые объекты по этому шаблону.
+// Расстояние указывается в световых годах.
+// ==========================================
+
+const objects = [
+    {
+        name: "Альфа Центавра",
+        distance: 4.36
+    },
+    {
+        name: "Сириус",
+        distance: 8.6
+    },
+    {
+        name: "Тау Кита",
+        distance: 11.905
+    },
+    {
+        name: "40 Эридана",
+        distance: 16.353
+    },
+    {
+        name: "Вега",
+        distance: 25.3
+    },
+    {
+        name: "Центр Млечного пути",
+        distance: 26000
+    },
+    {
+        name: "Галактика Андромеды",
+        distance: 2537000
+    },
+    // Пример добавления:
+    // {
+    //     name: "Название объекта",
+    //     distance: 100000
+    // },
+
+];
+
+// ==========================================
+// ЗАПОЛНЕНИЕ СПИСКА
+// ==========================================
+
+const select = document.getElementById("objectSelect");
+
+objects.forEach((obj, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = obj.name;
+    select.appendChild(option);
+});
+
+function selectObject() {
+    const obj = objects[select.value];
+
+    if (obj) {
+        document.getElementById("distance").value =
+            obj.distance;
+        calculate();
+    }
+}
+
+// ==========================================
+// РАСЧЁТ
+// ==========================================
+
+function calculate() {
+
+    const D_LY = Number(
+        document.getElementById("distance").value
+    );
+
+    const a = Number(
+        document.getElementById("acceleration").value
+    );
+
+    if (!Number.isFinite(D_LY) ||
+        !Number.isFinite(a) ||
+        D_LY <= 0 || a <= 0) {
+
+        alert("Введите положительные значения расстояния и ускорения.");
+        return;
+    }
+
+    // Расстояние в метрах
+    const D = D_LY * LIGHT_YEAR;
+
+    // Аргумент гиперболических функций
+    const eta = Math.acosh(
+        1 + (a * D) / (2 * C * C)
+    );
+
+    // Время на борту
+    const tau = (2 * C / a) * eta;
+
+    // Время в системе Земли
+    const T = Math.sqrt(
+        4 * D / a + (D * D) / (C * C)
+    );
+
+    // Максимальная скорость
+    const beta = Math.tanh(eta);
+
+    const velocity = beta * C;
+
+    // Фактор Лоренца
+    const gamma = Math.cosh(eta);
+
+    // ======================================
+    // ВЫВОД РЕЗУЛЬТАТОВ
+    // ======================================
+
+    document.getElementById("shipTime").textContent =
+        formatTime(tau / YEAR);
+
+    document.getElementById("earthTime").textContent =
+        formatTime(T / YEAR);
+
+    document.getElementById("maxSpeed").textContent =
+        (beta * 100).toFixed(6) + " % c";
+
+    document.getElementById("gamma").textContent =
+        gamma.toLocaleString("ru-RU", {
+            maximumFractionDigits: 3
+        });
+
+    drawChart(D, a, eta, T);
+}
+
+// ==========================================
+// ФОРМАТИРОВАНИЕ ВРЕМЕНИ
+// ==========================================
+
+function formatTime(years) {
+
+    if (years >= 1000000) {
+        return (years / 1000000).toFixed(3) + " млн лет";
+    }
+
+    if (years >= 1000) {
+        return years.toLocaleString("ru-RU", {
+            maximumFractionDigits: 1
+        }) + " лет";
+    }
+
+    return years.toFixed(2) + " лет";
+}
+
+// ==========================================
+// ГРАФИК СКОРОСТИ
+// ==========================================
+
+function drawChart(D, a, eta, T) {
+
+    const canvas = document.getElementById("chart");
+    const ctx = canvas.getContext("2d");
+
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const padding = 55;
+    const graphW = W - padding * 2;
+    const graphH = H - padding * 2;
+
+    // Оси
+    ctx.strokeStyle = "#64748b";
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, H - padding);
+    ctx.lineTo(W - padding, H - padding);
+    ctx.stroke();
+
+    // Подписи
+    ctx.fillStyle = "#9aacc5";
+    ctx.font = "13px Arial";
+
+    ctx.fillText("Скорость / c", 10, 22);
+    ctx.fillText("Время", W - 90, H - 12);
+    ctx.fillText("0", padding - 20, H - padding + 5);
+    ctx.fillText("Макс.", 5, padding + 5);
+
+    // Кривая скорости.
+    // eta(t) линейно меняется на каждой половине
+    // при постоянном собственном ускорении.
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#55aaff";
+    ctx.lineWidth = 3;
+
+    const samples = 300;
+
+    for (let i = 0; i <= samples; i++) {
+
+        const u = i / samples;
+
+        let rapidity;
+
+        if (u <= 0.5) {
+            rapidity = 2 * eta * u;
+        } else {
+            rapidity = 2 * eta * (1 - u);
+        }
+
+        const v = Math.tanh(rapidity);
+
+        const x = padding + u * graphW;
+        const y = H - padding - v * graphH;
+
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+
+    ctx.stroke();
+
+    // Отметка середины
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = "#52647f";
+
+    ctx.beginPath();
+    ctx.moveTo(W / 2, padding);
+    ctx.lineTo(W / 2, H - padding);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#fbbf24";
+    ctx.fillText("Разгон", padding + 20, H - padding + 25);
+    ctx.fillText("Торможение", W / 2 + 15, H - padding + 25);
+
+    // Максимальная скорость
+    ctx.fillStyle = "#55aaff";
+    ctx.fillText(
+        (Math.tanh(eta) * 100).toFixed(2) + "% c",
+        W / 2 + 10,
+        padding + 15
+    );
+}
+
+// ==========================================
+// АВТОМАТИЧЕСКИЙ РАСЧЁТ ПРИ ЗАПУСКЕ
+// ==========================================
+
+calculate();
+
+</script>
+</body>
+</html>
