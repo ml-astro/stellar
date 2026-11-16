@@ -169,7 +169,7 @@ canvas {
 
 <h1>Орбита спутника</h1>
 <div class="subtitle">
-Гравитационная модель Ньютона · Спутник нулевой массы · Вид с полюса
+Гравитационная модель Ньютона · Спутник нулевой массы
 </div>
 
 <div class="layout">
@@ -275,10 +275,6 @@ canvas {
     Голубая линия — рассчитанная траектория.
     <br>
     Белая точка — спутник.
-    <br>
-    Красная граница — поверхность центрального тела.
-    <br>
-    Выход траектории за границы холста не меняет масштаб.
   </div>
 
 </div>
@@ -652,9 +648,6 @@ function draw() {
   ctx.fillStyle = gradient;
   ctx.fill();
 
-  ctx.strokeStyle = "#e15e5e";
-  ctx.lineWidth = 2*dpr;
-  ctx.stroke();
 
   // Спутник
   const sat = worldToScreen(x,y);
@@ -679,22 +672,7 @@ function draw() {
   ctx.setLineDash([]);
   ctx.globalAlpha = 1;
 
-  // Подписи
-  ctx.fillStyle = "#a7bed4";
-  ctx.font = `${12*dpr}px Arial`;
-
-  ctx.fillText(
-    "Центральное тело",
-    center.x+10*dpr,
-    center.y-12*dpr
-  );
-
-  ctx.fillText(
-    "Спутник",
-    sat.x+10*dpr,
-    sat.y-12*dpr
-  );
-
+  
   // Линия левого края
   ctx.strokeStyle = "#53667d";
   ctx.globalAlpha = 0.5;
