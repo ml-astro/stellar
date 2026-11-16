@@ -594,16 +594,6 @@ function draw() {
 
   ctx.clearRect(0,0,w,h);
 
-  // Звёздный фон
-  ctx.fillStyle = "#8ba5c0";
-
-  for (let i=0;i<100;i++) {
-    const sx = (i*7919)%w;
-    const sy = (i*3571)%h;
-
-    ctx.globalAlpha = 0.15+(i%5)*0.1;
-    ctx.fillRect(sx,sy,1.5*dpr,1.5*dpr);
-  }
 
   ctx.globalAlpha = 1;
 
