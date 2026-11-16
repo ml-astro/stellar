@@ -1,0 +1,837 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Орбита спутника</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: #101722;
+  color: #e5edf8;
+  font-family: Arial, sans-serif;
+}
+
+.container { max-width: 1100px; margin: auto; }
+
+h1 { font-size: 25px; margin: 0 0 8px; }
+
+.subtitle {
+  color: #91a3b9;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+}
+
+.panel, .visual {
+  background: #182333;
+  border: 1px solid #2b3c52;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.control { margin-bottom: 19px; }
+
+.control label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input[type=number] {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #40536b;
+  border-radius: 6px;
+  background: #101c2b;
+  color: #65ceff;
+  font-size: 15px;
+  font-weight: bold;
+  outline: none;
+}
+
+input:focus { border-color: #45b7ed; }
+
+.unit {
+  color: #91a3b9;
+  font-size: 13px;
+  min-width: 45px;
+}
+
+.hint {
+  color: #8094aa;
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+button {
+  flex: 1;
+  padding: 12px;
+  border: 0;
+  border-radius: 7px;
+  background: #147fbd;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover { background: #209bdc; }
+button.stop { background: #37485d; }
+button.stop:hover { background: #506680; }
+
+.status {
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 7px;
+  background: #111c29;
+  color: #91d5ff;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  background: #080e19;
+  border-radius: 8px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.stat {
+  background: #111c29;
+  padding: 12px;
+  border-radius: 7px;
+  min-width: 0;
+}
+
+.stat-title {
+  font-size: 11px;
+  color: #8da2b9;
+  margin-bottom: 7px;
+}
+
+.stat-value {
+  font-size: 17px;
+  font-weight: bold;
+  color: #65ceff;
+  overflow-wrap: anywhere;
+}
+
+.info {
+  margin-top: 14px;
+  color: #8498ae;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media(max-width: 760px) {
+  body { padding: 10px; }
+  .layout { grid-template-columns: 1fr; }
+  canvas { height: 360px; }
+  .stats { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Орбита спутника</h1>
+<div class="subtitle">
+Гравитационная модель Ньютона · Спутник нулевой массы · Вид с полюса
+</div>
+
+<div class="layout">
+
+<div class="panel">
+
+  <div class="control">
+    <label>Масса центрального тела</label>
+    <div class="input-row">
+      <input id="mass" type="number"
+        min="1e10" max="1e32" step="any"
+        value="5.9722e24">
+      <span class="unit">кг</span>
+    </div>
+    <div class="hint">Диапазон: 10¹⁰ – 10³² кг</div>
+  </div>
+
+  <div class="control">
+    <label>Радиус центрального тела</label>
+    <div class="input-row">
+      <input id="radius" type="number"
+        min="1" max="2000000" step="any"
+        value="6371">
+      <span class="unit">км</span>
+    </div>
+    <div class="hint">Диапазон: 1 – 2 000 000 км</div>
+  </div>
+
+<div class="control">
+  <label>Расстояние спутника от центра</label>
+  <div class="input-row">
+    <input id="distance" type="number"
+      min="1" max="1e15" step="any"
+      value="6771">
+    <span class="unit">км</span>
+  </div>
+  <div class="hint">Расстояние измеряется от центра центрального тела</div>
+</div>
+
+  <div class="control">
+    <label>Начальная скорость спутника</label>
+    <div class="input-row">
+      <input id="speed" type="number"
+        min="0" max="1e12" step="any"
+        value="0">
+      <span class="unit">м/с</span>
+    </div>
+    <div class="hint">Скорость направлена вверх, по касательной</div>
+  </div>
+
+  <div class="info">
+    G = 6.67430 × 10⁻¹¹ м³/(кг·с²)
+    <br>
+    Центральное тело неподвижно.
+    <br>
+    Спутник всегда начинает движение слева.
+  </div>
+<div class="control">
+  <label>Скорость анимации</label>
+  <div class="input-row">
+    <input id="animationSpeed"
+      type="number"
+      min="0.01"
+      max="1000000"
+      step="any"
+      value="60">
+    <span class="unit">×</span>
+  </div>
+</div>
+  <div class="buttons">
+    <button id="forward">▶ Вперёд</button>
+    <button class="stop" id="stop">■ Стоп</button>
+  </div>
+
+  <div class="status" id="status">
+    Ожидание запуска
+  </div>
+
+</div>
+
+<div class="visual">
+
+  <canvas id="canvas"></canvas>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-title">Высота</div>
+      <div class="stat-value" id="currentHeight">400 км</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title">Скорость</div>
+      <div class="stat-value" id="currentSpeed">0 м/с</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title">Время</div>
+      <div class="stat-value" id="currentTime">0 с</div>
+    </div>
+  </div>
+
+  <div class="info">
+    Голубая линия — рассчитанная траектория.
+    <br>
+    Белая точка — спутник.
+    <br>
+    Красная граница — поверхность центрального тела.
+    <br>
+    Выход траектории за границы холста не меняет масштаб.
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+
+const G = 6.67430e-11;
+
+const $ = id => document.getElementById(id);
+const canvas = $("canvas");
+const ctx = canvas.getContext("2d");
+
+let M, R, D, V;
+
+let x, y, vx, vy, t;
+
+let trajectory = [];
+let running = false;
+let collision = false;
+let calculated = false;
+
+let dt = 1;
+let playbackIndex = 0;
+
+let scale = 1;
+let lastFrame = 0;
+
+const MAX_STEPS = 100000;
+
+function fmt(n, digits=3) {
+  if (!Number.isFinite(n)) return "—";
+  if (n === 0) return "0";
+
+  if (Math.abs(n) >= 1e6 || Math.abs(n) < 0.01)
+    return n.toExponential(3);
+
+  return n.toLocaleString("ru-RU", {
+    maximumFractionDigits: digits
+  });
+}
+
+function distanceFormat(n) {
+  if (Math.abs(n) >= 1e9)
+    return fmt(n / 1e9) + " млн км";
+
+  if (Math.abs(n) >= 1e6)
+    return fmt(n / 1e6) + " тыс. км";
+
+  if (Math.abs(n) >= 1000)
+    return fmt(n / 1000) + " км";
+
+  return fmt(n) + " м";
+}
+
+function speedFormat(n) {
+  if (Math.abs(n) >= 1e6)
+    return fmt(n / 1e6) + " млн м/с";
+
+  if (Math.abs(n) >= 1000)
+    return fmt(n / 1000) + " км/с";
+
+  return fmt(n) + " м/с";
+}
+
+function readInputs() {
+  const mass = $("mass");
+  const radius = $("radius");
+  const distance = $("distance");
+  const speed = $("speed");
+
+  const values = [
+    [mass, 1e10, 1e32],
+    [radius, 1, 2000000],
+    [distance, 1, 1e15],
+    [speed, 0, 1e12]
+  ];
+
+  for (const [input, min, max] of values) {
+    const value = Number(input.value);
+
+    if (input.value.trim() === "" || !Number.isFinite(value)) {
+      throw new Error("Введите корректные числовые значения.");
+    }
+
+    if (value < min || value > max) {
+      throw new Error(
+        "Значение «" + input.previousElementSibling?.textContent +
+        "» находится вне допустимого диапазона."
+      );
+    }
+  }
+
+  M = Number(mass.value);
+  R = Number(radius.value) * 1000;
+  D = Number(distance.value) * 1000;
+  V = Number(speed.value);
+
+  if (D < R) {
+    throw new Error("Расстояние до спутника не может быть меньше радиуса тела.");
+  }
+}
+
+function acceleration(px, py) {
+  const r2 = px*px + py*py;
+  const r = Math.sqrt(r2);
+  const f = -G*M/(r2*r);
+
+  return { x: f*px, y: f*py };
+}
+
+function rk4(s, h) {
+  function d(a) {
+    const acc = acceleration(a.x, a.y);
+    return {
+      x: a.vx,
+      y: a.vy,
+      vx: acc.x,
+      vy: acc.y
+    };
+  }
+
+  function add(a, b, f) {
+    return {
+      x: a.x + b.x*f,
+      y: a.y + b.y*f,
+      vx: a.vx + b.vx*f,
+      vy: a.vy + b.vy*f
+    };
+  }
+
+  const k1 = d(s);
+  const k2 = d(add(s, k1, h/2));
+  const k3 = d(add(s, k2, h/2));
+  const k4 = d(add(s, k3, h));
+
+  return {
+    x: s.x + h/6*(k1.x+2*k2.x+2*k3.x+k4.x),
+    y: s.y + h/6*(k1.y+2*k2.y+2*k3.y+k4.y),
+    vx: s.vx + h/6*(k1.vx+2*k2.vx+2*k3.vx+k4.vx),
+    vy: s.vy + h/6*(k1.vy+2*k2.vy+2*k3.vy+k4.vy)
+  };
+}
+
+// Фиксированный масштаб:
+// начальное положение спутника всегда x = 10 пикселей.
+// Центр планеты всегда в центре холста.
+// Никакого автоматического масштабирования орбиты.
+
+function updateScale() {
+  const w = canvas.width;
+  const centerX = w / 2;
+  const margin = 10 * (window.devicePixelRatio || 1);
+
+  scale = (centerX - margin) / (D);
+}
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = Math.round(rect.width*dpr);
+  canvas.height = Math.round(rect.height*dpr);
+
+  updateScale();
+  draw();
+}
+
+function resetSimulation() {
+  try {
+    readInputs();
+  } catch(e) {
+    running = false;
+    $("status").textContent = e.message;
+    return;
+  }
+
+  running = false;
+  collision = false;
+  calculated = false;
+
+  x = -(D);
+  y = 0;
+  vx = 0;
+  vy = V;
+  t = 0;
+
+  trajectory = [[x,y, vx,vy]];
+  playbackIndex = 0;
+
+  updateScale();
+  updateStats();
+  draw();
+
+  $("status").textContent =
+    "Параметры обновлены. Нажмите «Вперёд».";
+}
+
+function calculateOrbit() {
+  readInputs();
+
+  const r0 = D;
+  const mu = G*M;
+
+  const period = 2*Math.PI*Math.sqrt(r0*r0*r0/mu);
+
+  const energy = V*V/2 - mu/r0;
+  const bound = energy < 0;
+
+  // Достаточно мелкий шаг интегрирования.
+  // Для незамкнутых траекторий используется то же
+  // характерное динамическое время.
+
+  const characteristic = Math.sqrt(r0*r0*r0/mu);
+
+  dt = Math.min(
+    period/4000,
+    characteristic/200
+  );
+
+  dt = Math.max(dt, 1e-12);
+
+  const maxTime = bound
+    ? Math.min(period*3, characteristic*10000)
+    : Math.min(characteristic*500, 1e12);
+
+  const maxRadius = Math.max(r0*30, R*100);
+
+  let state = {
+    x: -r0,
+    y: 0,
+    vx: 0,
+    vy: V
+  };
+
+  trajectory = [[state.x,state.y,state.vx,state.vy]];
+
+  let time = 0;
+  collision = false;
+
+  for (let i=0; i<MAX_STEPS; i++) {
+    let next = rk4(state,dt);
+
+    const r = Math.hypot(next.x,next.y);
+
+    if (!Number.isFinite(r) || !Number.isFinite(next.vx)) {
+      break;
+    }
+
+    if (r <= R) {
+      // Интерполяция точки столкновения
+      const oldR = Math.hypot(state.x,state.y);
+      const f = (oldR-R)/(oldR-r);
+
+      next = {
+        x: state.x+(next.x-state.x)*f,
+        y: state.y+(next.y-state.y)*f,
+        vx: state.vx+(next.vx-state.vx)*f,
+        vy: state.vy+(next.vy-state.vy)*f
+      };
+
+      trajectory.push([next.x,next.y,next.vx,next.vy]);
+      time += dt*f;
+      collision = true;
+      break;
+    }
+
+    state = next;
+    time += dt;
+
+    trajectory.push([
+      state.x,state.y,state.vx,state.vy
+    ]);
+
+    if (!bound && r > maxRadius) break;
+    if (time >= maxTime) break;
+  }
+
+  t = 0;
+  playbackIndex = 0;
+
+  x = -r0;
+  y = 0;
+  vx = 0;
+  vy = V;
+
+  calculated = true;
+  running = false;
+
+  updateScale();
+  updateStats();
+  draw();
+
+  $("status").textContent =
+    "Траектория рассчитана: " +
+    trajectory.length.toLocaleString("ru-RU") +
+    " точек" +
+    (collision ? ". Предусмотрено столкновение." : ".");
+}
+
+function worldToScreen(px,py) {
+  const cx = canvas.width/2;
+  const cy = canvas.height/2;
+
+  return {
+    x: cx + px*scale,
+    y: cy - py*scale
+  };
+}
+
+function draw() {
+  const w = canvas.width;
+  const h = canvas.height;
+  const dpr = window.devicePixelRatio || 1;
+
+  ctx.clearRect(0,0,w,h);
+
+  // Звёздный фон
+  ctx.fillStyle = "#8ba5c0";
+
+  for (let i=0;i<100;i++) {
+    const sx = (i*7919)%w;
+    const sy = (i*3571)%h;
+
+    ctx.globalAlpha = 0.15+(i%5)*0.1;
+    ctx.fillRect(sx,sy,1.5*dpr,1.5*dpr);
+  }
+
+  ctx.globalAlpha = 1;
+
+  const center = worldToScreen(0,0);
+  const pr = R*scale;
+
+  // Орбита. Холст обрезает всё, что выходит за его пределы.
+  if (trajectory.length > 1) {
+    ctx.beginPath();
+
+    for (let i=0;i<trajectory.length;i++) {
+      const p = worldToScreen(
+        trajectory[i][0],
+        trajectory[i][1]
+      );
+
+      if (i===0) ctx.moveTo(p.x,p.y);
+      else ctx.lineTo(p.x,p.y);
+    }
+
+    ctx.strokeStyle = "#39baff";
+    ctx.lineWidth = 1.5*dpr;
+    ctx.stroke();
+  }
+
+  // Планета
+  const gradient = ctx.createRadialGradient(
+    center.x-pr*0.3,
+    center.y-pr*0.3,
+    Math.max(1,pr*0.05),
+    center.x,
+    center.y,
+    Math.max(1,pr)
+  );
+
+  gradient.addColorStop(0,"#79b9e9");
+  gradient.addColorStop(0.65,"#286b9e");
+  gradient.addColorStop(1,"#102b4c");
+
+  ctx.beginPath();
+  ctx.arc(center.x,center.y,Math.max(0,pr),0,Math.PI*2);
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  ctx.strokeStyle = "#e15e5e";
+  ctx.lineWidth = 2*dpr;
+  ctx.stroke();
+
+  // Спутник
+  const sat = worldToScreen(x,y);
+
+  ctx.beginPath();
+  ctx.arc(sat.x,sat.y,5*dpr,0,Math.PI*2);
+  ctx.fillStyle = collision ? "#ff5252" : "#ffffff";
+  ctx.shadowColor = "#6acfff";
+  ctx.shadowBlur = 14*dpr;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Радиус-вектор
+  ctx.beginPath();
+  ctx.moveTo(center.x,center.y);
+  ctx.lineTo(sat.x,sat.y);
+
+  ctx.strokeStyle = "#ffffff";
+  ctx.globalAlpha = 0.2;
+  ctx.setLineDash([5*dpr,5*dpr]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+
+  // Подписи
+  ctx.fillStyle = "#a7bed4";
+  ctx.font = `${12*dpr}px Arial`;
+
+  ctx.fillText(
+    "Центральное тело",
+    center.x+10*dpr,
+    center.y-12*dpr
+  );
+
+  ctx.fillText(
+    "Спутник",
+    sat.x+10*dpr,
+    sat.y-12*dpr
+  );
+
+  // Линия левого края
+  ctx.strokeStyle = "#53667d";
+  ctx.globalAlpha = 0.5;
+  ctx.globalAlpha = 1;
+}
+
+function updateStats() {
+  const r = Math.hypot(x,y);
+  const height = Math.max(0,r-R);
+  const speed = Math.hypot(vx,vy);
+
+  $("currentHeight").textContent = distanceFormat(height);
+  $("currentSpeed").textContent = speedFormat(speed);
+  $("currentTime").textContent = fmt(t)+" с";
+}
+
+function animate(timestamp) {
+  requestAnimationFrame(animate);
+
+  if (!running || !calculated) {
+    lastFrame = timestamp;
+    return;
+  }
+
+  if (!lastFrame) lastFrame = timestamp;
+
+  const realDt = Math.min(
+    (timestamp-lastFrame)/1000,
+    0.05
+  );
+
+  lastFrame = timestamp;
+
+  // Скорость воспроизведения
+  const animationSpeed = Math.max(
+    0.01,
+    Number($("animationSpeed").value) || 0.01
+  );
+
+  const advance = realDt*animationSpeed;
+
+  playbackIndex += advance/dt;
+
+  let index = Math.floor(playbackIndex);
+
+  if (index >= trajectory.length-1) {
+    index = trajectory.length-1;
+    playbackIndex = index;
+    running = false;
+
+    if (collision) {
+      $("status").textContent =
+        "⚠ Спутник столкнулся с поверхностью.";
+    } else {
+      $("status").textContent =
+        "Конец рассчитанной траектории.";
+    }
+  }
+
+  const a = trajectory[index];
+  const b = trajectory[Math.min(index+1,trajectory.length-1)];
+
+  const f = Math.max(0,Math.min(1,playbackIndex-index));
+
+  x = a[0]+(b[0]-a[0])*f;
+  y = a[1]+(b[1]-a[1])*f;
+  vx = a[2]+(b[2]-a[2])*f;
+  vy = a[3]+(b[3]-a[3])*f;
+
+  t = playbackIndex*dt;
+
+  if (!running && collision && index===trajectory.length-1) {
+    x = b[0];
+    y = b[1];
+    vx = b[2];
+    vy = b[3];
+    t = (trajectory.length-2)*dt +
+      dt * Math.max(0, Math.min(1,
+        Math.hypot(b[0],b[1]) <= R ? 1 : 0));
+  }
+
+  updateStats();
+  draw();
+}
+
+$("forward").addEventListener("click",()=>{
+  try {
+    if (!calculated) calculateOrbit();
+
+    if (playbackIndex >= trajectory.length-1) {
+      playbackIndex = 0;
+    }
+
+    collision = false;
+    running = true;
+    lastFrame = 0;
+
+    $("status").textContent = "Анимация выполняется";
+  } catch(e) {
+    $("status").textContent = e.message;
+  }
+});
+
+$("stop").addEventListener("click",()=>{
+  running = false;
+  $("status").textContent = "Анимация остановлена";
+});
+
+// Изменение параметров
+["mass","radius","distance","speed"].forEach(id=>{
+  $(id).addEventListener("change",()=>{
+    resetSimulation();
+  });
+});
+
+readInputsSafe();
+function readInputsSafe() {
+  try {
+    readInputs();
+    x = -(D);
+    y = 0;
+    vx = 0;
+    vy = V;
+    t = 0;
+    trajectory = [[x,y,vx,vy]];
+    updateScale();
+    updateStats();
+  } catch(e) {
+    $("status").textContent = e.message;
+  }
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+resizeCanvas();
+requestAnimationFrame(animate);
+
+</script>
+</body>
+</html>
