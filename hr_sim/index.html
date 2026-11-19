@@ -1,0 +1,679 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Симулятор диаграммы Герцшпрунга — Рассела</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: #101722;
+  color: #e8edf5;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  font-size: 25px;
+}
+
+h2 {
+  font-size: 18px;
+  text-align: center;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.panel {
+  height: 100%;
+  background: #1b2736;
+  padding: 16px;
+  border-radius: 12px;
+  min-width: 0;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #080d16;
+  border-radius: 5px;
+}
+
+#diagram {
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.controls {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 20px;
+  background: #1b2736;
+  border-radius: 12px;
+}
+
+.control {
+  margin: 20px 0;
+}
+
+.control label {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+input[type=range] {
+  width: 100%;
+  accent-color: #55b8ff;
+}
+
+.value {
+  color: #70c8ff;
+  font-weight: bold;
+}
+
+.formula {
+  background: #111c2a;
+  padding: 16px;
+  border-radius: 8px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.note {
+  color: #a8b6c8;
+  font-size: 13px;
+}
+
+.star-color {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@media(max-width: 750px) {
+  .panels {
+    grid-template-columns: 1fr;
+  }
+
+  body {
+    padding: 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<h1>Звездный калькулятор</h1>
+
+<div class="panels">
+
+  <section class="panel">
+    <h2>Диаграмма Герцшпрунга — Рассела</h2>
+
+    <canvas id="diagram"></canvas>
+
+    <p class="note">
+      Нажми на диаграмму или перетаскивай крестик,
+      чтобы изменить параметры звезды.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Сравнение с Солнцем</h2>
+
+    <canvas id="stars" width="500" height="500"></canvas>
+
+    <p class="note">
+      Сравнение радиусов звезды и Солнца в масштабе.
+    </p>
+  </section>
+
+</div>
+
+<div class="controls">
+
+  <h2>Параметры звезды</h2>
+
+  <div class="control">
+    <label>
+      <span>Температура T</span>
+      <span class="value" id="tValue">5800 K</span>
+    </label>
+
+    <input
+      id="temperature"
+      type="range"
+      min="2300"
+      max="40000"
+      step="1"
+      value="5800"
+    >
+  </div>
+
+  <div class="control">
+    <label>
+      <span>Светимость L</span>
+      <span class="value" id="lValue">1 L☉</span>
+    </label>
+
+    <input
+      id="luminosity"
+      type="range"
+      min="-4"
+      max="6"
+      step="0.01"
+      value="0"
+    >
+  </div>
+
+  <div class="formula">
+
+    <strong>Относительный радиус звезды:</strong>
+
+    <div>
+      R = √L / (T / 5800)²
+    </div>
+
+    <div id="calculation"></div>
+
+    <div
+      id="result"
+      style="font-size:20px;color:#70c8ff;font-weight:bold"
+    ></div>
+
+    
+  </div>
+
+</div>
+
+<script>
+
+// ========================================
+// ЭЛЕМЕНТЫ
+// ========================================
+
+const diagram = document.getElementById('diagram');
+const dctx = diagram.getContext('2d');
+
+const stars = document.getElementById('stars');
+const sctx = stars.getContext('2d');
+
+const temperature = document.getElementById('temperature');
+const luminosity = document.getElementById('luminosity');
+
+const image = new Image();
+
+let imageLoaded = false;
+let dragging = false;
+
+
+// ========================================
+// ПАРАМЕТРЫ ДИАГРАММЫ
+// ========================================
+
+const X_MIN = 100;
+const X_MAX = 634;
+
+const Y_MIN = 17;
+const Y_MAX = 617;
+
+const T_MIN = 2300;
+const T_MAX = 40000;
+
+const LOG_L_MIN = -4;
+const LOG_L_MAX = 6;
+
+
+// ========================================
+// ЗАГРУЗКА ИЗОБРАЖЕНИЯ
+// ========================================
+
+image.src = './diagram.jpg';
+
+image.onload = () => {
+  diagram.width = image.naturalWidth;
+  diagram.height = image.naturalHeight;
+
+  imageLoaded = true;
+  update();
+};
+
+image.onerror = () => {
+  diagram.width = 735;
+  diagram.height = 635;
+
+  dctx.fillStyle = '#111c2a';
+  dctx.fillRect(0, 0, 735, 635);
+
+  dctx.fillStyle = 'white';
+  dctx.font = '18px Arial';
+  dctx.fillText('Не удалось загрузить diagram.jpg', 130, 300);
+};
+
+
+// ========================================
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+// ========================================
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function formatNumber(n) {
+  return Number(n.toPrecision(4)).toString();
+}
+
+
+// ========================================
+// ПРЕОБРАЗОВАНИЕ КООРДИНАТ
+// ========================================
+
+// Температура -> X
+// Логарифмическая шкала
+
+function temperatureToX(T) {
+  return X_MIN +
+    Math.log(T_MAX / T) /
+    Math.log(T_MAX / T_MIN) *
+    (X_MAX - X_MIN);
+}
+
+
+// X -> температура
+
+function xToTemperature(x) {
+  const fraction = (x - X_MIN) / (X_MAX - X_MIN);
+
+  return T_MAX * Math.pow(
+    T_MIN / T_MAX,
+    fraction
+  );
+}
+
+
+// Светимость -> Y
+// Логарифмическая шкала
+
+function luminosityToY(L) {
+  const logL = Math.log10(L);
+
+  return Y_MAX -
+    (logL - LOG_L_MIN) /
+    (LOG_L_MAX - LOG_L_MIN) *
+    (Y_MAX - Y_MIN);
+}
+
+
+// Y -> светимость
+
+function yToLuminosity(y) {
+  const fraction = (Y_MAX - y) / (Y_MAX - Y_MIN);
+
+  const logL = LOG_L_MIN +
+    fraction * (LOG_L_MAX - LOG_L_MIN);
+
+  return Math.pow(10, logL);
+}
+
+
+// ========================================
+// ЦВЕТ ЗВЕЗДЫ ПО ТЕМПЕРАТУРЕ
+// ========================================
+
+// Интерполяция между цветами
+
+const colorStops = [
+  { t: 2300,  color: [255, 55, 25]},
+  { t: 3000,  color: [255, 115, 40]},
+  { t: 4500,  color: [255, 195, 110]},
+  { t: 5800,  color: [255, 240, 195]},
+  { t: 7500,  color: [225, 240, 255]},
+  { t: 10000, color: [160, 205, 255]},
+  { t: 20000, color: [105, 160, 255]},
+  { t: 40000, color: [90, 115, 255]}
+];
+
+function getStarColor(T) {
+
+  if (T <= colorStops[0].t) {
+    return colorStops[0].color;
+  }
+
+  for (let i = 0; i < colorStops.length - 1; i++) {
+
+    const a = colorStops[i];
+    const b = colorStops[i + 1];
+
+    if (T <= b.t) {
+
+      // Интерполяция по логарифму температуры
+      const f =
+        Math.log(T / a.t) /
+        Math.log(b.t / a.t);
+
+      return a.color.map((v, j) =>
+        Math.round(v + (b.color[j] - v) * f)
+      );
+    }
+  }
+
+  return colorStops[colorStops.length - 1].color;
+}
+
+
+function rgb(color) {
+  return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+}
+
+
+// ========================================
+// ОБНОВЛЕНИЕ СИМУЛЯТОРА
+// ========================================
+
+function update() {
+
+  const T = Number(temperature.value);
+
+  const logL = Number(luminosity.value);
+
+  const L = Math.pow(10, logL);
+
+  // Значения на экране
+
+  document.getElementById('tValue').textContent =
+    formatNumber(T) + ' K';
+
+  document.getElementById('lValue').textContent =
+    formatNumber(L) + ' L☉';
+
+
+  // Часть 1: положение крестика
+
+  if (imageLoaded) {
+
+    dctx.clearRect(0, 0, diagram.width, diagram.height);
+
+    dctx.drawImage(image, 0, 0);
+
+    const x = temperatureToX(T);
+    const y = luminosityToY(L);
+
+    const size = 9;
+
+    dctx.save();
+
+    dctx.strokeStyle = '#ff2020';
+    dctx.lineWidth = 3;
+
+    
+    dctx.beginPath();
+
+    dctx.moveTo(x - size, y - size);
+    dctx.lineTo(x + size, y + size);
+
+    dctx.moveTo(x + size, y - size);
+    dctx.lineTo(x - size, y + size);
+
+    dctx.stroke();
+
+    dctx.restore();
+  }
+
+
+  // Часть 2: радиус звезды
+
+  const R = Math.sqrt(L) /
+    Math.pow(T / 5800, 2);
+
+
+  // Формула и результат
+
+  document.getElementById('calculation').textContent =
+    `R = √${formatNumber(L)} / (${formatNumber(T)} / 5800)²`;
+
+  document.getElementById('result').textContent =
+    'R = ' + formatNumber(R) + ' R☉';
+
+
+  // Цвет
+  const color = getStarColor(T);
+
+  // Рисуем звёзды
+  drawStars(R, color);
+}
+
+
+// ========================================
+// РИСОВАНИЕ ЗВЁЗД
+// ========================================
+
+function drawStars(R, starColor) {
+
+  const w = stars.width;
+  const h = stars.height;
+
+  sctx.clearRect(0, 0, w, h);
+
+  // Фон
+
+  sctx.fillStyle = '#050a15';
+  sctx.fillRect(0, 0, w, h);
+
+  // Звёзды на фоне
+
+  
+
+  // Солнце
+
+  const sunRadius = w / 6;
+  const sunX = w * 0.75;
+
+  const centerY = h / 2;
+
+
+  // Радиус исследуемой звезды
+
+  const starRadius = R * sunRadius;
+
+  // Расстояние между поверхностями
+
+  const gap = w / 10;
+
+  // Центр исследуемой звезды
+
+  const starX =
+    sunX - sunRadius - gap - starRadius;
+
+
+  // Генерируемая звезда
+
+  if (starRadius > 0) {
+
+    
+    const base = rgb(starColor);
+
+    
+    sctx.beginPath();
+
+    sctx.arc(
+      starX,
+      centerY,
+      starRadius,
+      0,
+      Math.PI * 2
+    );
+
+    sctx.fillStyle = base;
+    sctx.fill();
+
+    // Свечение
+
+    sctx.save();
+
+    
+    sctx.beginPath();
+
+    sctx.arc(
+      starX,
+      centerY,
+      starRadius,
+      0,
+      Math.PI * 2
+    );
+
+    sctx.strokeStyle = base;
+    sctx.stroke();
+
+    sctx.restore();
+  }
+
+
+  // Солнце
+
+const sunColor = '#ffce45';
+
+  sctx.save();
+
+  sctx.beginPath();
+
+  sctx.arc(
+    sunX,
+    centerY,
+    sunRadius,
+    0,
+    Math.PI * 2
+  );
+
+sctx.fillStyle = sunColor;
+  sctx.fill();
+
+  sctx.restore();
+  
+}
+
+
+// ========================================
+// УПРАВЛЕНИЕ КРЕСТИКОМ МЫШЬЮ
+// ========================================
+
+// Перевод координат мыши в координаты изображения
+
+function getCanvasPosition(event) {
+
+  const rect = diagram.getBoundingClientRect();
+
+  const scaleX = diagram.width / rect.width;
+  const scaleY = diagram.height / rect.height;
+
+  return {
+    x: (event.clientX - rect.left) * scaleX,
+    y: (event.clientY - rect.top) * scaleY
+  };
+}
+
+
+// Установка параметров по координатам
+
+function setStarFromPosition(event) {
+
+  if (!imageLoaded) return;
+
+  const pos = getCanvasPosition(event);
+
+  // Ограничиваем координаты рамками диаграммы
+
+  const x = clamp(pos.x, X_MIN, X_MAX);
+  const y = clamp(pos.y, Y_MIN, Y_MAX);
+
+  // Обратное преобразование координат
+
+  const T = xToTemperature(x);
+  const L = yToLuminosity(y);
+
+  // Обновляем ползунки
+
+  temperature.value = T;
+  luminosity.value = Math.log10(L);
+
+  // Обновляем всю визуализацию
+
+  update();
+}
+
+
+// Нажатие мыши или касание
+
+diagram.addEventListener('pointerdown', (event) => {
+
+  if (!imageLoaded) return;
+
+  dragging = true;
+
+  diagram.setPointerCapture(event.pointerId);
+
+  setStarFromPosition(event);
+});
+
+
+// Перетаскивание
+
+diagram.addEventListener('pointermove', (event) => {
+
+  if (!dragging) return;
+
+  setStarFromPosition(event);
+});
+
+
+// Отпускание
+
+diagram.addEventListener('pointerup', () => {
+  dragging = false;
+});
+
+diagram.addEventListener('pointercancel', () => {
+  dragging = false;
+});
+
+diagram.addEventListener('lostpointercapture', () => {
+  dragging = false;
+});
+
+
+// ========================================
+// УПРАВЛЕНИЕ ПОЛЗУНКАМИ
+// ========================================
+
+temperature.addEventListener('input', update);
+
+luminosity.addEventListener('input', update);
+
+
+// ========================================
+// ЗАПУСК
+// ========================================
+
+update();
+</script>
+<p class="note">Написано по мотивам: astro.unl.edu/naap/hr/animations/hr.html</p>
+</body>
+</html>
